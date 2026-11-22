@@ -1,0 +1,7 @@
+# ninja log v7
+88	2271	8170220624773963	CMakeFiles/EnchantedGarden.dir/src/animation.cpp.obj	8c01388dbad1e1f1
+63	2600	8170220624499027	CMakeFiles/EnchantedGarden.dir/src/village.cpp.obj	ac9771c025c9016a
+77	2771	8170220624641618	CMakeFiles/EnchantedGarden.dir/src/garden.cpp.obj	8f86398102d5b763
+52	3005	8170220624385533	CMakeFiles/EnchantedGarden.dir/src/mountain.cpp.obj	d1b5ec2aa7dedf8
+42	3447	8170220624294769	CMakeFiles/EnchantedGarden.dir/src/main.cpp.obj	cc8d90356dc8900f
+3447	3690	8170220658340854	EnchantedGarden.exe	fc5fb4b346d8106e

@@ -1,5 +1,6 @@
 #include "village.h"
 #include "gfx.h"
+#include "theme.h"
 
 #include <algorithm>
 #include <vector>
@@ -50,7 +51,13 @@ void drawWindow(float cx, float cy, float w, float h, bool lit, const Color& shu
     // frame + glass
     setColor(rgb(0.95f, 0.92f, 0.85f));
     rect(cx - w * 0.5f - 0.014f, cy - h * 0.5f - 0.014f, cx + w * 0.5f + 0.014f, cy + h * 0.5f + 0.014f);
-    if (lit) rectV(cx - w * 0.5f, cy - h * 0.5f, cx + w * 0.5f, cy + h * 0.5f, rgb(0.98f, 0.70f, 0.32f), rgb(1.0f, 0.90f, 0.58f));
+    if (lit || theme::cur().windowsLit > 0.5f)
+    {
+        const bool oldTint = gfx::useTint;          // lit windows glow: no night tint
+        gfx::useTint = false;
+        rectV(cx - w * 0.5f, cy - h * 0.5f, cx + w * 0.5f, cy + h * 0.5f, rgb(0.98f, 0.70f, 0.32f), rgb(1.0f, 0.90f, 0.58f));
+        gfx::useTint = oldTint;
+    }
     else     rectV(cx - w * 0.5f, cy - h * 0.5f, cx + w * 0.5f, cy + h * 0.5f, rgb(0.42f, 0.66f, 0.86f), rgb(0.74f, 0.89f, 0.97f));
     // cross bars
     setColor(rgb(0.95f, 0.92f, 0.85f));

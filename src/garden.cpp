@@ -1,6 +1,7 @@
 #include "garden.h"
 #include "gfx.h"
 #include "village.h"
+#include "theme.h"
 
 #include <algorithm>
 #include <cmath>
@@ -36,13 +37,17 @@ float catmull(float p0, float p1, float p2, float p3, float t)
 // ---------------------------------------------------------------------------
 void drawSkyAndFar(float u)
 {
-    static const Stop stops[] = {{-1.2f, rgb(0.90f, 0.96f, 0.98f)}, {0.10f, rgb(0.84f, 0.94f, 0.99f)},
-                                 {0.50f, rgb(0.62f, 0.84f, 0.98f)}, {1.60f, rgb(0.28f, 0.58f, 0.92f)}};
+    Stop stops[] = {{-1.2f, rgb(0.90f, 0.96f, 0.98f)}, {0.10f, rgb(0.84f, 0.94f, 0.99f)},
+                    {0.50f, rgb(0.62f, 0.84f, 0.98f)}, {1.60f, rgb(0.28f, 0.58f, 0.92f)}};
+    for (Stop& st : stops) st.c = theme::skyColor(st.c, st.y);      // time-of-day sky
+    gfx::useTint = false;                                           // sky is already final
     vGradient(-3.2f, 3.2f, stops, 4);
 
-    glow(-0.35f, 0.74f, 0.9f, rgb(1.0f, 0.97f, 0.80f, 0.75f), 48);
-    setColor(rgb(1.0f, 0.97f, 0.78f));
+    glow(-0.35f, 0.74f, 0.9f, theme::sun(rgb(1.0f, 0.97f, 0.80f, 0.75f)), 48);
+    setColor(theme::sun(rgb(1.0f, 0.97f, 0.78f)));
     circle(-0.35f, 0.74f, 0.10f, 36);
+    theme::drawStarsAndMoon(-0.35f, 0.74f, 0.10f, u);               // integer-cycle twinkle => loops
+    gfx::useTint = true;
 
     drawRidge(farMts, -0.3f, rgb(0.58f, 0.74f, 0.92f), rgb(0.82f, 0.92f, 0.98f));
     drawRidgeShadows(farMts, rgb(0.46f, 0.64f, 0.86f, 0.45f));

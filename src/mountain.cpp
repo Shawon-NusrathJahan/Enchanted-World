@@ -1,6 +1,7 @@
 #include "mountain.h"
 #include "gfx.h"
 #include "village.h"
+#include "theme.h"
 
 #include <algorithm>
 #include <utility>
@@ -149,9 +150,9 @@ void drawMist(float y, float thick, float alpha, float t, float speed, float see
         const float cy = y + 0.03f * std::sin(t * 0.3f + i * 1.9f + seed);
         const float rx = 0.9f + 0.3f * hash1(i * 3.3f + seed);
         glBegin(GL_TRIANGLE_FAN);
-        glColor4f(0.95f, 0.97f, 0.98f, clampf(a, 0.0f, 0.9f));
+        gfx::paint(0.95f, 0.97f, 0.98f, clampf(a, 0.0f, 0.9f));
         glVertex2f(cx, cy);
-        glColor4f(0.95f, 0.97f, 0.98f, 0.0f);
+        gfx::paint(0.95f, 0.97f, 0.98f, 0.0f);
         for (int k = 0; k <= 24; k++)
             glVertex2f(cx + std::cos(TAU * k / 24) * rx, cy + std::sin(TAU * k / 24) * thick);
         glEnd();
@@ -170,7 +171,7 @@ void drawPines(const std::vector<Pine>& list, float t, float dark)
 // ---------------------------------------------------------------------------
 void drawSky(float t)
 {
-    const Stop stops[] = {
+    Stop stops[] = {
         {-1.6f, P(rgb(0.94f, 0.95f, 0.95f), rgb(0.99f, 0.90f, 0.82f))},
         {-0.1f, P(rgb(0.94f, 0.95f, 0.95f), rgb(0.99f, 0.90f, 0.82f))},
         {0.12f, P(rgb(0.88f, 0.92f, 0.94f), rgb(0.80f, 0.89f, 0.96f))},
@@ -178,10 +179,14 @@ void drawSky(float t)
         {0.80f, P(rgb(0.62f, 0.72f, 0.82f), rgb(0.28f, 0.52f, 0.88f))},
         {1.60f, P(rgb(0.52f, 0.63f, 0.76f), rgb(0.13f, 0.30f, 0.68f))},
         {2.40f, P(rgb(0.52f, 0.63f, 0.76f), rgb(0.13f, 0.30f, 0.68f))}};
+    for (Stop& st : stops) st.c = theme::skyColor(st.c, st.y);      // time-of-day sky
+    gfx::useTint = false;                                           // sky is already final
     vGradient(-3.2f, 3.2f, stops, 7);
 
-    glow(0.10f, 0.28f, 1.35f, P(rgb(1.0f, 1.0f, 1.0f, 0.55f), rgb(1.0f, 0.88f, 0.70f, 0.85f)), 48);
-    glow(0.10f, 0.28f, 0.50f, P(rgb(1.0f, 1.0f, 1.0f, 0.55f), rgb(1.0f, 0.96f, 0.85f, 0.9f)), 40);
+    glow(0.10f, 0.28f, 1.35f, theme::sun(P(rgb(1.0f, 1.0f, 1.0f, 0.55f), rgb(1.0f, 0.88f, 0.70f, 0.85f))), 48);
+    glow(0.10f, 0.28f, 0.50f, theme::sun(P(rgb(1.0f, 1.0f, 1.0f, 0.55f), rgb(1.0f, 0.96f, 0.85f, 0.9f))), 40);
+    theme::drawStarsAndMoon(-0.80f, 0.62f, 0.09f, fract(t / 60.0f));
+    gfx::useTint = true;
 
     struct C { float x, y, s, speed, pink; };
     static const C clouds[] = {{-1.30f, 0.84f, 0.85f, 0.010f, 0.85f}, {1.35f, 0.84f, 0.95f, 0.007f, 0.80f},
@@ -238,7 +243,7 @@ void drawValley(float t, const AnimState& s)
         glBegin(GL_TRIANGLE_FAN);
         setColor(b.c);
         glVertex2f(b.x, b.y);
-        glColor4f(b.c.r, b.c.g, b.c.b, 0.0f);
+        gfx::paint(b.c.r, b.c.g, b.c.b, 0.0f);
         for (int i = 0; i <= 32; i++)
             glVertex2f(b.x + std::cos(TAU * i / 32) * b.rx, b.y + std::sin(TAU * i / 32) * b.ry);
         glEnd();

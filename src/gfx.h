@@ -25,6 +25,17 @@ struct Color { float r, g, b, a; };
 
 inline Color rgb(float r, float g, float b, float a = 1.0f) { return Color{r, g, b, a}; }
 
+// Time-of-day tint. Every scene colour goes through paint(), which multiplies
+// it by tintColor (set once per frame from theme.cpp). Sky and UI switch the
+// tint off with useTint = false.
+inline bool  useTint   = true;
+inline Color tintColor = Color{1.0f, 1.0f, 1.0f, 1.0f};
+inline void  paint(float r, float g, float b, float a)
+{
+    if (useTint) glColor4f(r * tintColor.r, g * tintColor.g, b * tintColor.b, a);
+    else         glColor4f(r, g, b, a);
+}
+
 inline Color mix(const Color& a, const Color& b, float t)
 {
     return Color{a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t,
@@ -32,8 +43,8 @@ inline Color mix(const Color& a, const Color& b, float t)
 }
 inline Color shade(const Color& c, float k)      { return Color{c.r * k, c.g * k, c.b * k, c.a}; }
 inline Color withAlpha(const Color& c, float a)  { return Color{c.r, c.g, c.b, a}; }
-inline void  setColor(const Color& c)            { glColor4f(c.r, c.g, c.b, c.a); }
-inline void  vtx(const Color& c, float x, float y) { glColor4f(c.r, c.g, c.b, c.a); glVertex2f(x, y); }
+inline void  setColor(const Color& c)            { paint(c.r, c.g, c.b, c.a); }
+inline void  vtx(const Color& c, float x, float y) { paint(c.r, c.g, c.b, c.a); glVertex2f(x, y); }
 
 inline float clampf(float v, float lo, float hi) { return v < lo ? lo : (v > hi ? hi : v); }
 inline float lerpf(float a, float b, float t)    { return a + (b - a) * t; }
@@ -148,7 +159,7 @@ inline void glow(float x, float y, float r, const Color& c, int seg = 40)
     glBegin(GL_TRIANGLE_FAN);
     setColor(c);
     glVertex2f(x, y);
-    glColor4f(c.r, c.g, c.b, 0.0f);
+    paint(c.r, c.g, c.b, 0.0f);
     for (int i = 0; i <= seg; i++)
     {
         const float a = TAU * i / seg;

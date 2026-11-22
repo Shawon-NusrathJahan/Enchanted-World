@@ -1,11 +1,15 @@
 // Enchanted Garden - cinematic mountain -> village -> garden animation
 // C++17, OpenGL 2.1 (immediate mode), GLFW + GLEW
 //
+// Mouse:  top-left arrow = restart the whole film      top-right map = go to a location
 // Keys:   SPACE  pause / resume          R        restart
 //         1..5   jump to a stage         <- / ->  skip -2 s / +2 s
-//         O      view culling on / off   ESC      quit
+//         O      view culling on / off   T        TEST: cycle day/afternoon/evening/night
+//         ESC    close map / quit
 //
-// Optional: EnchantedGarden --shot <seconds> <file.ppm>   saves one frame and exits
+// Test options (single frame, then exit):
+//   EnchantedGarden --shot <seconds> <file.ppm> [--hour H] [--scene garden|playground|station|hospital|inside]
+//                   [--map] [--click X Y]
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -20,6 +24,9 @@
 #include "garden.h"
 #include "gfx.h"
 #include "mountain.h"
+#include "scenes.h"
+#include "theme.h"
+#include "ui.h"
 
 using namespace std;
 
@@ -75,16 +82,49 @@ static void drawBloom(float blend)
 // ---------------------------------------------------------------------------
 // One frame
 // ---------------------------------------------------------------------------
-static void renderFrame(GLFWwindow* window)
+static int g_vx = 0, g_vy = 0, g_vw = 1, g_vh = 1;       // picture rectangle inside the window (pixels)
+
+static void computeViewport(int fbw, int fbh)
+{
+    g_vw = fbw; g_vh = (int)(fbw / ASPECT);
+    if (g_vh > fbh) { g_vh = fbh; g_vw = (int)(fbh * ASPECT); }
+    g_vx = (fbw - g_vw) / 2;
+    g_vy = (fbh - g_vh) / 2;
+}
+
+// cursor (window pixels) -> world coordinates
+static void updateMouse(GLFWwindow* window)
+{
+    double cx = 0, cy = 0;
+    glfwGetCursorPos(window, &cx, &cy);
+    int ww = 1, wh = 1, fbw = 1, fbh = 1;
+    glfwGetWindowSize(window, &ww, &wh);
+    glfwGetFramebufferSize(window, &fbw, &fbh);
+    if (ww <= 0 || wh <= 0 || fbw <= 0 || fbh <= 0) { ui::mouse.valid = false; return; }
+    computeViewport(fbw, fbh);
+    const double fx = cx * fbw / ww, fy = fbh - cy * fbh / wh;
+    const double nx = (fx - g_vx) / g_vw, ny = (fy - g_vy) / g_vh;
+    ui::mouse.valid = nx >= 0.0 && nx <= 1.0 && ny >= 0.0 && ny <= 1.0;
+    ui::mouse.x = (float)((nx * 2.0 - 1.0) * gfx::WORLD_W);
+    ui::mouse.y = (float)(ny * 2.0 - 1.0);
+}
+
+static void mouseButtonCallback(GLFWwindow*, int button, int action, int)
+{
+    if (button != GLFW_MOUSE_BUTTON_LEFT) return;
+    if (action == GLFW_PRESS)   { ui::mouse.down = true;  ui::mouse.pressed  = true; }
+    if (action == GLFW_RELEASE) { ui::mouse.down = false; ui::mouse.released = true; }
+}
+
+static void renderFrame(GLFWwindow* window, double now)
 {
     int fbw = 0, fbh = 0;
     glfwGetFramebufferSize(window, &fbw, &fbh);
     if (fbw <= 0 || fbh <= 0) return;                           // minimised
 
     // keep a fixed 16:9 picture, black bars if the window has another shape
-    int vw = fbw, vh = (int)(fbw / ASPECT);
-    if (vh > fbh) { vh = fbh; vw = (int)(fbh * ASPECT); }
-    const int vx = (fbw - vw) / 2, vy = (fbh - vh) / 2;
+    computeViewport(fbw, fbh);
+    const int vx = g_vx, vy = g_vy, vw = g_vw, vh = g_vh;
 
     glDisable(GL_SCISSOR_TEST);
     glViewport(0, 0, fbw, fbh);
@@ -106,23 +146,39 @@ static void renderFrame(GLFWwindow* window)
 
     const AnimState& s = getAnimState();
 
-    if (s.gardenBlend < 1.0f) drawMountainScene(s);             // stages 1-4 (village side)
+    // time-of-day tint for everything that is "in the world"
+    gfx::tintColor = theme::cur().tint;
+    gfx::useTint   = true;
 
-    if (s.gardenBlend > 0.0f)                                   // stages 4-6 (garden side)
+    if (scenes::isIntroOrGarden())
     {
-        const bool fading = s.gardenBlend < 1.0f;
-        if (fading)
+        if (s.gardenBlend < 1.0f) drawMountainScene(s);         // stages 1-4 (village side)
+
+        if (s.gardenBlend > 0.0f)                               // stages 4-6 (garden side)
         {
-            captureFrame(vx, vy, vw, vh);
-            glClear(GL_COLOR_BUFFER_BIT);
-        }
-        drawGarden(s);
-        if (fading)
-        {
-            drawCapture(1.0f - s.gardenBlend);
-            drawBloom(s.gardenBlend);
+            const bool fading = s.gardenBlend < 1.0f;
+            if (fading)
+            {
+                captureFrame(vx, vy, vw, vh);
+                glClear(GL_COLOR_BUFFER_BIT);
+            }
+            gfx::useTint = true;
+            drawGarden(s);
+            gfx::useTint = false;                               // the captured frame is already tinted
+            if (fading)
+            {
+                drawCapture(1.0f - s.gardenBlend);
+                drawBloom(s.gardenBlend);
+            }
         }
     }
+    else
+    {
+        scenes::drawLocation(s);                                // playground / station / hospital
+    }
+
+    gfx::useTint = false;
+    scenes::drawUI(s, now);                                     // back button, map button, map, clock label
 }
 
 static void savePPM(const char* path, int w, int h)
@@ -144,32 +200,41 @@ static void keyCallback(GLFWwindow* window, int key, int, int action, int)
 
     switch (key)
     {
-    case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(window, GLFW_TRUE); break;
+    case GLFW_KEY_ESCAPE:
+        if (scenes::mapOpen) scenes::mapOpen = false;
+        else glfwSetWindowShouldClose(window, GLFW_TRUE);
+        break;
     case GLFW_KEY_SPACE:  toggleAnimation(); break;
-    case GLFW_KEY_R:      resetAnimation(now); break;
-    case GLFW_KEY_1:      jumpToPhase(PHASE_OPENING, now); break;
-    case GLFW_KEY_2:      jumpToPhase(PHASE_REVEAL, now); break;
-    case GLFW_KEY_3:      jumpToPhase(PHASE_JOURNEY, now); break;
-    case GLFW_KEY_4:      jumpToPhase(PHASE_GARDEN_REVEAL, now); break;
-    case GLFW_KEY_5:      jumpToPhase(PHASE_LIVING_GARDEN, now); break;
+    case GLFW_KEY_R:      scenes::restartFromBeginning(now); break;
+    case GLFW_KEY_1:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_OPENING, now); break;
+    case GLFW_KEY_2:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_REVEAL, now); break;
+    case GLFW_KEY_3:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_JOURNEY, now); break;
+    case GLFW_KEY_4:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_GARDEN_REVEAL, now); break;
+    case GLFW_KEY_5:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_LIVING_GARDEN, now); break;
     case GLFW_KEY_LEFT:   seekAnimation(-2.0, now); break;
     case GLFW_KEY_RIGHT:  seekAnimation(2.0, now); break;
     case GLFW_KEY_O:      gfx::cullingEnabled = !gfx::cullingEnabled; break;
+    case GLFW_KEY_T:      theme::cycleOverride(); break;
     default: break;
     }
 }
 
 int main(int argc, char** argv)
 {
-    // optional single-frame capture mode
-    bool        shotMode = false;
+    // optional test options (see top of file)
+    bool        shotMode = false, openMap = false, doClick = false;
     double      shotTime = 0.0;
     const char* shotFile = "shot.ppm";
-    if (argc >= 4 && string(argv[1]) == "--shot")
+    float       testHour = -1.0f, clickX = 0.0f, clickY = 0.0f;
+    const char* testScene = nullptr;
+    for (int i = 1; i < argc; i++)
     {
-        shotMode = true;
-        shotTime = atof(argv[2]);
-        shotFile = argv[3];
+        const string a = argv[i];
+        if (a == "--shot" && i + 2 < argc)   { shotMode = true; shotTime = atof(argv[i + 1]); shotFile = argv[i + 2]; i += 2; }
+        else if (a == "--hour" && i + 1 < argc)  { testHour = (float)atof(argv[++i]); }
+        else if (a == "--scene" && i + 1 < argc) { testScene = argv[++i]; }
+        else if (a == "--map")                   { openMap = true; }
+        else if (a == "--click" && i + 2 < argc) { doClick = true; clickX = (float)atof(argv[i + 1]); clickY = (float)atof(argv[i + 2]); i += 2; }
     }
 
     if (!glfwInit())
@@ -193,6 +258,7 @@ int main(int argc, char** argv)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);                                        // vsync
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
@@ -206,6 +272,8 @@ int main(int argc, char** argv)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_MULTISAMPLE);
 
+    theme::init();
+    if (testHour >= 0.0f) theme::setOverrideHour(testHour);
     initMountain();
     initGarden();
     initializeAnimation(glfwGetTime());
@@ -213,8 +281,24 @@ int main(int argc, char** argv)
     if (shotMode)
     {
         seekAnimation(shotTime, glfwGetTime());
-        // draw twice so smoke / loop clocks are settled, then save the back buffer
-        renderFrame(window);
+        theme::snap();
+        if (testScene)
+        {
+            const string sc = testScene;
+            if (sc == "garden")          scenes::current = SceneId::Garden;
+            else if (sc == "playground") scenes::current = SceneId::Playground;
+            else if (sc == "station")    scenes::current = SceneId::Station;
+            else if (sc == "hospital")   scenes::current = SceneId::HospitalOutside;
+            else if (sc == "inside")     scenes::current = SceneId::HospitalInside;
+        }
+        scenes::mapOpen = openMap;
+        if (doClick)                                            // simulate one left click at world position X,Y
+        {
+            ui::mouse.valid = true; ui::mouse.x = clickX; ui::mouse.y = clickY; ui::mouse.pressed = true;
+            renderFrame(window, shotTime);
+            ui::endFrame();
+        }
+        renderFrame(window, shotTime);
         int w = 0, h = 0;
         glfwGetFramebufferSize(window, &w, &h);
         savePPM(shotFile, w, h);
@@ -222,30 +306,38 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    double fpsTimer = glfwGetTime();
+    double fpsTimer = glfwGetTime(), prev = fpsTimer;
     int    frames   = 0;
 
     while (!glfwWindowShouldClose(window))
     {
-        updateAnimation(glfwGetTime());
-        renderFrame(window);
+        const double now = glfwGetTime();
+        const double dt  = now - prev;
+        prev = now;
+
+        theme::update(dt);                                      // follows the device clock
+        updateAnimation(now);
+        updateMouse(window);
+        renderFrame(window, now);
+        ui::endFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        // window title: stage, time, fps, culling statistics
+        // window title: location, stage, mode, time, fps, culling statistics
         frames++;
-        const double now = glfwGetTime();
-        if (now - fpsTimer >= 0.5)
+        const double t2 = glfwGetTime();
+        if (t2 - fpsTimer >= 0.5)
         {
-            char title[256];
+            char title[320];
             const AnimState& s = getAnimState();
             snprintf(title, sizeof(title),
-                     "Enchanted Garden | stage %s%s | t=%.1fs | %.0f FPS | culling %s (drawn %d, skipped %d)",
-                     phaseName(s.phase), s.paused ? " [PAUSED]" : "", s.time, frames / (now - fpsTimer),
+                     "Enchanted Garden | %s | stage %s%s | %s | t=%.1fs | %.0f FPS | culling %s (drawn %d, skipped %d)",
+                     scenes::name(scenes::current), phaseName(s.phase), s.paused ? " [PAUSED]" : "",
+                     theme::modeName(theme::mode()), s.time, frames / (t2 - fpsTimer),
                      gfx::cullingEnabled ? "ON" : "OFF", gfx::statDrawn, gfx::statCulled);
             glfwSetWindowTitle(window, title);
-            fpsTimer = now;
+            fpsTimer = t2;
             frames   = 0;
         }
     }
