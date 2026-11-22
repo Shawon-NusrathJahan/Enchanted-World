@@ -30,10 +30,11 @@ inline Color rgb(float r, float g, float b, float a = 1.0f) { return Color{r, g,
 // tint off with useTint = false.
 inline bool  useTint   = true;
 inline Color tintColor = Color{1.0f, 1.0f, 1.0f, 1.0f};
+inline float alphaMul  = 1.0f;       // fades whole objects (gardener entering the house)
 inline void  paint(float r, float g, float b, float a)
 {
-    if (useTint) glColor4f(r * tintColor.r, g * tintColor.g, b * tintColor.b, a);
-    else         glColor4f(r, g, b, a);
+    if (useTint) glColor4f(r * tintColor.r, g * tintColor.g, b * tintColor.b, a * alphaMul);
+    else         glColor4f(r, g, b, a * alphaMul);
 }
 
 inline Color mix(const Color& a, const Color& b, float t)

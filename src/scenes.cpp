@@ -1,6 +1,7 @@
 #include "scenes.h"
 
 #include "gfx.h"
+#include "gardensim.h"
 #include "theme.h"
 #include "ui.h"
 
@@ -281,6 +282,9 @@ void drawUI(const AnimState& s, double now)
         else if (ui::mouse.pressed && (hc || std::fabs(ui::mouse.x) > PANEL_X || std::fabs(ui::mouse.y) > PANEL_Y))
             mapOpen = false;
     }
+
+    if (!mapOpen && (current == SceneId::Garden || (current == SceneId::Intro && s.phase == PHASE_LIVING_GARDEN)))
+        gardensim::drawHud();
 
     if (ui::backButton()) restartFromBeginning(now);
     if (!mapOpen && mapAllowed && ui::mapButton()) mapOpen = true;

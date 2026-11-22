@@ -24,6 +24,7 @@
 #include "garden.h"
 #include "gfx.h"
 #include "mountain.h"
+#include "gardensim.h"
 #include "scenes.h"
 #include "theme.h"
 #include "ui.h"
@@ -215,6 +216,7 @@ static void keyCallback(GLFWwindow* window, int key, int, int action, int)
     case GLFW_KEY_RIGHT:  seekAnimation(2.0, now); break;
     case GLFW_KEY_O:      gfx::cullingEnabled = !gfx::cullingEnabled; break;
     case GLFW_KEY_T:      theme::cycleOverride(); break;
+    case GLFW_KEY_H:      gardensim::toggleHud(); break;
     default: break;
     }
 }
@@ -227,12 +229,18 @@ int main(int argc, char** argv)
     const char* shotFile = "shot.ppm";
     float       testHour = -1.0f, clickX = 0.0f, clickY = 0.0f;
     const char* testScene = nullptr;
+    double      simSeconds = 0.0, afterSeconds = 0.0;
+    bool        haveCursor = false;
+    float       curX = 0.0f, curY = 0.0f;
     for (int i = 1; i < argc; i++)
     {
         const string a = argv[i];
         if (a == "--shot" && i + 2 < argc)   { shotMode = true; shotTime = atof(argv[i + 1]); shotFile = argv[i + 2]; i += 2; }
         else if (a == "--hour" && i + 1 < argc)  { testHour = (float)atof(argv[++i]); }
         else if (a == "--scene" && i + 1 < argc) { testScene = argv[++i]; }
+        else if (a == "--simulate" && i + 1 < argc) { simSeconds = atof(argv[++i]); }
+        else if (a == "--after" && i + 1 < argc)    { afterSeconds = atof(argv[++i]); }
+        else if (a == "--cursor" && i + 2 < argc) { haveCursor = true; curX = (float)atof(argv[i + 1]); curY = (float)atof(argv[i + 2]); i += 2; }
         else if (a == "--map")                   { openMap = true; }
         else if (a == "--click" && i + 2 < argc) { doClick = true; clickX = (float)atof(argv[i + 1]); clickY = (float)atof(argv[i + 2]); i += 2; }
     }
@@ -292,11 +300,25 @@ int main(int argc, char** argv)
             else if (sc == "inside")     scenes::current = SceneId::HospitalInside;
         }
         scenes::mapOpen = openMap;
+        if (simSeconds > 0.0)                                   // run the garden simulation forward (for tests)
+        {
+            ui::mouse.valid = haveCursor; ui::mouse.x = curX; ui::mouse.y = curY;
+            const AnimState& as = getAnimState();
+            for (double t = 0.0; t < simSeconds; t += 1.0 / 60.0)
+                gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f);
+        }
         if (doClick)                                            // simulate one left click at world position X,Y
         {
             ui::mouse.valid = true; ui::mouse.x = clickX; ui::mouse.y = clickY; ui::mouse.pressed = true;
+            {
+                const AnimState& as = getAnimState();
+                gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen);
+            }
             renderFrame(window, shotTime);
             ui::endFrame();
+            const AnimState& as2 = getAnimState();
+            for (double t = 0.0; t < afterSeconds; t += 1.0 / 60.0)      // let the click play out
+                gardensim::update(1.0 / 60.0, as2, ui::mouse, scenes::isIntroOrGarden() && as2.gardenBlend >= 1.0f);
         }
         renderFrame(window, shotTime);
         int w = 0, h = 0;
@@ -318,6 +340,11 @@ int main(int argc, char** argv)
         theme::update(dt);                                      // follows the device clock
         updateAnimation(now);
         updateMouse(window);
+        {
+            const AnimState& as = getAnimState();
+            const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen;
+            gardensim::update(dt, as, ui::mouse, interactive);
+        }
         renderFrame(window, now);
         ui::endFrame();
 
