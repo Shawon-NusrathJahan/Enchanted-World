@@ -1,15 +1,13 @@
 # ninja log v7
-88	2271	8170220624773963	CMakeFiles/EnchantedGarden.dir/src/animation.cpp.obj	8c01388dbad1e1f1
-63	2600	8170220624499027	CMakeFiles/EnchantedGarden.dir/src/village.cpp.obj	ac9771c025c9016a
-77	2771	8170220624641618	CMakeFiles/EnchantedGarden.dir/src/garden.cpp.obj	8f86398102d5b763
-52	3005	8170220624385533	CMakeFiles/EnchantedGarden.dir/src/mountain.cpp.obj	d1b5ec2aa7dedf8
-42	3447	8170220624294769	CMakeFiles/EnchantedGarden.dir/src/main.cpp.obj	cc8d90356dc8900f
-3447	3690	8170220658340854	EnchantedGarden.exe	fc5fb4b346d8106e
-160	4120	8171571107220510	CMakeFiles/EnchantedGarden.dir/src/scenes.cpp.obj	3f2cc79af0ae754a
-116	7532	8171571106784911	CMakeFiles/EnchantedGarden.dir/src/animation.cpp.obj	8c01388dbad1e1f1
-146	7563	8171571107080219	CMakeFiles/EnchantedGarden.dir/src/ui.cpp.obj	20acf5b0a4086ec
-133	7627	8171571106945235	CMakeFiles/EnchantedGarden.dir/src/theme.cpp.obj	6f59efb867e8869f
-92	8038	8171571106544885	CMakeFiles/EnchantedGarden.dir/src/village.cpp.obj	ac9771c025c9016a
-103	8622	8171571106655045	CMakeFiles/EnchantedGarden.dir/src/garden.cpp.obj	8f86398102d5b763
-79	8930	8171571106404963	CMakeFiles/EnchantedGarden.dir/src/mountain.cpp.obj	d1b5ec2aa7dedf8
-173	10439	8171571107350414	CMakeFiles/EnchantedGarden.dir/src/gardensim.cpp.obj	94e1cffb537232fe
+117	3878	8171456163198962	CMakeFiles/EnchantedGarden.dir/src/animation.cpp.obj	ebcaf6503e2ff5c3
+155	3938	8171456163629008	CMakeFiles/EnchantedGarden.dir/src/ui.cpp.obj	a567ef345882dfc
+132	4058	8171456163389025	CMakeFiles/EnchantedGarden.dir/src/theme.cpp.obj	dc7385ff13d95fce
+85	5168	8171456162878932	CMakeFiles/EnchantedGarden.dir/src/village.cpp.obj	896eab78f856abd9
+182	5308	8171456163849091	CMakeFiles/EnchantedGarden.dir/src/scenes.cpp.obj	eaaffb1bf6105976
+98	5396	8171456163008966	CMakeFiles/EnchantedGarden.dir/src/garden.cpp.obj	59ac3fee0d919b
+73	5697	8171456162768945	CMakeFiles/EnchantedGarden.dir/src/mountain.cpp.obj	1c8f2a0b7913d004
+62	5872	8171456162648928	CMakeFiles/EnchantedGarden.dir/src/main.cpp.obj	96f4c2e6c4f7fcba
+244	6261	8171456164634221	CMakeFiles/EnchantedGarden.dir/src/hospital.cpp.obj	7d98568604090692
+213	6311	8171456164168980	CMakeFiles/EnchantedGarden.dir/src/hospitalsim.cpp.obj	92110908ea7d9c43
+194	6488	8171456163998954	CMakeFiles/EnchantedGarden.dir/src/gardensim.cpp.obj	1d7b090ec8feb639
+6489	6831	8171456226913555	EnchantedGarden.exe	4e3a6fd83e1593d8

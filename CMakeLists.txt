@@ -20,6 +20,8 @@ add_executable(EnchantedGarden
     src/ui.cpp
     src/scenes.cpp
     src/gardensim.cpp
+    src/hospitalsim.cpp
+    src/hospital.cpp
 )
 
 target_include_directories(EnchantedGarden PRIVATE
@@ -39,4 +41,7 @@ if(BUILD_TESTS)
         tests/garden_sim_test.cpp src/gardensim.cpp src/theme.cpp src/ui.cpp)
     target_include_directories(garden_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
     target_link_libraries(garden_sim_test PRIVATE GLEW::GLEW OpenGL::GL)
+
+    add_executable(hospital_sim_test tests/hospital_sim_test.cpp src/hospitalsim.cpp)
+    target_include_directories(hospital_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 endif()

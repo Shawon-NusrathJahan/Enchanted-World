@@ -32,10 +32,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/ninja-build.com"
       - "C:/msys64/ucrt64/bin/ninja-build.exe"
@@ -48,10 +68,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -82,10 +122,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/cc.com"
     found: "C:/msys64/ucrt64/bin/cc.exe"
@@ -95,10 +155,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -130,10 +210,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "message-v1"
     backtrace:
@@ -154,7 +254,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.exe"
       
       The C compiler identification is GNU, found in:
-        E:/CG - EG/Enchanted-Garden/build/CMakeFiles/4.5.1/CompilerIdC/a.exe
+        C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/4.5.1/CompilerIdC/a.exe
       
   -
     kind: "find-v1"
@@ -179,10 +279,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/ar.com"
     found: "C:/msys64/ucrt64/bin/ar.exe"
@@ -192,10 +312,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -219,10 +359,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/ranlib.com"
     found: "C:/msys64/ucrt64/bin/ranlib.exe"
@@ -232,10 +392,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -259,10 +439,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/strip.com"
     found: "C:/msys64/ucrt64/bin/strip.exe"
@@ -272,10 +472,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -299,10 +519,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/ld.com"
     found: "C:/msys64/ucrt64/bin/ld.exe"
@@ -312,10 +552,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -339,10 +599,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/nm.com"
     found: "C:/msys64/ucrt64/bin/nm.exe"
@@ -352,10 +632,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -379,10 +679,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/objdump.com"
     found: "C:/msys64/ucrt64/bin/objdump.exe"
@@ -392,10 +712,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -419,10 +759,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/objcopy.com"
     found: "C:/msys64/ucrt64/bin/objcopy.exe"
@@ -432,10 +792,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -459,10 +839,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/readelf.com"
     found: "C:/msys64/ucrt64/bin/readelf.exe"
@@ -472,10 +872,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -499,10 +919,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/dlltool.com"
     found: "C:/msys64/ucrt64/bin/dlltool.exe"
@@ -512,10 +952,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -539,10 +999,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/addr2line.com"
     found: "C:/msys64/ucrt64/bin/addr2line.exe"
@@ -552,10 +1032,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -579,10 +1079,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/tapi.com"
       - "C:/msys64/ucrt64/bin/tapi.exe"
@@ -593,6 +1113,12 @@ events:
       - "C:/msys64/usr/bin/tapi.com"
       - "C:/msys64/usr/bin/tapi.exe"
       - "C:/msys64/usr/bin/tapi"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/tapi.com"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/tapi.exe"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/tapi"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/tapi.com"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/tapi.exe"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/tapi"
       - "C:/Windows/System32/tapi.com"
       - "C:/Windows/System32/tapi.exe"
       - "C:/Windows/System32/tapi"
@@ -605,6 +1131,60 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/tapi.com"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/tapi.exe"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/tapi"
+      - "C:/Windows/System32/OpenSSH/tapi.com"
+      - "C:/Windows/System32/OpenSSH/tapi.exe"
+      - "C:/Windows/System32/OpenSSH/tapi"
+      - "C:/Program Files/dotnet/tapi.com"
+      - "C:/Program Files/dotnet/tapi.exe"
+      - "C:/Program Files/dotnet/tapi"
+      - "C:/Program Files/Git/cmd/tapi.com"
+      - "C:/Program Files/Git/cmd/tapi.exe"
+      - "C:/Program Files/Git/cmd/tapi"
+      - "C:/Program Files/nodejs/tapi.com"
+      - "C:/Program Files/nodejs/tapi.exe"
+      - "C:/Program Files/nodejs/tapi"
+      - "C:/src/flutter/bin/tapi.com"
+      - "C:/src/flutter/bin/tapi.exe"
+      - "C:/src/flutter/bin/tapi"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/tapi.com"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/tapi.exe"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/tapi"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/tapi.com"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/tapi.exe"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/tapi"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/tapi.com"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/tapi.exe"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/tapi"
+      - "C:/Program Files/CMake/bin/tapi.com"
+      - "C:/Program Files/CMake/bin/tapi.exe"
+      - "C:/Program Files/CMake/bin/tapi"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/tapi"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/tapi"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/tapi"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/tapi"
+      - "C:/Users/DELL/AppData/Roaming/npm/tapi.com"
+      - "C:/Users/DELL/AppData/Roaming/npm/tapi.exe"
+      - "C:/Users/DELL/AppData/Roaming/npm/tapi"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/tapi"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/tapi"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi.com"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi.exe"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/tapi.com"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/tapi.exe"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/tapi"
     found: false
     search_context:
       ENV{PATH}:
@@ -612,10 +1192,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -642,10 +1242,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/gcc-ar-16.2.com"
       - "C:/msys64/ucrt64/bin/gcc-ar-16.2.exe"
@@ -664,10 +1284,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -694,10 +1334,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/gcc-ranlib-16.2.com"
       - "C:/msys64/ucrt64/bin/gcc-ranlib-16.2.exe"
@@ -716,10 +1376,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -756,10 +1436,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -791,10 +1491,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "message-v1"
     backtrace:
@@ -815,7 +1535,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.exe"
       
       The CXX compiler identification is GNU, found in:
-        E:/CG - EG/Enchanted-Garden/build/CMakeFiles/4.5.1/CompilerIdCXX/a.exe
+        C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/4.5.1/CompilerIdCXX/a.exe
       
   -
     kind: "find-v1"
@@ -843,10 +1563,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/gcc-ar-16.2.com"
       - "C:/msys64/ucrt64/bin/gcc-ar-16.2.exe"
@@ -865,10 +1605,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -895,10 +1655,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
     searched_directories:
       - "C:/msys64/ucrt64/bin/gcc-ranlib-16.2.com"
       - "C:/msys64/ucrt64/bin/gcc-ranlib-16.2.exe"
@@ -917,10 +1697,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
   -
     kind: "find-v1"
     backtrace:
@@ -947,10 +1747,30 @@ events:
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/usr/local/bin/"
       - "C:/msys64/usr/bin/"
+      - "C:/Users/DELL/.vscode/extensions/vadimcn.vscode-lldb-1.12.2/bin/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
       - "C:/Windows/System32/"
       - "C:/Windows/"
       - "C:/Windows/System32/wbem/"
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/nodejs/"
+      - "C:/src/flutter/bin/"
+      - "C:/Program Files/CodeBlocks/MinGW/bin/"
+      - "C:/Program Files/MongoDB/Server/8.2/bin/"
+      - "C:/Program Files/MySQL/MySQL Server 8.0/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Scripts/"
+      - "C:/Users/DELL/AppData/Local/Programs/Python/Python314/"
+      - "C:/Users/DELL/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/DELL/AppData/Roaming/npm/"
+      - "C:/Users/DELL/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/DELL/AppData/Local/Kingsoft/WPS Office/12.1.0.27458/clitool/"
+      - "C:/Users/DELL/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "C:/Users/DELL/AppData/Local/Programs/Microsoft VS Code/bin/copilot-shim/"
       - "C:/msys64/ucrt64/bin/"
       - "C:/msys64/ucrt64/sbin/"
       - "C:/msys64/ucrt64/"
@@ -972,10 +1792,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/EnchantedGarden"
       CMAKE_SYSTEM_PREFIX_PATH:
         - "C:/msys64/ucrt64"
@@ -992,8 +1832,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-cb3nwv"
-      binary: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-cb3nwv"
+      source: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-g5afko"
+      binary: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-g5afko"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
@@ -1003,10 +1843,10 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: 'E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-cb3nwv'
+        Change Dir: 'C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-g5afko'
         
-        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_2fa6f
-        [1/2] C:\\msys64\\ucrt64\\bin\\cc.exe   -v -o CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_c99e6
+        [1/2] C:\\msys64\\ucrt64\\bin\\cc.exe   -v -o CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\cc.exe
         Target: x86_64-w64-mingw32
@@ -1014,8 +1854,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 16.2.0 (Rev7, Built by MSYS2 project) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_2fa6f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccsWsbAS.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_c99e6.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\cceZKZMI.s
         GNU C23 (Rev7, Built by MSYS2 project) version 16.2.0 (x86_64-w64-mingw32)
         	compiled by GNU C version 16.2.0, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.4.1, isl version isl-0.28-GMP
         
@@ -1032,13 +1872,13 @@ events:
          C:/msys64/ucrt64/bin/../../ucrt64/include
         End of search list.
         Compiler executable checksum: 32d3ef16f5737dc1f140ae23504a48b5
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj C:\\msys64\\tmp\\ccsWsbAS.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj C:\\msys64\\tmp\\cceZKZMI.s
         GNU assembler version 2.47 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.47.20260726
         COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/;C:/msys64/ucrt64/bin/../../ucrt64/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../;C:/msys64/ucrt64/bin/../../ucrt64/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.'
-        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe  -v -Wl,-v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj -o cmTC_2fa6f.exe -Wl,--out-implib,libcmTC_2fa6f.dll.a -Wl,--major-image-version,0,--minor-image-version,0   && cd ."
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.'
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe  -v -Wl,-v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj -o cmTC_c99e6.exe -Wl,--out-implib,libcmTC_c99e6.dll.a -Wl,--major-image-version,0,--minor-image-version,0   && cd ."
         Using built-in specs.
         COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\cc.exe
         COLLECT_LTO_WRAPPER=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe
@@ -1049,12 +1889,12 @@ events:
         gcc version 16.2.0 (Rev7, Built by MSYS2 project) 
         COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/;C:/msys64/ucrt64/bin/../../ucrt64/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../;C:/msys64/ucrt64/bin/../../ucrt64/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2fa6f.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_2fa6f.'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c99e6.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_c99e6.'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
         collect2 version 16.2.0
-        C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
+        C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
         GNU ld (GNU Binutils) 2.47.20260726
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2fa6f.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_2fa6f.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c99e6.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_c99e6.'
         
       exitCode: 0
   -
@@ -1087,10 +1927,10 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild))("|,| |$)]
-        ignore line: [Change Dir: 'E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-cb3nwv']
+        ignore line: [Change Dir: 'C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-g5afko']
         ignore line: []
-        ignore line: [Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_2fa6f]
-        ignore line: [[1/2] C:\\msys64\\ucrt64\\bin\\cc.exe   -v -o CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_c99e6]
+        ignore line: [[1/2] C:\\msys64\\ucrt64\\bin\\cc.exe   -v -o CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\cc.exe]
         ignore line: [Target: x86_64-w64-mingw32]
@@ -1098,8 +1938,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 16.2.0 (Rev7  Built by MSYS2 project) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/']
-        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_2fa6f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccsWsbAS.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/']
+        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_c99e6.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\cceZKZMI.s]
         ignore line: [GNU C23 (Rev7  Built by MSYS2 project) version 16.2.0 (x86_64-w64-mingw32)]
         ignore line: [	compiled by GNU C version 16.2.0  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.4.1  isl version isl-0.28-GMP]
         ignore line: []
@@ -1116,8 +1956,8 @@ events:
         ignore line: [ C:/msys64/ucrt64/bin/../../ucrt64/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 32d3ef16f5737dc1f140ae23504a48b5]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/']
-        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj C:\\msys64\\tmp\\ccsWsbAS.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/']
+        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj C:\\msys64\\tmp\\cceZKZMI.s]
         ignore line: [GNU assembler version 2.47 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.47.20260726]
         ignore line: [COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/]
@@ -1130,8 +1970,8 @@ events:
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../]
         ignore line: [C:/msys64/ucrt64/bin/../../ucrt64/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.']
-        ignore line: [[2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe  -v -Wl -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj -o cmTC_2fa6f.exe -Wl --out-implib libcmTC_2fa6f.dll.a -Wl --major-image-version 0 --minor-image-version 0   && cd ."]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.']
+        ignore line: [[2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe  -v -Wl -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj -o cmTC_c99e6.exe -Wl --out-implib libcmTC_c99e6.dll.a -Wl --major-image-version 0 --minor-image-version 0   && cd ."]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\cc.exe]
         ignore line: [COLLECT_LTO_WRAPPER=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe]
@@ -1151,13 +1991,13 @@ events:
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../]
         ignore line: [C:/msys64/ucrt64/bin/../../ucrt64/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2fa6f.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_2fa6f.']
-        link line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c99e6.exe' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_c99e6.']
+        link line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe] ==> ignore
           arg [-plugin] ==> ignore, skip following value
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll] ==> skip value of -plugin
           arg [-plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe] ==> ignore
-          arg [-plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res] ==> ignore
+          arg [-plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_eh] ==> ignore
@@ -1180,7 +2020,7 @@ events:
           arg [i386pep] ==> ignore
           arg [-Bdynamic] ==> search dynamic
           arg [-o] ==> ignore, skip following value
-          arg [cmTC_2fa6f.exe] ==> skip value of -o
+          arg [cmTC_c99e6.exe] ==> skip value of -o
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o]
           arg [-LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0] ==> dir [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0]
@@ -1192,9 +2032,9 @@ events:
           arg [-LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../..] ==> dir [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../..]
           arg [-LC:/msys64/ucrt64/bin/../../ucrt64/lib] ==> dir [C:/msys64/ucrt64/bin/../../ucrt64/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj] ==> ignore
+          arg [CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj] ==> ignore
           arg [--out-implib] ==> ignore
-          arg [libcmTC_2fa6f.dll.a] ==> ignore
+          arg [libcmTC_c99e6.dll.a] ==> ignore
           arg [--major-image-version] ==> ignore
           arg [0] ==> ignore
           arg [--minor-image-version] ==> ignore
@@ -1219,9 +2059,9 @@ events:
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
         ignore line: [collect2 version 16.2.0]
-        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe]
-        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker architecture flags [-m;i386pep]
-        ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccwWto2Z.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_2fa6f.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_2fa6f.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_2fa6f.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
+        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe]
+        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker architecture flags [-m;i386pep]
+        ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccceGFo3.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_c99e6.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_c99e6.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_c99e6.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc -lgcc_eh -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
         linker tool for 'C': C:/msys64/ucrt64/x86_64-w64-mingw32/bin/ld.exe -m;i386pep
         remove lib [gcc_eh]
         remove lib [msvcrt]
@@ -1264,8 +2104,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-6h3ktp"
-      binary: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-6h3ktp"
+      source: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-5mf7pp"
+      binary: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-5mf7pp"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1276,10 +2116,10 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: 'E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-6h3ktp'
+        Change Dir: 'C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-5mf7pp'
         
-        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_5de3c
-        [1/2] C:\\msys64\\ucrt64\\bin\\c++.exe   -v -o CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_22f48
+        [1/2] C:\\msys64\\ucrt64\\bin\\c++.exe   -v -o CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\c++.exe
         Target: x86_64-w64-mingw32
@@ -1287,8 +2127,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 16.2.0 (Rev7, Built by MSYS2 project) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_5de3c.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccBY0wNx.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_22f48.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccdMehlk.s
         GNU C++20 (Rev7, Built by MSYS2 project) version 16.2.0 (x86_64-w64-mingw32)
         	compiled by GNU C version 16.2.0, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.4.1, isl version isl-0.28-GMP
         
@@ -1311,13 +2151,13 @@ events:
          C:/msys64/ucrt64/bin/../../ucrt64/include
         End of search list.
         Compiler executable checksum: 2c9f525242d4629fc574be603938ef7f
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj C:\\msys64\\tmp\\ccBY0wNx.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj C:\\msys64\\tmp\\ccdMehlk.s
         GNU assembler version 2.47 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.47.20260726
         COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/;C:/msys64/ucrt64/bin/../../ucrt64/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../;C:/msys64/ucrt64/bin/../../ucrt64/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.'
-        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\c++.exe  -v -Wl,-v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_5de3c.exe -Wl,--out-implib,libcmTC_5de3c.dll.a -Wl,--major-image-version,0,--minor-image-version,0   && cd ."
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.'
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\c++.exe  -v -Wl,-v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_22f48.exe -Wl,--out-implib,libcmTC_22f48.dll.a -Wl,--major-image-version,0,--minor-image-version,0   && cd ."
         Using built-in specs.
         COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\c++.exe
         COLLECT_LTO_WRAPPER=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe
@@ -1328,12 +2168,12 @@ events:
         gcc version 16.2.0 (Rev7, Built by MSYS2 project) 
         COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/;C:/msys64/ucrt64/bin/../lib/gcc/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/;C:/msys64/ucrt64/bin/../../ucrt64/lib/../lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../;C:/msys64/ucrt64/bin/../../ucrt64/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5de3c.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_5de3c.'
-         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_22f48.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_22f48.'
+         C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
         collect2 version 16.2.0
-        C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
+        C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o
         GNU ld (GNU Binutils) 2.47.20260726
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5de3c.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_5de3c.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_22f48.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_22f48.'
         
       exitCode: 0
   -
@@ -1372,10 +2212,10 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild))("|,| |$)]
-        ignore line: [Change Dir: 'E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-6h3ktp']
+        ignore line: [Change Dir: 'C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-5mf7pp']
         ignore line: []
-        ignore line: [Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_5de3c]
-        ignore line: [[1/2] C:\\msys64\\ucrt64\\bin\\c++.exe   -v -o CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_22f48]
+        ignore line: [[1/2] C:\\msys64\\ucrt64\\bin\\c++.exe   -v -o CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj -c C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\c++.exe]
         ignore line: [Target: x86_64-w64-mingw32]
@@ -1383,8 +2223,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 16.2.0 (Rev7  Built by MSYS2 project) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/']
-        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_5de3c.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccBY0wNx.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/']
+        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/ -isysroot C:/msys64/ucrt64/bin/../../ucrt64 -D_REENTRANT C:/msys64/ucrt64/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_22f48.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\\msys64\\tmp\\ccdMehlk.s]
         ignore line: [GNU C++20 (Rev7  Built by MSYS2 project) version 16.2.0 (x86_64-w64-mingw32)]
         ignore line: [	compiled by GNU C version 16.2.0  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.4.1  isl version isl-0.28-GMP]
         ignore line: []
@@ -1407,8 +2247,8 @@ events:
         ignore line: [ C:/msys64/ucrt64/bin/../../ucrt64/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 2c9f525242d4629fc574be603938ef7f]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/']
-        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj C:\\msys64\\tmp\\ccBY0wNx.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/']
+        ignore line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj C:\\msys64\\tmp\\ccdMehlk.s]
         ignore line: [GNU assembler version 2.47 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.47.20260726]
         ignore line: [COMPILER_PATH=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/]
@@ -1421,8 +2261,8 @@ events:
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../]
         ignore line: [C:/msys64/ucrt64/bin/../../ucrt64/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [[2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\c++.exe  -v -Wl -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_5de3c.exe -Wl --out-implib libcmTC_5de3c.dll.a -Wl --major-image-version 0 --minor-image-version 0   && cd ."]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [[2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\c++.exe  -v -Wl -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_22f48.exe -Wl --out-implib libcmTC_22f48.dll.a -Wl --major-image-version 0 --minor-image-version 0   && cd ."]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=C:\\msys64\\ucrt64\\bin\\c++.exe]
         ignore line: [COLLECT_LTO_WRAPPER=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe]
@@ -1442,13 +2282,13 @@ events:
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../]
         ignore line: [C:/msys64/ucrt64/bin/../../ucrt64/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5de3c.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_5de3c.']
-        link line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_22f48.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_22f48.']
+        link line: [ C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/collect2.exe] ==> ignore
           arg [-plugin] ==> ignore, skip following value
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll] ==> skip value of -plugin
           arg [-plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe] ==> ignore
-          arg [-plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res] ==> ignore
+          arg [-plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
@@ -1471,7 +2311,7 @@ events:
           arg [i386pep] ==> ignore
           arg [-Bdynamic] ==> search dynamic
           arg [-o] ==> ignore, skip following value
-          arg [cmTC_5de3c.exe] ==> skip value of -o
+          arg [cmTC_22f48.exe] ==> skip value of -o
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o]
           arg [-LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0] ==> dir [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0]
@@ -1483,9 +2323,9 @@ events:
           arg [-LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../..] ==> dir [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../..]
           arg [-LC:/msys64/ucrt64/bin/../../ucrt64/lib] ==> dir [C:/msys64/ucrt64/bin/../../ucrt64/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj] ==> ignore
+          arg [CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj] ==> ignore
           arg [--out-implib] ==> ignore
-          arg [libcmTC_5de3c.dll.a] ==> ignore
+          arg [libcmTC_22f48.dll.a] ==> ignore
           arg [--major-image-version] ==> ignore
           arg [0] ==> ignore
           arg [--minor-image-version] ==> ignore
@@ -1511,9 +2351,9 @@ events:
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o]
           arg [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> obj [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
         ignore line: [collect2 version 16.2.0]
-        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe]
-        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker architecture flags [-m;i386pep]
-        ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\ccJSXFxL.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_5de3c.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_5de3c.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_5de3c.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
+        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe]
+        link line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o] ==> linker architecture flags [-m;i386pep]
+        ignore line: [C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\msys64\\tmp\\cco5FNeh.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=C:/msys64/ucrt64/bin/../../ucrt64 -m i386pep -Bdynamic -o cmTC_22f48.exe C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/crt2.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtbegin.o -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0 -LC:/msys64/ucrt64/bin/../lib/gcc -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib -LC:/msys64/ucrt64/bin/../../ucrt64/lib/../lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../.. -LC:/msys64/ucrt64/bin/../../ucrt64/lib -v CMakeFiles/cmTC_22f48.dir/CMakeCXXCompilerABI.cpp.obj --out-implib libcmTC_22f48.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmingwex -lmsvcrt -lkernel32 C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/default-manifest.o C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/crtend.o]
         linker tool for 'CXX': C:/msys64/ucrt64/x86_64-w64-mingw32/bin/ld.exe -m;i386pep
         remove lib [msvcrt]
         remove lib [msvcrt]
@@ -1559,8 +2399,8 @@ events:
     checks:
       - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
     directories:
-      source: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-rbvgd8"
-      binary: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-rbvgd8"
+      source: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-1xz3pl"
+      binary: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-1xz3pl"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: "C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../lib/libstdc++.modules.json"
       CMAKE_C_FLAGS: ""
@@ -1570,11 +2410,11 @@ events:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
-        Change Dir: 'E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-rbvgd8'
+        Change Dir: 'C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-1xz3pl'
         
-        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_bf73b
-        [1/2] C:\\msys64\\ucrt64\\bin\\cc.exe -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_bf73b.dir/src.c.obj -c "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/CMakeScratch/TryCompile-rbvgd8/src.c"
-        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe   CMakeFiles/cmTC_bf73b.dir/src.c.obj -o cmTC_bf73b.exe -Wl,--out-implib,libcmTC_bf73b.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        Run Build Command(s): C:/msys64/ucrt64/bin/ninja.exe -v cmTC_030f0
+        [1/2] C:\\msys64\\ucrt64\\bin\\cc.exe -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_030f0.dir/src.c.obj -c C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/CMakeScratch/TryCompile-1xz3pl/src.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\msys64\\ucrt64\\bin\\cc.exe   CMakeFiles/cmTC_030f0.dir/src.c.obj -o cmTC_030f0.exe -Wl,--out-implib,libcmTC_030f0.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
         
       exitCode: 0
   -
@@ -1616,19 +2456,19 @@ events:
         CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
     candidates:
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/glfw3Config.cmake"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/glfw3Config.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/glfw3-config.cmake"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/glfw3-config.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/lib/cps/glfw3.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/lib/cps/glfw3.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/share/cps/glfw3.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/share/cps/glfw3.cps"
         mode: "cps"
         reason: "no_exist"
       -
@@ -1657,10 +2497,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/EnchantedGarden"
       CMAKE_SYSTEM_PREFIX_PATH:
         - "C:/msys64/ucrt64"
@@ -1711,27 +2571,27 @@ events:
         CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
     candidates:
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/GLEWConfig.cmake"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/GLEWConfig.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/glew-config.cmake"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/glew-config.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/lib/cps/GLEW.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/lib/cps/GLEW.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/lib/cps/glew.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/lib/cps/glew.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/share/cps/GLEW.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/share/cps/GLEW.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/share/cps/glew.cps"
+        path: "C:/Users/DELL/Downloads/Enchanted-Garden-phase3/build/CMakeFiles/pkgRedirects/share/cps/glew.cps"
         mode: "cps"
         reason: "no_exist"
       -
@@ -1772,101 +2632,30 @@ events:
         - "C:\\msys64\\usr\\local\\bin"
         - "C:\\msys64\\usr\\bin"
         - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/EnchantedGarden"
-      CMAKE_SYSTEM_PREFIX_PATH:
-        - "C:/msys64/ucrt64"
-        - "C:/Program Files"
-        - "C:/Program Files (x86)"
-        - "C:/msys64/ucrt64"
-        - "C:/Program Files (x86)/EnchantedGarden"
-  -
-    kind: "find_package-v1"
-    backtrace:
-      - "CMakeLists.txt:12 (find_package)"
-    name: "glm"
-    configs:
-      -
-        filename: "glm.cps"
-        kind: "cps"
-      -
-        filename: "glmConfig.cmake"
-        kind: "cmake"
-      -
-        filename: "glm-config.cmake"
-        kind: "cmake"
-    version_request:
-      exact: false
-    settings:
-      required: "required_explicit"
-      quiet: false
-      global: false
-      policy_scope: true
-      bypass_provider: false
-      names:
-        - "glm"
-      path_suffixes:
-        - ""
-      paths:
-        CMAKE_FIND_USE_CMAKE_PATH: true
-        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-        CMAKE_FIND_USE_INSTALL_PREFIX: true
-        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
-        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
-        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
-        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
-    candidates:
-      -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/glmConfig.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/glm-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/lib/cps/glm.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "E:/CG - EG/Enchanted-Garden/build/CMakeFiles/pkgRedirects/share/cps/glm.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "C:/msys64/ucrt64/glmConfig.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/msys64/ucrt64/glm-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/msys64/ucrt64/lib/cps/glm.cps"
-        mode: "cps"
-        reason: "no_exist"
-      -
-        path: "C:/msys64/ucrt64/share/cps/glm.cps"
-        mode: "cps"
-        reason: "no_exist"
-    found:
-      path: "C:/msys64/ucrt64/share/glm/glmConfig.cmake"
-      mode: "config"
-      version: "1.0.3"
-    search_context:
-      ENV{PATH}:
-        - "C:\\msys64\\ucrt64\\bin"
-        - "C:\\msys64\\usr\\local\\bin"
-        - "C:\\msys64\\usr\\bin"
-        - "C:\\msys64\\usr\\bin"
-        - "C:\\Windows\\System32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Users\\DELL\\.vscode\\extensions\\vadimcn.vscode-lldb-1.12.2\\bin"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\dotnet"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\nodejs"
+        - "C:\\src\\flutter\\bin"
+        - "C:\\Program Files\\CodeBlocks\\MinGW\\bin"
+        - "C:\\Program Files\\MongoDB\\Server\\8.2\\bin"
+        - "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\Scripts"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314"
+        - "C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\npm"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\DELL\\AppData\\Local\\Kingsoft\\WPS Office\\12.1.0.27458\\clitool"
+        - "C:\\Users\\DELL\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
+        - "C:\\Users\\DELL\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\copilot-shim"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/EnchantedGarden"
       CMAKE_SYSTEM_PREFIX_PATH:
         - "C:/msys64/ucrt64"
