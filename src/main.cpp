@@ -25,6 +25,7 @@
 #include "gfx.h"
 #include "mountain.h"
 #include "gardensim.h"
+#include "hospital.h"
 #include "scenes.h"
 #include "theme.h"
 #include "ui.h"
@@ -281,6 +282,7 @@ int main(int argc, char** argv)
     glEnable(GL_MULTISAMPLE);
 
     theme::init();
+    hospital::init();
     if (testHour >= 0.0f) theme::setOverrideHour(testHour);
     initMountain();
     initGarden();
@@ -305,7 +307,10 @@ int main(int argc, char** argv)
             ui::mouse.valid = haveCursor; ui::mouse.x = curX; ui::mouse.y = curY;
             const AnimState& as = getAnimState();
             for (double t = 0.0; t < simSeconds; t += 1.0 / 60.0)
+            {
                 gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f);
+                scenes::updateLocation(1.0 / 60.0);
+            }
         }
         if (doClick)                                            // simulate one left click at world position X,Y
         {
@@ -313,12 +318,16 @@ int main(int argc, char** argv)
             {
                 const AnimState& as = getAnimState();
                 gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen);
+                scenes::updateLocation(1.0 / 60.0);
             }
             renderFrame(window, shotTime);
             ui::endFrame();
             const AnimState& as2 = getAnimState();
             for (double t = 0.0; t < afterSeconds; t += 1.0 / 60.0)      // let the click play out
+            {
                 gardensim::update(1.0 / 60.0, as2, ui::mouse, scenes::isIntroOrGarden() && as2.gardenBlend >= 1.0f);
+                scenes::updateLocation(1.0 / 60.0);
+            }
         }
         renderFrame(window, shotTime);
         int w = 0, h = 0;
@@ -344,6 +353,7 @@ int main(int argc, char** argv)
             const AnimState& as = getAnimState();
             const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen;
             gardensim::update(dt, as, ui::mouse, interactive);
+            scenes::updateLocation(dt);
         }
         renderFrame(window, now);
         ui::endFrame();

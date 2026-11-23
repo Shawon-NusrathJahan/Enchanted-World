@@ -2,6 +2,7 @@
 
 #include "gfx.h"
 #include "gardensim.h"
+#include "hospital.h"
 #include "theme.h"
 #include "ui.h"
 
@@ -23,7 +24,7 @@ const Node NODES[4] = {
     {SceneId::Garden,          -0.88f, -0.22f, "GARDEN"},
     {SceneId::Playground,      -0.30f,  0.28f, "PLAYGROUND"},
     {SceneId::Station,          0.50f, -0.28f, "TRAIN STATION"},
-    {SceneId::HospitalOutside,  1.00f,  0.30f, "HOSPITAL"},
+    {SceneId::HospitalOutside,  1.00f,  0.30f, hospitalcfg::NAME},
 };
 
 const float PANEL_X = 1.46f, PANEL_Y = 0.80f;
@@ -239,11 +240,29 @@ void restartFromBeginning(double now)
     resetAnimation(now);          // the ONE shared clock goes back to t = 0 (no second timeline is created)
     current = SceneId::Intro;
     mapOpen = false;
+    hospital::reset();
+}
+
+void updateLocation(double dt)
+{
+    if (current != SceneId::HospitalOutside && current != SceneId::HospitalInside) return;
+    hospital::Input in;
+    in.x = ui::mouse.x; in.y = ui::mouse.y; in.valid = ui::mouse.valid && !mapOpen;
+    in.down = ui::mouse.down && !mapOpen; in.pressed = ui::mouse.pressed && !mapOpen; in.released = ui::mouse.released && !mapOpen;
+    const hospital::View v = current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside;
+    const hospital::Action a = hospital::update(dt, v, in);
+    if (a == hospital::Action::GoInside)  current = SceneId::HospitalInside;
+    if (a == hospital::Action::GoOutside) current = SceneId::HospitalOutside;
 }
 
 void drawLocation(const AnimState& s)
 {
     const float t = (float)s.time;
+    if (current == SceneId::HospitalOutside || current == SceneId::HospitalInside)
+    {
+        hospital::draw(current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside, t);
+        return;
+    }
     const char* title = name(current);
     switch (current)
     {
@@ -285,6 +304,9 @@ void drawUI(const AnimState& s, double now)
 
     if (!mapOpen && (current == SceneId::Garden || (current == SceneId::Intro && s.phase == PHASE_LIVING_GARDEN)))
         gardensim::drawHud();
+
+    if (!mapOpen && (current == SceneId::HospitalOutside || current == SceneId::HospitalInside))
+        hospital::drawOverlay(current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside);
 
     if (ui::backButton()) restartFromBeginning(now);
     if (!mapOpen && mapAllowed && ui::mapButton()) mapOpen = true;
