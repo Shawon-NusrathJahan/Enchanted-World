@@ -36,8 +36,8 @@ struct Injury
 void init();                                                     // once, when the program starts
 void update(double dt);                                          // every frame (animations only)
 
-int  score();
-int  scoreAt(Where w);                                           // what one location contributed
+int  score();                                                    // TOTAL score: all scenes together, kept everywhere
+int  scoreAt(Where w);                                           // SCENE score: what this one location earned
 void add(Where w, int delta, const char* fmt, ...);               // gameplay event (+/- score)
 void addAt(Where w, int delta, float x, float y, const char* fmt, ...);   // same + flying "+N" from (x, y)
 const std::vector<Event>& events();                              // oldest first, newest last
@@ -55,6 +55,9 @@ bool takeHealed(int& kidId);
 struct Token { float x0, y0, cx, cy, t; int delta; };          // flying "+N": quadratic Bezier to the score
 constexpr float HUD_X = 0.0f, HUD_Y = 0.905f;
 float shownScore();
+float shownSceneScore(Where w);
+Where lastDeltaWhere();
+const char* whereName(Where w);
 float pulse();
 int   lastDelta();
 float lastDeltaAge();
@@ -63,8 +66,8 @@ const std::vector<Token>& tokens();
 // HUD: a compact score panel at the top centre + the latest events at the bottom.
 // `stat` is one short line of the most important numbers of the current scene.
 void drawHud(Where w, const char* title, const char* stat);
-void drawFeed();
-void scorePos(float& x, float& y);                               // where the score number sits
+void drawFeed(float x0 = -0.62f, float y0 = -0.955f, bool downward = false);   // newest event nearest to (x0, y0)
+void scorePos(float& x, float& y);                               // where the scene score number sits (tokens fly there)
 
 }   // namespace game
 

@@ -33,7 +33,7 @@ constexpr float WAKE_DEADLINE = 15.0f;    // ... or when any flower will be crit
 constexpr float REPLANT_AFTER = 25.0f;    // dead flower is replaced by a new seed after this long
 constexpr float GARDENER_SCALE = 0.46f;
 
-const Vec2 DOOR{1.12f, -0.22f};                 // cottage door (cottage on the RIGHT)
+const Vec2 DOOR{DOOR_X, DOOR_Y};                 // cottage door (cottage on the RIGHT)
 
 struct Row
 {
@@ -72,6 +72,12 @@ int               curRow_ = -1, targetFlower_ = -1;
 float             stateTime_ = 0.0f, wakeTimer_ = 0.0f, stuck_ = 0.0f;
 char              schedInfo_[64] = "SCHEDULER IDLE";
 Vec2              grabOff_{0, 0};
+float             gate_ = 0.0f;           // gate opening 0..1
+bool              sentHome_ = false;      // the user sent him in: do not turn back on the way
+Drop              lastDrop_ = Drop::Ground;
+bool              pendPick_ = false;      // drag threshold
+float             pendX_ = 0, pendY_ = 0;
+std::vector<cg::V2> shore_, lakePoly_;
 
 const char* const STATE_NAMES[] = {"RESTING IN HOUSE", "LEAVING HOUSE", "WALKING TO POND", "FILLING CAN", "WALKING TO ROW",
                                    "WALKING TO FLOWER", "WATERING", "GOING HOME", "ENTERING HOUSE", "PICKED UP", "WALKING TO SPOT"};
@@ -94,12 +100,12 @@ void seedFlower(Flower& f, int index, int generation)
 {
     const float k = index * 13.7f + generation * 5.3f;
     f.generation = generation;
-    f.thirst   = lerpf(0.0007f, 0.0028f, hash1(k + 1.0f));
+    f.thirst   = lerpf(0.0006f, 0.0022f, hash1(k + 1.0f));   // more flowers now: a little less thirsty each
     if (hash1(k + 6.0f) > 0.82f) f.thirst *= 2.0f;          // a few flowers are real drinkers
     f.growRate = lerpf(0.022f, 0.050f, hash1(k + 2.0f));
     f.frail    = hash1(k + 3.0f);
     f.growth   = generation == 0 ? lerpf(0.35f, 0.95f, hash1(k + 8.0f)) : 0.0f;   // first garden: already blooming
-    f.water    = lerpf(0.10f, 0.48f, hash1(k + 4.0f));   // soil is already dry
+    f.water    = lerpf(0.16f, 0.50f, hash1(k + 4.0f));   // soil is already dry
     f.health   = 0.85f;
     f.dead     = false;
     f.deadTime = 0.0f;
@@ -169,27 +175,45 @@ void buildLayout()
                                       rgb(0.35f, 0.55f, 0.95f)};
     static const int cyc[] = {8, 10, 12, 15};
 
-    struct Bed { const char* tag; float xa, xb, y0, dy; int rows, cols; float seed; };
-    // layout is mirrored: pond + waterfall on the left, cottage on the right
-    const Bed beds[] = {{"A", 0.76f, 1.62f, -0.66f, -0.10f, 3, 6, 1.0f},
-                        {"B", -1.62f, -0.62f, -0.90f, -0.085f, 2, 6, 7.0f},
-                        {"C", -0.30f, 0.50f, -0.285f, 0.0f, 1, 6, 13.0f},
-                        {"D", -1.22f, -0.92f, -0.285f, 0.0f, 1, 3, 19.0f}};
+    struct Bed { const char* tag; float xa, xb, y0, dy; int rows, cols; float seed; float standDy; };
+    // pond/lake on the left, cottage on the right; beds: A big bed right, B between the cove and
+    // the path, C along the fence (centre), D on the FAR BANK (over the bridge), E/F at the cottage
+    const Bed beds[] = {{"A", 0.80f, 1.66f, -0.55f, -0.10f, 4, 7, 1.0f, -0.045f},
+                        {"B", -0.12f, 0.12f, -0.615f, -0.075f, 2, 5, 7.0f, -0.040f},
+                        {"C", -0.30f, 0.48f, -0.285f, 0.0f, 1, 6, 13.0f, -0.030f},
+                        {"D", -1.74f, -0.92f, -0.290f, 0.0f, 1, 8, 19.0f, -0.022f},
+                        {"E", 0.58f, 0.98f, -0.300f, 0.0f, 1, 4, 23.0f, -0.032f},
+                        {"F", 1.28f, 1.70f, -0.300f, 0.0f, 1, 3, 29.0f, -0.032f}};
+    constexpr int NB = 6;
 
     flowers_.clear();
     rows_.clear();
     graph_ = pf::Graph();
 
-    // --- walking graph ---
+    // --- walking graph: door -> gate -> stepping-stone path -> branch path -> bridge -> far bank ---
     nodeDoor_ = graph_.add(DOOR.x, DOOR.y);
-    const int p0 = graph_.add(1.00f, -0.28f), p1 = graph_.add(0.60f, -0.44f);
-    const int p2 = graph_.add(0.16f, -0.66f), p3 = graph_.add(-0.06f, -0.88f);
-    nodePond_    = graph_.add(-0.24f, -0.60f);
-    graph_.link(nodeDoor_, p0); graph_.link(p0, p1); graph_.link(p1, p2); graph_.link(p2, p3); graph_.link(p2, nodePond_);
+    const int gate = graph_.add(0.5f * (GATE_X0 + GATE_X1), FENCE_Y - 0.03f);
+    const int p0 = graph_.add(1.00f, -0.33f), p1 = graph_.add(0.60f, -0.46f);
+    const int p2 = graph_.add(0.20f, -0.66f), p3 = graph_.add(0.20f, -0.88f);
+    const int s1 = graph_.add(-0.02f, -0.805f), s2 = graph_.add(-0.30f, -0.815f);
+    nodePond_    = graph_.add(FILL_X, FILL_Y);
+    graph_.link(nodeDoor_, gate); graph_.link(gate, p0); graph_.link(p0, p1); graph_.link(p1, p2); graph_.link(p2, p3);
+    graph_.link(p3, s1); graph_.link(s1, s2); graph_.link(p2, nodePond_); graph_.link(s2, nodePond_);
+    int prev = graph_.add(BRIDGE_X0 + 0.05f, BRIDGE_Y0 - 0.005f);                         // bridge foot
+    graph_.link(s2, prev);
+    for (int k = 0; k <= 6; k++)                                                          // along the deck
+    {
+        const cg::V2 q = bridgeAt(k / 6.0f);
+        const int n = graph_.add(q.x, q.y);
+        graph_.link(prev, n);
+        prev = n;
+    }
+    const int farFoot = graph_.add(BRIDGE_X1 + 0.02f, -0.315f);
+    graph_.link(prev, farFoot);
 
-    int bedFirstRow[4] = {0, 0, 0, 0};
+    int bedFirstRow[NB] = {0};
     int index = 0;
-    for (int b = 0; b < 4; b++)
+    for (int b = 0; b < NB; b++)
     {
         const Bed& bd = beds[b];
         bedFirstRow[b] = (int)rows_.size();
@@ -198,14 +222,14 @@ void buildLayout()
             Row row;
             std::snprintf(row.name, sizeof(row.name), "%s%d", bd.tag, (r + 1) % 10);
             row.y = bd.y0 + bd.dy * r;
-            row.standDy = (b >= 2) ? 0.0f : -0.045f;     // rows C/D sit right behind the pond: stand beside the flowers
+            row.standDy = bd.standDy;
             row.xMin = 1e9f; row.xMax = -1e9f;
             for (int c = 0; c < bd.cols; c++, index++)
             {
                 Flower f{};
                 const float k = index * 1.0f + bd.seed;
-                f.x = lerpf(bd.xa, bd.xb, (c + 0.5f) / bd.cols) + (hash1(k * 12.9f) - 0.5f) * 0.05f;
-                f.y = row.y + (hash1(k * 78.2f) - 0.5f) * 0.014f;
+                f.x = lerpf(bd.xa, bd.xb, (c + 0.5f) / bd.cols) + (hash1(k * 12.9f) - 0.5f) * 0.04f;
+                f.y = row.y + (hash1(k * 78.2f) - 0.5f) * 0.012f;
                 const float depth = -f.y;
                 f.h      = (0.10f + 0.10f * hash1(k * 4.1f)) * (0.7f + 0.5f * depth) * 1.15f;
                 f.size   = (0.030f + 0.020f * hash1(k * 9.3f)) * (0.7f + 0.5f * depth);
@@ -228,29 +252,25 @@ void buildLayout()
             rows_.push_back(row);
         }
     }
-    // link rows of one bed (aisles at both ends) and connect beds to the garden path
-    for (int b = 0; b < 4; b++)
-    {
-        const int first = bedFirstRow[b], last = first + beds[b].rows - 1;
-        for (int r = first; r < last; r++)
+    for (int b = 0; b < NB; b++)                                     // aisles at both ends of a bed
+        for (int r = bedFirstRow[b]; r < bedFirstRow[b] + beds[b].rows - 1; r++)
         {
             graph_.link(rows_[r].nodeL, rows_[r + 1].nodeL);
             graph_.link(rows_[r].nodeR, rows_[r + 1].nodeR);
         }
-    }
-    // bed A (rows 0..2, right side): left ends toward the path
-    graph_.link(rows_[0].nodeL, p1); graph_.link(rows_[0].nodeL, p2);
-    graph_.link(rows_[1].nodeL, p2); graph_.link(rows_[2].nodeL, p2); graph_.link(rows_[2].nodeL, p3);
-    // bed B (rows 3..4, left side in front of the pond): right ends toward the path
-    graph_.link(rows_[3].nodeR, p3); graph_.link(rows_[4].nodeR, p3);
-    // bed C (row 5), bed D (row 6, behind the pond)
-    graph_.link(rows_[5].nodeR, p1); graph_.link(rows_[5].nodeL, p2);
-    graph_.link(rows_[5].nodeL, rows_[6].nodeR);
+    const int A = bedFirstRow[0], B = bedFirstRow[1], C = bedFirstRow[2], D = bedFirstRow[3], E = bedFirstRow[4], F = bedFirstRow[5];
+    graph_.link(rows_[A].nodeL, p1); graph_.link(rows_[A].nodeL, p2); graph_.link(rows_[A + 1].nodeL, p2);
+    graph_.link(rows_[A + 2].nodeL, p2); graph_.link(rows_[A + 3].nodeL, p3);
+    graph_.link(rows_[B].nodeR, p2); graph_.link(rows_[B + 1].nodeR, p2); graph_.link(rows_[B + 1].nodeL, s1); graph_.link(rows_[B].nodeL, nodePond_); graph_.link(rows_[B + 1].nodeL, nodePond_);
+    graph_.link(rows_[C].nodeR, p1); graph_.link(rows_[C].nodeL, p2);
+    graph_.link(rows_[D].nodeL, farFoot); graph_.link(rows_[D].nodeR, farFoot);           // the far bank: only over the bridge
+    graph_.link(rows_[E].nodeL, p1); graph_.link(rows_[E].nodeR, p0);
+    graph_.link(rows_[F].nodeL, p0);
 
     // butterfly meadow points
     meadow_.clear();
-    const float mx[] = {1.5f, 1.0f, 0.5f, 0.0f, -0.5f, -1.0f, -1.5f, 1.2f, 0.2f, -0.6f, -1.3f, -0.2f};
-    const float my[] = {-0.55f, -0.75f, -0.45f, -0.30f, -0.50f, -0.20f, -0.80f, -0.30f, -0.90f, -0.95f, -0.30f, -0.15f};
+    const float mx[] = {1.5f, 1.0f, 0.5f, 0.0f, -0.5f, -1.0f, -1.5f, 1.2f, 0.2f, -0.1f, -1.3f, -0.2f};
+    const float my[] = {-0.55f, -0.75f, -0.45f, -0.30f, -0.50f, -0.20f, -0.20f, -0.30f, -0.90f, -0.80f, -0.24f, -0.15f};
     for (int i = 0; i < 12; i++) meadow_.push_back(Vec2{mx[i], my[i]});
 }
 
@@ -259,17 +279,23 @@ void buildLayout()
 // ----------------------------------------------------------------------------
 void setState(GState s) { g_.state = s; stateTime_ = 0.0f; }
 
+// keep the gardener out of the water (the bridge deck is dry): move to the nearest shore point
 void pushOutOfPond(float& x, float& y)
 {
-    const float rx = POND_RX + 0.03f, ry = POND_RY + 0.03f;
-    const float dx = (x - POND_X) / rx, dy = (y - POND_Y) / ry;
-    const float d  = std::sqrt(dx * dx + dy * dy);
-    if (d < 1.0f)
+    if (!inLake(x, y) || onBridge(x, y)) return;
+    float best = 1e9f; cg::V2 q(x, y);
+    for (size_t i = 1; i < shore_.size(); i++)
     {
-        const float k = d > 1e-4f ? 1.0f / d : 1.0f;
-        x = POND_X + (d > 1e-4f ? dx * k : 0.0f) * rx;
-        y = POND_Y + (d > 1e-4f ? dy * k : -1.0f) * ry;
+        const cg::V2 a = shore_[i - 1], ab = shore_[i] - a;
+        const float t = clampf(cg::dot(cg::V2(x, y) - a, ab) / std::max(1e-6f, cg::dot(ab, ab)), 0.0f, 1.0f);
+        const cg::V2 c = a + ab * t;
+        const float d = cg::len(cg::V2(x, y) - c);
+        if (d < best) { best = d; q = c; }
     }
+    // step a little further onto land
+    const cg::V2 dir = q - cg::V2(x, y);
+    const float l = std::max(1e-5f, cg::len(dir));
+    x = q.x + dir.x / l * 0.03f; y = q.y + dir.y / l * 0.03f;
 }
 
 void planRouteToNode(int node)
@@ -443,12 +469,12 @@ void updateGardener(float dt)
     }
     case GState::Returning:
         wakeTimer_ += dt;
-        if (wakeTimer_ > 0.5f) { wakeTimer_ = 0.0f; if (shouldWake()) { decideNext(); break; } }   // new work appeared
+        if (wakeTimer_ > 0.5f) { wakeTimer_ = 0.0f; if (!sentHome_ && shouldWake()) { decideNext(); break; } }   // new work appeared
         if (followRoute(dt)) setState(GState::Entering);
         break;
     case GState::Entering:
         g_.alpha = std::max(0.0f, 1.0f - stateTime_ / 0.4f);
-        if (stateTime_ >= 0.4f) { g_.alpha = 0.0f; g_.x = DOOR.x; g_.y = DOOR.y; setState(GState::InHouse); }
+        if (stateTime_ >= 0.4f) { g_.alpha = 0.0f; g_.x = DOOR.x; g_.y = DOOR.y; sentHome_ = false; setState(GState::InHouse); }
         break;
     case GState::Dragged:
         g_.walking = false;               // stands still while the user chooses a destination
@@ -456,6 +482,11 @@ void updateGardener(float dt)
     case GState::UserWalk:
         if (followRoute(dt)) { g_.watering = 0.0f; decideNext(); }
         break;
+    }
+    // the garden gate swings open while the gardener is near it (eased, never snaps)
+    {
+        const bool near = g_.alpha > 0.05f && g_.state != GState::Dragged && std::fabs(g_.x - 0.5f * (GATE_X0 + GATE_X1)) < 0.16f && std::fabs(g_.y - FENCE_Y) < 0.10f;
+        gate_ += ((near ? 1.0f : 0.0f) - gate_) * std::min(1.0f, dt * 6.0f);
     }
     if (g_.state != GState::Filling) g_.filling = std::max(0.0f, g_.filling - dt * 3.0f);
     if (g_.state != GState::Watering) g_.watering = std::max(0.0f, g_.watering - dt * 3.0f);
@@ -737,32 +768,94 @@ void updateButterfly(Butterfly& b, float dt, bool cursorOn, float cx, float cy)
 // ----------------------------------------------------------------------------
 // Input: drag the gardener, click the pond, click the windmill
 // ----------------------------------------------------------------------------
-bool inPond(float x, float y)
+bool inPond(float x, float y) { return inLake(x, y) && !onBridge(x, y); }
+bool overHouse(float x, float y) { return x >= HOUSE_X0 && x <= HOUSE_X1 && y >= HOUSE_Y0 - 0.06f && y <= HOUSE_Y1 + 0.40f; }
+bool onDoorStone(float x, float y) { return std::fabs(x - STONE_X) < 0.10f && std::fabs(y - STONE_Y) < 0.045f; }
+
+// where the gardener lands when the user lets go of him
+void resolveDrop(float x, float y)
 {
-    const float dx = (x - POND_X) / POND_RX, dy = (y - POND_Y) / POND_RY;
-    return dx * dx + dy * dy <= 1.0f;
+    float u = 0.0f;
+    if (onDoorStone(x, y))                                         // the door stone: he goes inside
+    {
+        g_.x = STONE_X; g_.y = STONE_Y;
+        lastDrop_ = Drop::IntoHouse;
+        goHome();                                                   // through the gate, then in at the door
+        sentHome_ = true;
+        return;
+    }
+    if (overHouse(x, y))                                           // on the house: he does NOT go in, he stands outside
+    {
+        g_.x = clampf(x, HOUSE_X0 + 0.05f, HOUSE_X1 - 0.05f);
+        if (std::fabs(g_.x - DOOR.x) < 0.10f) g_.x = DOOR.x + (g_.x < DOOR.x ? -0.10f : 0.10f);   // not onto the door stone
+        g_.y = DOOR.y - 0.005f;
+        lastDrop_ = Drop::House;
+    }
+    else if (onBridge(x, y, &u))                                   // on the bridge: snap onto the deck
+    {
+        const cg::V2 q = bridgeAt(u);
+        g_.x = q.x; g_.y = q.y;
+        lastDrop_ = Drop::Bridge;
+    }
+    else
+    {
+        g_.x = clampf(x, -1.70f, 1.70f);
+        g_.y = clampf(y, -1.0f, FENCE_Y - 0.02f);                   // the fence keeps him in the garden
+        lastDrop_ = inLake(g_.x, g_.y) ? Drop::Water : Drop::Ground;
+        pushOutOfPond(g_.x, g_.y);                                  // dropped into the water: he wades to the shore
+    }
+    decideNext();                                                  // carry on with the work from here
 }
 
 void handleInput(const ui::Mouse& m, bool interactive)
 {
     if (!interactive || !m.valid)
     {
-        if (g_.dragged && !m.down) { /* released outside: handled below */ }
-        else if (!interactive) { if (g_.dragged) { g_.dragged = false; decideNext(); } return; }
+        if (g_.dragged && !interactive) { g_.dragged = false; resolveDrop(g_.x, g_.y); }
+        pendPick_ = false;
+        if (!interactive) return;
     }
 
-    if (m.pressed && interactive && m.valid)
+    // ---- carrying the gardener (like the playground children): he follows the cursor ----
+    if (g_.dragged)
     {
-        const bool hitGardener = gardenerVisibleForClick() && g_.state != GState::Dragged &&
-                                 std::fabs(m.x - g_.x) < 0.14f && m.y > g_.y - 0.04f && m.y < g_.y + 0.52f;
-        if (hitGardener)                                           // pick up: choose a destination
+        if (m.valid)
         {
-            g_.dragged = true;
+            g_.x = clampf(m.x + grabOff_.x, -1.72f, 1.72f);
+            g_.y = clampf(m.y + grabOff_.y, -1.02f, 0.45f);
             g_.targetX = g_.x; g_.targetY = g_.y;
-            grabOff_.x = g_.x - m.x; grabOff_.y = g_.y - m.y;
-            setState(GState::Dragged);
+            g_.walkPhase += 0.25f;                                  // legs dangle
         }
-        else if (std::hypot(m.x - windX_, m.y - windY_) < 0.34f)   // wind gust: windmill spins faster
+        if (!m.down) { g_.dragged = false; resolveDrop(g_.x, g_.y); }
+        return;
+    }
+    if (pendPick_)                                                 // drag threshold: a plain click does not move him
+    {
+        if (!m.down) { pendPick_ = false; return; }
+        if (std::hypot(m.x - pendX_, m.y - pendY_) < 0.02f) return;
+        pendPick_ = false;
+        g_.dragged = true;
+        sentHome_ = false;
+        grabOff_.x = g_.x - pendX_; grabOff_.y = g_.y - pendY_;
+        setState(GState::Dragged);
+        return;
+    }
+
+    if (m.pressed && m.valid)
+    {
+        const bool hitGardener = gardenerVisibleForClick() && std::fabs(m.x - g_.x) < 0.14f && m.y > g_.y - 0.04f && m.y < g_.y + 0.52f;
+        if (hitGardener) { pendPick_ = true; pendX_ = m.x; pendY_ = m.y; return; }
+        // he is inside: press on the house WALL (not the roof) -> he comes straight out, into your hand
+        if (g_.state == GState::InHouse && m.x >= HOUSE_X0 && m.x <= HOUSE_X1 && m.y >= HOUSE_Y0 && m.y <= HOUSE_Y1)
+        {
+            g_.alpha = 1.0f;
+            g_.dragged = true;
+            grabOff_.x = 0.0f; grabOff_.y = -0.22f;
+            g_.x = m.x; g_.y = m.y - 0.22f;
+            setState(GState::Dragged);
+            return;
+        }
+        if (std::hypot(m.x - windX_, m.y - windY_) < 0.34f)       // wind gust: windmill spins faster
         {
             windBoost_ = std::min(420.0f, windBoost_ + 200.0f);
         }
@@ -772,24 +865,6 @@ void handleInput(const ui::Mouse& m, bool interactive)
             ripples_.push_back(Ripple{m.x, m.y, 0.0f});
         }
     }
-
-    if (g_.dragged)
-    {
-        float tx = clampf(m.x + grabOff_.x, -1.70f, 1.70f), ty = clampf(m.y + grabOff_.y, -1.0f, -0.24f);
-        pushOutOfPond(tx, ty);
-        g_.targetX = tx; g_.targetY = ty;
-        if (!m.down)                                               // released: walk to the chosen spot, then resume work
-        {
-            g_.dragged = false;
-            if (pf::dist(Vec2{g_.x, g_.y}, Vec2{tx, ty}) < 0.05f) decideNext();
-            else
-            {
-                route_.clear(); routeIdx_ = 0;
-                route_.push_back(Vec2{tx, ty});
-                setState(GState::UserWalk);
-            }
-        }
-    }
 }
 
 }   // namespace
@@ -797,8 +872,35 @@ void handleInput(const ui::Mouse& m, bool interactive)
 // ----------------------------------------------------------------------------
 // public API
 // ----------------------------------------------------------------------------
+// ---- lake + bridge geometry ----
+const std::vector<cg::V2>& lakeShore() { return shore_; }
+bool inLake(float x, float y) { return cg::pointInPolygon(cg::V2(x, y), lakePoly_); }
+cg::V2 bridgeAt(float u)
+{
+    const cg::V2 a(BRIDGE_X0, BRIDGE_Y0), b(BRIDGE_X1, BRIDGE_Y1);
+    return a + (b - a) * u + cg::V2(0.0f, BRIDGE_ARCH * std::sin(u * PI));
+}
+bool onBridge(float x, float y, float* uOut)
+{
+    // nearest deck sample; the deck is about 0.09 wide (more near the viewer)
+    float best = 1e9f, bu = 0.0f;
+    for (int i = 0; i <= 40; i++) { const float u = i / 40.0f; const cg::V2 q = bridgeAt(u); const float d = std::hypot(x - q.x, (y - q.y) * 1.6f); if (d < best) { best = d; bu = u; } }
+    if (uOut) *uOut = bu;
+    return best < 0.065f;
+}
+float gateOpen() { return gate_; }
+Drop  lastDrop() { return lastDrop_; }
+
 void init()
 {
+    // lake shore (far-left -> right -> bottom); the polygon closes off-screen at the bottom-left,
+    // so the water runs off the left and bottom edges like part of a much bigger lake
+    shore_ = {cg::V2(-2.20f, -0.355f), cg::V2(-1.80f, -0.360f), cg::V2(-1.50f, -0.370f), cg::V2(-1.20f, -0.375f), cg::V2(-0.95f, -0.370f),
+              cg::V2(-0.72f, -0.375f), cg::V2(-0.56f, -0.400f), cg::V2(-0.46f, -0.460f), cg::V2(-0.42f, -0.540f), cg::V2(-0.37f, -0.600f),
+              cg::V2(-0.30f, -0.640f), cg::V2(-0.29f, -0.700f), cg::V2(-0.35f, -0.750f), cg::V2(-0.44f, -0.790f), cg::V2(-0.58f, -0.850f),
+              cg::V2(-0.68f, -0.930f), cg::V2(-0.76f, -1.020f), cg::V2(-0.84f, -1.120f), cg::V2(-0.88f, -1.250f)};
+    lakePoly_ = shore_;
+    lakePoly_.push_back(cg::V2(-2.20f, -1.25f));
     buildLayout();
     reset();
 }
@@ -809,6 +911,7 @@ void reset()
     resetGardener();
     resetButterflies();
     ripples_.clear();
+    gate_ = 0.0f; lastDrop_ = Drop::Ground; pendPick_ = false; sentHome_ = false;
     windAngle_ = 0.0f; windBoost_ = 0.0f;
     simTime_ = 0.0;
     started_ = false;

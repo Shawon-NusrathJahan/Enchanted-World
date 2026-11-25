@@ -10,6 +10,10 @@ static double    titleClk = 0.0;      // title screen clock (only for the logo e
 static double    lastTime = 0.0;
 static bool      playing  = true;
 static bool      waiting  = true;
+static bool      holding  = false;  // waiting at the revealed village
+static bool      released = false;  // the village wait is over (clicked or skipped)
+static double    holdClk  = 0.0;
+static double    ambient  = 0.0;
 static AnimState state;
 
 float smootherstep(float u)
@@ -50,6 +54,9 @@ static void recompute()
     state.waiting = waiting;
     state.phase   = phaseAt(elapsed);
     state.paused  = !playing;
+    state.villageWait = holding;
+    state.holdT   = (float)holdClk;
+    state.ambient = ambient;
     state.titleT  = (float)std::min(titleClk, LOGO_IN);
     state.logoFade = waiting ? 1.0f : 1.0f - smootherstep(t / (float)TITLE_OUT);
 
@@ -65,6 +72,9 @@ void initializeAnimation(double currentTime)
     lastTime = currentTime;
     playing  = true;
     waiting  = true;
+    holding  = false;
+    released = false;
+    holdClk  = 0.0;
     recompute();
 }
 
@@ -74,8 +84,19 @@ void updateAnimation(double currentTime)
     lastTime  = currentTime;
     if (dt > 0.1) dt = 0.1;            // avoid jumps after window drag / breakpoints
     if (dt < 0.0) dt = 0.0;
+    if (playing) ambient += dt;
     if (waiting) titleClk += dt;       // the logo entrance plays once, then the title screen is still
-    else if (playing) elapsed += dt;
+    else if (holding) holdClk += dt;   // camera stays on the village until the user clicks
+    else if (playing)
+    {
+        elapsed += dt;
+        if (!released && elapsed >= timeline::JOURNEY_START)
+        {
+            elapsed = timeline::JOURNEY_START;
+            holding = true;
+            holdClk = 0.0;
+        }
+    }
     recompute();
 }
 
@@ -89,6 +110,14 @@ void startFilm(double currentTime)
     recompute();
 }
 
+void continueFilm()
+{
+    if (!holding) return;
+    holding = false;
+    released = true;
+    recompute();
+}
+
 void toggleAnimation() { playing = !playing; recompute(); }
 
 void resetAnimation(double currentTime) { initializeAnimation(currentTime); }
@@ -99,6 +128,8 @@ void jumpToPhase(Phase phase, double currentTime)
     waiting  = false;
     titleClk = timeline::LOGO_IN;
     elapsed  = phaseStart(phase);
+    holding  = false;
+    released = phase > PHASE_REVEAL;
     lastTime = currentTime;
     recompute();
 }
@@ -108,6 +139,11 @@ void seekAnimation(double deltaSeconds, double currentTime)
     if (waiting) { waiting = false; titleClk = timeline::LOGO_IN; }
     elapsed += deltaSeconds;
     if (elapsed < 0.0) elapsed = 0.0;
+    ambient += std::fabs(deltaSeconds);
+    holding = false;
+    if (elapsed > timeline::JOURNEY_START + 1e-6) released = true;
+    else if (elapsed >= timeline::JOURNEY_START - 1e-6) { holding = true; released = false; elapsed = timeline::JOURNEY_START; }   // exactly at the village
+    else released = false;
     lastTime = currentTime;
     recompute();
 }

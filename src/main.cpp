@@ -388,6 +388,12 @@ int main(int argc, char** argv)
             startFilm(now);
             ui::mouse.pressed = false;                          // this click does nothing else
         }
+        if (getAnimState().villageWait && ui::mouse.pressed && ui::mouse.valid && scenes::isIntroOrGarden() &&
+            std::hypot(ui::mouse.x - (-gfx::WORLD_W + 0.095f), ui::mouse.y - 0.895f) > 0.07f)   // not the restart button
+        {
+            continueFilm();                                     // village view: the next click continues the journey
+            ui::mouse.pressed = false;
+        }
         {
             const AnimState& as = getAnimState();
             const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen;

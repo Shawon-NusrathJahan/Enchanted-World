@@ -6,6 +6,9 @@
 //   Flowers     : per-flower state model (water / growth / health) with individual rates
 //   Gardener    : finite state machine (InHouse, Leaving, ToPond, Filling, ToRow, ToFlower,
 //                 Watering, Returning, Entering, Dragged, UserWalk)
+//                 You carry him like the playground children: press + drag, release = drop.
+//                 Drop on the door stone -> he goes in; drop on the house -> he stays outside;
+//                 press the house wall while he is inside -> he comes out in your hand.
 //   Scheduling  : Earliest-Deadline-First priority scheduling with a binary min-heap
 //                 (std::priority_queue) - the row whose flowers will become critical first is served first
 //   Traversal   : systematic row-by-row (boustrophedon / serpentine) walk from the nearest row end
@@ -19,6 +22,7 @@
 #define GARDENSIM_H
 
 #include "animation.h"
+#include "cgmath.h"
 #include "gfx.h"
 #include "ui.h"
 
@@ -28,9 +32,25 @@
 namespace gardensim
 {
 
-// pond geometry (shared with garden.cpp so clicks hit exactly what is drawn)
-constexpr float POND_X = -1.02f, POND_Y = -0.54f, POND_RX = 0.62f, POND_RY = 0.20f;   // pond on the LEFT
-constexpr float FALL_X = -1.38f, FALL_Y = -0.375f;          // where the mountain waterfall plunges into the pond
+// ---- garden geometry (shared with garden.cpp so clicks hit exactly what is drawn) ----
+// The lake on the LEFT runs off the left and bottom edges of the screen (part of the big
+// water body seen in the film); a small cove reaches into the garden where the can is filled.
+// Its shore is a polygon; a wooden bridge crosses it to the far bank with more flowers.
+const std::vector<cg::V2>& lakeShore();          // shore polyline, far-left -> right -> bottom
+bool  inLake(float x, float y);                  // point in polygon (ray casting)
+constexpr float BRIDGE_X0 = -0.50f, BRIDGE_Y0 = -0.835f;     // near end (on the garden side)
+constexpr float BRIDGE_X1 = -1.25f, BRIDGE_Y1 = -0.345f;    // far end (on the far bank)
+constexpr float BRIDGE_ARCH = 0.10f;                        // arch height at mid-span
+cg::V2 bridgeAt(float u);                         // deck point, u = 0 near end .. 1 far end
+bool  onBridge(float x, float y, float* u = nullptr);
+constexpr float FILL_X = -0.22f, FILL_Y = -0.675f;          // where the gardener fills the can (the cove)
+
+// cottage: door, the stepping stone in front of it, walls, the garden gate in the fence
+constexpr float DOOR_X = 1.12f, DOOR_Y = -0.205f;
+constexpr float STONE_X = 1.105f, STONE_Y = -0.285f;        // the first stepping stone at the gate: drop him here -> he goes INTO the house
+constexpr float HOUSE_X0 = 0.81f, HOUSE_X1 = 1.43f, HOUSE_Y0 = -0.17f, HOUSE_Y1 = 0.28f;   // the walls
+constexpr float FENCE_Y = -0.235f, GATE_X0 = 1.03f, GATE_X1 = 1.21f;
+float gateOpen();                                 // 0 closed .. 1 open (opens when the gardener passes)
 
 constexpr int   CAN_CAPACITY = 12;        // flowers one can of water serves
 constexpr float RIPPLE_LIFE  = 2.4f;      // seconds
@@ -96,6 +116,8 @@ struct Butterfly
 
 struct Ripple { float x, y, age; };
 
+enum class Drop { Ground, House, IntoHouse, Water, Bridge };   // what happened at the last drop
+
 void init();                                     // build the static layout (call once)
 void reset();                                    // back to the "empty garden" start
 void update(double dt, const AnimState& s, const ui::Mouse& m, bool interactive);
@@ -115,6 +137,7 @@ void toggleHud();
 int  thirstyCount();
 int  deadCount();
 int  bloomCount();
+Drop lastDrop();
 const char* stateName(GState s);
 
 }   // namespace gardensim

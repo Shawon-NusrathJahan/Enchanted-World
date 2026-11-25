@@ -203,6 +203,17 @@ int main()
     int healed = -1;
     CHECK(stats().kidsHealed == 1 && game::takeHealed(healed) && healed == 7, "treated, released, and sent back to the playground");
 
+    std::printf("== 14. total score vs scene scores ==\n");
+    game::init();
+    game::add(game::Where::Garden, 5, "garden +5");
+    game::add(game::Where::Station, -2, "station -2");
+    game::addAt(game::Where::Hospital, 4, 0.0f, 0.0f, "hospital +4");
+    CHECK(game::score() == 7, "the TOTAL adds every scene together (5 - 2 + 4)");
+    CHECK(game::scoreAt(game::Where::Garden) == 5 && game::scoreAt(game::Where::Station) == -2 && game::scoreAt(game::Where::Hospital) == 4 &&
+          game::scoreAt(game::Where::Playground) == 0, "each SCENE score only counts what happened there");
+    for (int i = 0; i < 120; i++) game::update(1.0 / 60.0);
+    CHECK(std::fabs(game::shownSceneScore(game::Where::Station) + 2.0f) < 0.05f && std::fabs(game::shownScore() - 7.0f) < 0.05f, "the displayed numbers roll to the new values");
+
     std::printf("\n%s (%d failure%s)\n", fails ? "SOME TESTS FAILED" : "ALL TESTS PASSED", fails, fails == 1 ? "" : "s");
     return fails ? 1 : 0;
 }

@@ -21,6 +21,7 @@
 #include "theme.h"
 #include "ui.h"
 #include "village.h"
+#include "world.h"
 
 #include <algorithm>
 #include <cmath>
@@ -285,9 +286,13 @@ struct Cam { float cx, cy, lz; };                       // centre (layer f = 1 u
 struct Key { float t; Cam c; };
 std::vector<Key> keys;
 const float TENSION = 0.55f;
-const cg::V2 TARGET(-0.21f, -0.255f);                  // between the lake and the cottage (plateau layer)
+// final point of the zoom: chosen so the village cottage lands exactly where the garden cottage
+// is drawn when the cross-fade starts (garden: x 1.12, ground -0.17, settle zoom 1.3)
+const cg::V2 TARGET(world::COTTAGE_X - 1.456f / 8.0f, world::COTTAGE_Y + 0.191f / 8.0f);
 const float  PLATEAU_F = 0.55f;
-const float  END_LAYER_ZOOM = 9.5f;
+const float  END_LAYER_ZOOM = 8.0f;
+const float  REVEAL_ZOOM = 3.1f;                         // zoom of the last peak, kept through the reveal
+const float  VILLAGE_CY = -0.30f;                        // plateau point centred when the village is shown
 
 Key keyFor(float t, float f, float px, float py, float zoom)
 {   // centre the point (px,py) of the layer with depth f:  f*C = P
@@ -296,14 +301,16 @@ Key keyFor(float t, float f, float px, float py, float zoom)
 
 void buildKeys()
 {
+    // the zoom only ever increases: title -> peak close-ups -> the gap between the giants
+    // -> (mountains part) -> the village seen from above. No zoom-out before the reveal.
     keys.clear();
     keys.push_back(keyFor(0.0f, 1.0f, 0.0f, 0.0f, 1.0f));              // the title view
     keys.push_back(keyFor(3.1f, 1.0f, -0.80f, 0.33f, 2.6f));           // peak 1: left front summit
-    keys.push_back(keyFor(6.2f, 0.85f, -0.30f, 0.58f, 3.0f));          // peak 2: left giant
-    keys.push_back(keyFor(9.3f, 0.85f, 0.43f, 0.62f, 3.1f));           // peak 3: right giant
-    keys.push_back(keyFor(12.4f, 1.0f, 1.04f, 0.34f, 2.6f));           // peak 4: right front summit
-    keys.push_back(keyFor(15.6f, 1.0f, 0.0f, 0.02f, 1.0f));            // back to the whole range
-    keys.push_back(keyFor(19.2f, PLATEAU_F, 0.0f, -0.06f, 1.10f));     // framing the revealed village
+    keys.push_back(keyFor(6.2f, 0.85f, -0.30f, 0.58f, 2.8f));          // peak 2: left giant
+    keys.push_back(keyFor(9.3f, 0.85f, 0.43f, 0.62f, 3.0f));           // peak 3: right giant
+    keys.push_back(keyFor(12.4f, 1.0f, 1.04f, 0.34f, REVEAL_ZOOM));    // peak 4: right front summit
+    keys.push_back(keyFor(14.8f, 1.0f, 0.0f, 0.06f, REVEAL_ZOOM));     // the gap where the giants will part
+    keys.push_back(keyFor(19.6f, PLATEAU_F, 0.0f, VILLAGE_CY, REVEAL_ZOOM));   // looking DOWN on the village
 }
 
 Cam splineAt(float t)
@@ -441,9 +448,9 @@ void mistBand(float y, float h, float alpha, const Color& c)
 // Water: Bezier ribbons with flowing streaks, analytic spray particles
 // ----------------------------------------------------------------------------
 struct Fall { cg::V2 p0, p1, p2, p3; float w0, w1; cg::ArcLength arc; };
-Fall upperFall, cliffFall;
+Fall upperFall;
 struct Stream { cg::V2 p0, p1, p2, p3; float w0, w1; cg::ArcLength arc; };
-Stream outflow, mountainCascade;
+Stream stream, mountainCascade;
 
 template <class T> cg::V2 curveAt(const T& c, float t) { return cg::cubicBezier(c.p0, c.p1, c.p2, c.p3, t); }
 template <class T> cg::V2 tangentAt(const T& c, float t) { return cg::cubicBezierTangent(c.p0, c.p1, c.p2, c.p3, t); }
@@ -511,10 +518,11 @@ void spray(float x, float y, float spread, float t, int count, float scale, bool
 // ----------------------------------------------------------------------------
 // Plateau with the village, the lake, the waterfalls and the cliff (layer f = 0.55)
 // ----------------------------------------------------------------------------
-const float LAKE_X = -0.47f, LAKE_Y = -0.27f, LAKE_RX = 0.33f, LAKE_RY = 0.08f;
+using world::LAKE_X; using world::LAKE_Y; using world::LAKE_RX; using world::LAKE_RY;
 
-float backHill(float x) { return -0.005f + 0.055f * cg::fbm(x * 1.4f + 3.0f, 501u, 4); }
-float cliffEdge(float x) { return -0.465f + 0.025f * (cg::fbm(x * 3.0f, 909u, 4) - 0.5f); }
+float backHill(float x) { return 0.005f + 0.050f * cg::fbm(x * 1.4f + 3.0f, 501u, 4); }
+
+using world::riverAt; using world::riverW;   // the river below the pond (shared with the map)
 
 GLuint plateauList = 0;
 Color  plateauTint{-1, -1, -1, -1};
@@ -525,99 +533,84 @@ void buildPlateauStatic()
     glBegin(GL_TRIANGLE_STRIP);
     for (float x = -2.6f; x <= 2.6f; x += 0.02f)
     {
-        vtx(rgb(0.40f, 0.62f, 0.52f), x, backHill(x));
-        vtx(rgb(0.36f, 0.58f, 0.44f), x, -0.30f);
+        vtx(rgb(0.42f, 0.64f, 0.54f), x, backHill(x));
+        vtx(rgb(0.40f, 0.64f, 0.46f), x, -0.10f);
     }
     glEnd();
-    for (int k = 0; k < 160; k++)                                    // forest on the hill tops
+    for (int k = 0; k < 200; k++)                                    // forest on the hill tops
     {
         const float x = -2.5f + 5.0f * cg::hashU(k * 9u + 1u);
         const float y = backHill(x) - 0.03f * cg::hashU(k * 5u + 2u);
-        const float h = 0.03f + 0.02f * cg::hashU(k * 3u + 7u);
+        const float h = 0.025f + 0.018f * cg::hashU(k * 3u + 7u);
         setColor(k & 1 ? rgb(0.16f, 0.38f, 0.34f) : rgb(0.20f, 0.44f, 0.36f));
         tri(x - h * 0.3f, y - 0.01f, x + h * 0.3f, y - 0.01f, x, y + h);
     }
-    // rocky spur on the left: the mountain stream falls over it into the lake
+    // the meadow: one big ground plane from the hills down past the bottom of the screen
+    // (seen from above at an angle: brighter and more saturated toward the viewer)
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= 16; i++)
     {
-        const float P[][2] = {{-1.55f, -0.32f}, {-1.48f, 0.00f}, {-1.30f, 0.05f}, {-1.10f, 0.065f}, {-0.94f, 0.07f},
-                              {-0.80f, 0.11f}, {-0.70f, 0.04f}, {-0.63f, -0.12f}, {-0.60f, -0.25f}};
-        const int n = 9;
+        const float u = i / 16.0f, y = lerpf(-0.005f, -1.45f, u);
+        const Color c = mix(rgb(0.62f, 0.80f, 0.52f), rgb(0.42f, 0.74f, 0.30f), u);
+        vtx(c, -2.6f, y + (i == 0 ? 0.0f : 0.0f)); vtx(c, 2.6f, y);
+    }
+    glEnd();
+    // gentle light / shadow patches (rolling ground)
+    for (int k = 0; k < 14; k++)
+    {
+        const float x = -1.0f + 2.0f * cg::hashU(k * 13u + 1u), y = -0.05f - 0.85f * cg::hashU(k * 17u + 2u);
+        const float s = world::depthScale(y);
+        setColor(k & 1 ? rgb(0.75f, 0.92f, 0.55f, 0.30f) : rgb(0.28f, 0.52f, 0.26f, 0.14f));
+        ellipse(x, y, 0.22f * s, 0.05f * s, 30);
+    }
+    // hedgerows between the fields
+    for (int k = 0; k < 7; k++)
+    {
+        const float y = -0.05f - 0.11f * k, x0 = 0.92f - 0.05f * k;
+        for (float x = x0; x < 1.4f; x += 0.012f * world::depthScale(y)) { setColor(rgb(0.24f, 0.50f, 0.26f)); circle(x, y, 0.008f * world::depthScale(y), 8); }
+    }
+
+    // rock ledge on the left: the stream falls over it into the pond
+    {
+        const float P[][2] = {{-0.96f, -0.30f}, {-0.95f, -0.10f}, {-0.86f, -0.06f}, {-0.76f, -0.08f}, {-0.70f, -0.10f},
+                              {-0.66f, -0.17f}, {-0.64f, -0.27f}};
         glBegin(GL_TRIANGLE_FAN);
-        vtx(rgb(0.42f, 0.45f, 0.58f), -1.05f, -0.10f);
-        for (int i = 0; i < n; i++) vtx(i < 3 ? rgb(0.55f, 0.58f, 0.74f) : rgb(0.48f, 0.52f, 0.68f), P[i][0], P[i][1]);
+        vtx(rgb(0.46f, 0.48f, 0.60f), -0.82f, -0.20f);
+        for (int i = 0; i < 7; i++) vtx(i < 3 ? rgb(0.60f, 0.62f, 0.76f) : rgb(0.50f, 0.53f, 0.68f), P[i][0], P[i][1]);
         glEnd();
-        setColor(rgb(0.32f, 0.34f, 0.48f, 0.55f));                       // shadowed east face
-        quad(-0.94f, 0.07f, -0.80f, 0.11f, -0.70f, -0.25f, -0.90f, -0.25f);
-        setColor(rgb(0.36f, 0.58f, 0.40f));                              // grassy top
+        setColor(rgb(0.34f, 0.36f, 0.50f, 0.55f)); quad(-0.70f, -0.10f, -0.66f, -0.17f, -0.64f, -0.27f, -0.72f, -0.27f);   // shadowed face
+        setColor(rgb(0.40f, 0.66f, 0.40f));                                                                            // mossy top
         glBegin(GL_TRIANGLE_STRIP);
-        for (int i = 1; i < 7; i++) { vtx(rgb(0.42f, 0.66f, 0.40f), P[i][0], P[i][1] + 0.012f); vtx(rgb(0.30f, 0.52f, 0.36f), P[i][0], P[i][1] - 0.03f); }
+        for (int i = 1; i < 5; i++) { vtx(rgb(0.46f, 0.72f, 0.42f), P[i][0], P[i][1] + 0.008f); vtx(rgb(0.34f, 0.56f, 0.38f), P[i][0], P[i][1] - 0.025f); }
         glEnd();
-        for (int k = 0; k < 10; k++)                                   // boulders on the spur
-        {
-            const float x = -1.42f + 0.06f * k, y = 0.0f + 0.04f * cg::hashU(k * 7u);
-            setColor(rgb(0.50f, 0.52f, 0.64f)); ellipse(x, y, 0.035f, 0.02f, 14);
-        }
+        for (int k = 0; k < 6; k++) { setColor(rgb(0.54f, 0.56f, 0.68f)); ellipse(-0.92f + 0.05f * k, -0.27f + 0.012f * (k & 1), 0.03f, 0.014f, 12); }
     }
-    // meadow of the plateau
+    // stream bed (darker grass) from the hills to the ledge
+    setColor(rgb(0.30f, 0.52f, 0.34f));
+    for (int i = 0; i <= 24; i++) { const float u = i / 24.0f; const cg::V2 p = world::streamAt(u); ellipse(p.x, p.y, 0.020f, 0.008f, 10); }
+    // pond shore + river banks (sand), the water itself is animated (drawLake / waterRibbon)
+    setColor(rgb(0.80f, 0.74f, 0.56f));
+    ellipse(LAKE_X, LAKE_Y - 0.004f, LAKE_RX + 0.03f, LAKE_RY + 0.018f, 72);
     glBegin(GL_TRIANGLE_STRIP);
-    for (float x = -2.6f; x <= 2.6f; x += 0.02f)
+    for (int i = 0; i <= 40; i++)
     {
-        vtx(rgb(0.60f, 0.84f, 0.42f), x, -0.03f + 0.02f * cg::fbm(x * 2.0f, 77u, 3));
-        vtx(rgb(0.46f, 0.76f, 0.34f), x, cliffEdge(x));
+        const float u = i / 40.0f; const cg::V2 p = riverAt(u); const float w = riverW(u) + 0.012f + 0.01f * u;
+        vtx(rgb(0.80f, 0.74f, 0.56f), p.x - w, p.y); vtx(rgb(0.80f, 0.74f, 0.56f), p.x + w, p.y);
     }
     glEnd();
-    setColor(rgb(0.72f, 0.90f, 0.50f, 0.35f));                            // sunlit patches
-    ellipse(0.35f, -0.20f, 0.55f, 0.09f, 40);
-    ellipse(-0.95f, -0.33f, 0.40f, 0.06f, 40);
-    // dirt path from the village to the lake shore
-    glBegin(GL_TRIANGLE_STRIP);
-    for (int i = 0; i <= 30; i++)
+    // reeds and flowers along the shore
+    for (int k = 0; k < 26; k++)
     {
-        const float u = i / 30.0f;
-        const cg::V2 p = cg::cubicBezier(cg::V2(0.95f, -0.42f), cg::V2(0.55f, -0.38f), cg::V2(0.15f, -0.36f), cg::V2(-0.15f, -0.33f), u);
-        const float w = 0.016f - 0.008f * u;
-        vtx(rgb(0.86f, 0.74f, 0.52f), p.x, p.y + w);
-        vtx(rgb(0.80f, 0.66f, 0.46f), p.x, p.y - w);
+        const float a = 3.1416f + 3.1416f * cg::hashU(k * 7u + 3u);
+        const float x = LAKE_X + std::cos(a) * (LAKE_RX + 0.03f), y = LAKE_Y + std::sin(a) * (LAKE_RY + 0.02f);
+        setColor(rgb(0.30f, 0.55f, 0.30f)); rect(x, y, x + 0.003f, y + 0.02f);
+        setColor(k % 3 == 0 ? rgb(1.0f, 0.5f, 0.7f) : rgb(0.45f, 0.30f, 0.18f)); ellipse(x + 0.0015f, y + 0.02f, 0.003f, 0.006f, 6);
     }
-    glEnd();
-    // the cliff below the plateau: the village is HIGH above the valley
-    glBegin(GL_TRIANGLE_STRIP);
-    for (float x = -2.6f; x <= 2.6f; x += 0.02f)
-    {
-        vtx(rgb(0.52f, 0.50f, 0.60f), x, cliffEdge(x));
-        vtx(rgb(0.36f, 0.38f, 0.52f), x, -1.40f);
-    }
-    glEnd();
-    glLineWidth(1.5f);
-    for (int k = 0; k < 9; k++)                                        // rock strata
-    {
-        setColor(rgb(0.30f, 0.30f, 0.44f, 0.45f));
-        glBegin(GL_LINE_STRIP);
-        for (float x = -2.6f; x <= 2.6f; x += 0.04f)
-            glVertex2f(x, cliffEdge(x) - 0.06f - 0.075f * k + 0.02f * (cg::fbm(x * 2.0f + k, 300u + k, 3) - 0.5f));
-        glEnd();
-    }
-    glLineWidth(1.0f);
-    for (float x = -2.5f; x <= 2.5f; x += 0.05f)                       // grass lip over the cliff edge
-    {
-        setColor(rgb(0.34f, 0.62f, 0.32f));
-        tri(x - 0.03f, cliffEdge(x) + 0.005f, x + 0.03f, cliffEdge(x) + 0.005f, x + 0.005f, cliffEdge(x) - 0.025f - 0.02f * cg::hashU((uint32_t)(x * 100 + 500)));
-    }
-    // trees around the meadow
-    const float TX[] = {-1.25f, -0.98f, -0.92f, 1.05f, 1.22f, 1.40f, 1.58f, -1.60f, 0.98f};
-    const float TY[] = {-0.36f, -0.40f, -0.30f, -0.30f, -0.40f, -0.33f, -0.42f, -0.40f, -0.12f};
-    for (int k = 0; k < 9; k++)
-    {
-        if (k % 3 == 0) drawPine(TX[k], TY[k], 0.20f, 0.0f, 1.0f);
-        else drawRoundTree(TX[k], TY[k], 0.15f, 0.0f, rgb(0.18f, 0.48f, 0.26f), rgb(0.36f, 0.68f, 0.32f), k == 4);
-    }
+    drawVillageGround();
 }
 
 void drawLake(float t, bool still)
 {
-    // shore, water body, sky reflection band
-    setColor(rgb(0.66f, 0.62f, 0.50f));
-    ellipse(LAKE_X, LAKE_Y - 0.004f, LAKE_RX + 0.025f, LAKE_RY + 0.016f, 72);
     glBegin(GL_TRIANGLE_FAN);
     vtx(rgb(0.30f, 0.60f, 0.86f), LAKE_X, LAKE_Y + 0.01f);
     for (int i = 0; i <= 72; i++)
@@ -629,8 +622,8 @@ void drawLake(float t, bool still)
     glEnd();
     setColor(rgb(0.85f, 0.95f, 1.0f, 0.35f));
     ellipse(LAKE_X + 0.06f, LAKE_Y + 0.025f, LAKE_RX * 0.55f, LAKE_RY * 0.18f, 40);
-    // rings spreading from the plunge pool (periodic, kept inside the lake ellipse)
-    const float px = -0.635f, py = -0.215f;
+    // rings spreading from the plunge pool (periodic, kept inside the pond ellipse)
+    const float px = world::FALL_BOT_X, py = world::FALL_BOT_Y;
     glLineWidth(1.5f);
     for (int k = 0; k < 4; k++)
     {
@@ -649,6 +642,14 @@ void drawLake(float t, bool still)
         glEnd();
     }
     glLineWidth(1.0f);
+    // the current drifting toward the outflow (shows the water keeps moving through the pond)
+    for (int k = 0; k < 10; k++)
+    {
+        const float u = fract((still ? 0.0f : t) * 0.06f + k * 0.1f);
+        const cg::V2 p = cg::quadBezier(cg::V2(px + 0.03f, py - 0.005f), cg::V2(-0.50f, -0.30f), cg::V2(-0.52f, -0.37f), u);
+        setColor(rgb(1, 1, 1, 0.45f * std::sin(u * 3.1416f)));
+        rect(p.x - 0.012f, p.y - 0.0012f, p.x + 0.012f, p.y + 0.0012f);
+    }
     // glints that twinkle on the water
     for (int k = 0; k < 14; k++)
     {
@@ -658,19 +659,66 @@ void drawLake(float t, bool still)
         setColor(rgb(1.0f, 1.0f, 1.0f, 0.75f * tw));
         rect(x - 0.012f * tw, y - 0.0015f, x + 0.012f * tw, y + 0.0015f);
     }
-    // lily pads
-    for (int k = 0; k < 5; k++)
+    // lily pads, a little rowing boat and ducks
+    for (int k = 0; k < 6; k++)
     {
-        const float x = LAKE_X - 0.18f + 0.09f * k, y = LAKE_Y - 0.035f + 0.02f * (k & 1);
+        const float x = LAKE_X - 0.10f + 0.06f * k, y = LAKE_Y - 0.045f + 0.02f * (k & 1);
         setColor(rgb(0.26f, 0.62f, 0.32f));
-        ellipse(x, y, 0.025f, 0.008f, 14);
-        if (k == 2) { setColor(rgb(1.0f, 0.62f, 0.78f)); circle(x, y + 0.006f, 0.007f, 10); }
+        ellipse(x, y, 0.018f, 0.006f, 14);
+        if (k == 2 || k == 5) { setColor(rgb(1.0f, 0.62f, 0.78f)); circle(x, y + 0.004f, 0.005f, 10); }
+    }
+    {
+        const float bx = LAKE_X + 0.05f + 0.06f * std::sin(t * 0.15f), by = LAKE_Y + 0.02f;
+        setColor(rgb(0.60f, 0.36f, 0.20f)); quad(bx - 0.030f, by, bx + 0.030f, by, bx + 0.022f, by - 0.010f, bx - 0.022f, by - 0.010f);
+        setColor(rgb(0.95f, 0.35f, 0.30f)); rect(bx - 0.004f, by, bx + 0.004f, by + 0.016f); setColor(rgb(0.98f, 0.82f, 0.68f)); circle(bx, by + 0.020f, 0.005f, 8);
+        const float oa = std::sin(t * 2.0f) * 0.008f;
+        setColor(rgb(0.45f, 0.30f, 0.18f)); thickLine(bx - 0.006f, by + 0.008f, bx - 0.040f, by - 0.004f + oa, 0.002f); thickLine(bx + 0.006f, by + 0.008f, bx + 0.040f, by - 0.004f + oa, 0.002f);
+    }
+    for (int k = 0; k < 3; k++)
+    {
+        const float dx = LAKE_X - 0.15f + 0.03f * k + 0.04f * std::sin(t * 0.2f), dy = LAKE_Y - 0.01f - 0.008f * k;
+        setColor(rgb(1, 1, 1)); ellipse(dx, dy, 0.008f, 0.004f, 8); circle(dx - 0.006f, dy + 0.005f, 0.0035f, 8);
+        setColor(rgb(1.0f, 0.6f, 0.1f)); tri(dx - 0.010f, dy + 0.006f, dx - 0.014f, dy + 0.005f, dx - 0.010f, dy + 0.004f);
+    }
+}
+
+// the river: a ribbon with flowing streaks, wider toward the viewer, leaving the bottom edge
+void drawRiver(float t, bool still)
+{
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= 48; i++)
+    {
+        const float u = i / 48.0f; const cg::V2 p = riverAt(u); const float w = riverW(u);
+        const Color c = mix(rgb(0.36f, 0.66f, 0.90f), rgb(0.22f, 0.50f, 0.80f), u);
+        vtx(c, p.x - w, p.y); vtx(c, p.x + w, p.y);
+    }
+    glEnd();
+    // flow streaks (move down the river; u uses an approximate arc length via the easing)
+    for (int lane = 0; lane < 7; lane++)
+        for (int k = 0; k < 8; k++)
+        {
+            const float u = fract((still ? 0.0f : t) * 0.10f + k * 0.125f + cg::hashU(lane * 7u + 1u));
+            const cg::V2 p = riverAt(u), q = riverAt(std::min(1.0f, u + 0.03f));
+            const float off = ((lane + 0.5f) / 7.0f * 2.0f - 1.0f) * riverW(u) * 0.8f;
+            setColor(rgb(1, 1, 1, 0.55f * std::sin(u * 3.1416f) * (0.5f + 0.5f * cg::hashU(lane * 3u + k))));
+            thickLine(p.x + off, p.y, q.x + off, q.y, 0.0025f + 0.003f * u);
+        }
+    // a small wooden footbridge over the river
+    {
+        const cg::V2 p = riverAt(0.45f); const float w = riverW(0.45f) + 0.02f;
+        setColor(rgb(0.55f, 0.36f, 0.22f)); quad(p.x - w, p.y - 0.010f, p.x + w, p.y - 0.010f, p.x + w, p.y + 0.008f, p.x - w, p.y + 0.008f);
+        setColor(rgb(0.42f, 0.26f, 0.15f)); for (float x = p.x - w; x < p.x + w; x += 0.010f) rect(x, p.y - 0.010f, x + 0.002f, p.y + 0.008f);
+        rect(p.x - w, p.y + 0.008f, p.x + w, p.y + 0.012f); rect(p.x - w, p.y + 0.012f, p.x - w + 0.004f, p.y + 0.026f); rect(p.x + w - 0.004f, p.y + 0.012f, p.x + w, p.y + 0.026f);
+        rect(p.x - w, p.y + 0.024f, p.x + w, p.y + 0.027f);
     }
 }
 
 void drawPlateau(float t, bool still)
 {
     pushLayer(PLATEAU_F);
+    // mouse -> plateau coordinates (inverse of the layer transform), for the hover labels
+    float mx = 99.0f, my = 99.0f;
+    if (ui::mouse.valid) { mx = (ui::mouse.x - gfx::layer.px - gfx::layer.panx) / gfx::layer.s + gfx::layer.px; my = (ui::mouse.y - gfx::layer.py - gfx::layer.pany) / gfx::layer.s + gfx::layer.py; }
     const Color tnow = gfx::tintColor;
     const bool same = std::fabs(tnow.r - plateauTint.r) + std::fabs(tnow.g - plateauTint.g) + std::fabs(tnow.b - plateauTint.b) < 0.004f;
     if (!plateauList || !same)
@@ -682,31 +730,20 @@ void drawPlateau(float t, bool still)
         plateauTint = tnow;
     }
     glCallList(plateauList);
-    mistBand(-0.92f, 0.16f, 0.75f, rgb(0.93f, 0.95f, 1.0f));
 
-    // water flowing out of the lake and over the cliff edge into the misty valley
-    waterRibbon(outflow, t, 0.18f, rgb(0.55f, 0.80f, 0.98f, 0.95f), rgb(1, 1, 1, 0.8f), still);
+    // the water course, continuous from the mountains to the bottom edge of the screen
+    waterRibbon(stream, t, 0.20f, rgb(0.50f, 0.76f, 0.96f, 0.95f), rgb(1, 1, 1, 0.8f), still);
+    spray(world::STREAM_X0, world::STREAM_Y0, 0.25f, t, 10, 0.18f, still);                 // foam where the cascade lands
+    glow(world::STREAM_X0, world::STREAM_Y0 + 0.005f, 0.025f, rgb(1, 1, 1, 0.35f), 16);
     drawLake(t, still);
-    waterRibbon(cliffFall, t, 0.55f, rgb(0.82f, 0.92f, 1.0f, 0.88f), rgb(1, 1, 1, 0.9f), still);
-    spray(cliffFall.p3.x, cliffFall.p3.y, 0.9f, t, 26, 0.6f, still);
-    // the mountain stream: falls from the rocky spur into the lake
-    waterRibbon(upperFall, t, 0.60f, rgb(0.84f, 0.94f, 1.0f, 0.92f), rgb(1, 1, 1, 0.95f), still);
-    spray(upperFall.p3.x, upperFall.p3.y + 0.005f, 0.7f, t, 30, 0.45f, still);
-    glow(upperFall.p3.x, upperFall.p3.y + 0.02f, 0.07f, rgb(1, 1, 1, 0.35f), 24);
+    drawRiver(t, still);
+    waterRibbon(upperFall, t, 0.55f, rgb(0.84f, 0.94f, 1.0f, 0.92f), rgb(1, 1, 1, 0.95f), still);
+    spray(upperFall.p3.x, upperFall.p3.y + 0.005f, 0.7f, t, 30, 0.40f, still);
+    glow(upperFall.p3.x, upperFall.p3.y + 0.02f, 0.06f, rgb(1, 1, 1, 0.35f), 24);
 
-    // the cottage beside the lake (the zoom ends here and becomes the garden cottage)
-    drawHouse(-0.05f, -0.29f, 0.105f, 1, true, still ? 0.0 : (double)t);
-    drawRoundTree(-0.68f, -0.34f, 0.13f, still ? 0.0f : 0.5f * std::sin(t * 1.3f), rgb(0.16f, 0.46f, 0.24f), rgb(0.34f, 0.66f, 0.30f));
+    // the village (buildings, people, train) - sorted far -> near
+    drawVillageLive(still ? 0.0 : (double)t, still, mx, my);
     popCamera();
-
-    // the village itself: the original village items, placed on the plateau
-    {
-        const float zf = std::exp(PLATEAU_F * cam_.lz);
-        const float ox = 0.46f, oy = -0.165f, k = 0.88f;
-        pushCamera(zf * k, 0.0f, 0.0f, zf * (ox - PLATEAU_F * cam_.cx), zf * (oy - PLATEAU_F * cam_.cy));
-        drawVillage(still ? 0.0 : (double)t);
-        popCamera();
-    }
 }
 
 // ----------------------------------------------------------------------------
@@ -776,13 +813,11 @@ void initMountain()
     }
     for (Range* r : {&r0, &r1, &r2, &r3, &r4, &r5, &r6}) ranges.push_back(*r);
 
-    // water curves (plateau layer)
-    upperFall = Fall{cg::V2(-0.795f, 0.105f), cg::V2(-0.758f, 0.09f), cg::V2(-0.665f, -0.05f), cg::V2(-0.635f, -0.212f), 0.016f, 0.042f, {}};
+    // water curves (plateau layer): stream from the hills -> waterfall over the ledge -> pond
+    stream = Stream{cg::V2(world::STREAM_X0, world::STREAM_Y0), cg::V2(world::STREAM_C1X, world::STREAM_C1Y), cg::V2(world::STREAM_C2X, world::STREAM_C2Y), cg::V2(world::FALL_TOP_X, world::FALL_TOP_Y), 0.007f, 0.011f, {}};
+    stream.arc.build([](float u) { return cg::cubicBezier(stream.p0, stream.p1, stream.p2, stream.p3, u); });
+    upperFall = Fall{cg::V2(world::FALL_TOP_X, world::FALL_TOP_Y), cg::V2(-0.69f, -0.13f), cg::V2(-0.66f, -0.20f), cg::V2(world::FALL_BOT_X, world::FALL_BOT_Y), 0.011f, 0.030f, {}};
     upperFall.arc.build([](float u) { return cg::cubicBezier(upperFall.p0, upperFall.p1, upperFall.p2, upperFall.p3, u); });
-    cliffFall = Fall{cg::V2(-0.335f, -0.455f), cg::V2(-0.33f, -0.52f), cg::V2(-0.31f, -0.70f), cg::V2(-0.30f, -0.90f), 0.016f, 0.05f, {}};
-    cliffFall.arc.build([](float u) { return cg::cubicBezier(cliffFall.p0, cliffFall.p1, cliffFall.p2, cliffFall.p3, u); });
-    outflow = Stream{cg::V2(-0.40f, -0.335f), cg::V2(-0.37f, -0.37f), cg::V2(-0.35f, -0.41f), cg::V2(-0.335f, -0.458f), 0.011f, 0.016f, {}};
-    outflow.arc.build([](float u) { return cg::cubicBezier(outflow.p0, outflow.p1, outflow.p2, outflow.p3, u); });
     // a cascade high up on the mountain behind the lake (range r2, f = 0.40)
     mountainCascade = Stream{cg::V2(-0.98f, 0.30f), cg::V2(-0.95f, 0.22f), cg::V2(-0.99f, 0.12f), cg::V2(-0.94f, 0.0f), 0.006f, 0.012f, {}};
     mountainCascade.arc.build([](float u) { return cg::cubicBezier(mountainCascade.p0, mountainCascade.p1, mountainCascade.p2, mountainCascade.p3, u); });
@@ -790,12 +825,13 @@ void initMountain()
 
 void drawMountainScene(const AnimState& s)
 {
-    const float t = (float)s.time;
+    const float t = (float)s.time;                      // film clock: drives the camera
+    const float at = (float)s.ambient;                  // always running: water, people, clouds
     const bool still = s.waiting;                       // title screen: nothing moves
     cam_ = cameraAt(t);
 
-    drawSky(t, still);
-    const float drift = still ? 0.0f : t * 0.02f;
+    drawSky(at, still);
+    const float drift = still ? 0.0f : at * 0.02f;
 
     for (size_t i = 0; i < ranges.size(); i++)
     {
@@ -809,14 +845,14 @@ void drawMountainScene(const AnimState& s)
             // During the peak shots the camera looks OVER the giants, so with parallax the plateau
             // would peek through; the village must only appear when the mountains part, so it is
             // drawn from the wide shot on (the closed mountains still cover it completely there).
-            if (s.open > 0.0f) drawPlateau(t, still);
+            if (s.open > 0.0f) drawPlateau(at, still);
         }
-        const float part = r.slide * s.open * (r.f >= 0.99f ? 1.80f : 1.55f);
+        const float part = r.slide * s.open * (r.f >= 0.99f ? 2.40f : 2.10f);
         pushLayer(r.f, part);
         drawRangeCached(r);
         if (i == 2)                                     // stream high on the far mountain + its cloud belt
         {
-            waterRibbon(mountainCascade, t, 0.25f, rgb(0.90f, 0.95f, 1.0f, 0.85f), rgb(1, 1, 1, 0.9f), still);
+            waterRibbon(mountainCascade, at, 0.25f, rgb(0.90f, 0.95f, 1.0f, 0.85f), rgb(1, 1, 1, 0.9f), still);
             cloudBank(-2.4f, 2.4f, 0.08f, 0.08f, drift * 1.5f, 5u, 0.75f, rgb(1.0f, 1.0f, 1.0f));
         }
         if (i == 0 || i == 1) mistBand(-0.12f + 0.05f * i, 0.12f, 0.18f, rgb(0.90f, 0.93f, 1.0f));
@@ -858,6 +894,19 @@ void drawMountainScene(const AnimState& s)
         glColor4f(0.02f, 0.03f, 0.10f, 0.0f);  glVertex2f(W, -0.55f); glVertex2f(-W, -0.55f);
         glEnd();
         gfx::useTint = old;
+    }
+
+    // ---- village view: the film waits; a very small hint at the bottom edge ----
+    if (s.villageWait)
+    {
+        const float a = smoothstep((s.holdT - 1.2f) / 0.8f) * (0.75f + 0.25f * std::sin(s.holdT * 2.5f));
+        if (a > 0.0f)
+        {
+            const bool old = gfx::useTint;
+            gfx::useTint = false;
+            font::draw(0.0f, -0.965f, 0.026f, rgb(1.0f, 1.0f, 1.0f, 0.85f * a), "Click anywhere to continue", 1, true);
+            gfx::useTint = old;
+        }
     }
 
     // ---- title: the logo, then the prompt (both still while waiting) ----

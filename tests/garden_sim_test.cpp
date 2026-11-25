@@ -145,25 +145,83 @@ int main()
     CHECK(ripples().size() == 1, "click outside the pond makes no ripple");
     step(60 * 3); CHECK(ripples().empty(), "ripples disappear by themselves");
 
-    std::printf("== 6. dragging the gardener ==\n");
-    reset(); update(DT, S, M, true); M.valid = false; step(60 * 40);      // wait until he is outside working
-    for (int i = 0; i < 60 * 60 && !(gardener().state == GState::ToFlower || gardener().state == GState::ToRow); i++) step(1);
+    std::printf("== 6. carrying the gardener (like the playground children) ==\n");
+    auto workOutside = [&]() {
+        reset(); update(DT, S, M, true); M = ui::Mouse(); M.valid = false; step(60 * 40);
+        for (int i = 0; i < 60 * 60 && !(gardener().state == GState::ToFlower || gardener().state == GState::ToRow); i++) step(1);
+    };
+    auto carryTo = [&](float tx, float ty) {             // press on him, drag past the threshold, move, release
+        const float gx = gardener().x, gy = gardener().y;
+        M = ui::Mouse(); M.valid = true; M.x = gx; M.y = gy + 0.2f; M.down = true; M.pressed = true; step(1);
+        M.x = gx + 0.05f; step(1);
+        M.x = tx; M.y = ty + 0.2f; step(3);
+        M.down = false; step(1);
+        M.valid = false;
+    };
+    workOutside();
     float gx = gardener().x, gy = gardener().y;
     std::printf("  gardener at (%.2f, %.2f) state %s\n", gx, gy, stateName(gardener().state));
-    M.valid = true; M.x = gx; M.y = gy + 0.2f; M.down = true; M.pressed = true; step(1);
-    CHECK(gardener().state == GState::Dragged, "click on gardener picks him up");
-    M.pressed = false; M.x = -0.2f; M.y = -0.9f; step(5);
-    CHECK(std::fabs(gardener().x - gx) < 0.05f, "while dragging he waits (destination marker moves, not teleport)");
-    M.down = false; step(1);
-    CHECK(gardener().state == GState::UserWalk, "release makes him walk to the chosen spot");
-    for (int i = 0; i < 60 * 12 && gardener().state == GState::UserWalk; i++) step(1);
-    std::printf("  after walk: (%.2f, %.2f) state %s\n", gardener().x, gardener().y, stateName(gardener().state));
-    CHECK(gardener().state != GState::UserWalk && gardener().state != GState::Dragged, "then he resumes his normal work");
+    M = ui::Mouse(); M.valid = true; M.x = gx; M.y = gy + 0.2f; M.down = true; M.pressed = true; step(1);
+    CHECK(gardener().state != GState::Dragged, "a plain press does not pick him up (drag threshold)");
+    M.x = gx + 0.05f; step(1);
+    CHECK(gardener().state == GState::Dragged, "dragging picks him up");
+    M.x = 0.0f; M.y = -0.5f + 0.2f; step(3);
+    CHECK(std::fabs(gardener().x - 0.0f) < 0.06f && std::fabs(gardener().y + 0.5f) < 0.06f, "he follows the cursor while carried");
+    M.down = false; step(1); M.valid = false;
+    CHECK(std::fabs(gardener().x) < 0.06f && gardener().state != GState::Dragged, "released: he is put down right there and goes back to work");
 
-    std::printf("== 7. windmill click ==\n");
-    reset(); setWindmillHub(1.18f, 0.25f); update(DT, S, M, true); M = ui::Mouse(); M.valid = false;
+    workOutside(); carryTo(1.20f, 0.05f);
+    CHECK(lastDrop() == Drop::House && gardener().state != GState::Entering && gardener().state != GState::InHouse && gardener().y < HOUSE_Y0 + 0.01f,
+          "dropped ON the house: he does not go in, he stands outside");
+
+    workOutside(); carryTo(STONE_X, STONE_Y);
+    bool wentIn = false;
+    for (int i = 0; i < 60 * 6 && !wentIn; i++) { step(1, true); if (gardener().state == GState::InHouse) wentIn = true; }
+    CHECK(lastDrop() == Drop::IntoHouse && wentIn, "dropped on the door stone: he walks through the gate into the house");
+
+    {   // he is inside: press on the house wall -> he comes out into your hand
+        M = ui::Mouse(); M.valid = true; M.x = 1.30f; M.y = 0.05f; M.down = true; M.pressed = true; step(1);
+        CHECK(gardener().state == GState::Dragged && gardener().alpha > 0.9f, "press on the house wall: he comes straight out, carried");
+        M.x = 0.30f; M.y = -0.70f + 0.22f; step(2); M.down = false; step(1); M.valid = false;
+        CHECK(std::fabs(gardener().x - 0.30f) < 0.06f && gardener().state != GState::InHouse, "and can be put down anywhere");
+    }
+    {   // press on the roof (above the walls) while he is inside does nothing
+        workOutside(); carryTo(STONE_X, STONE_Y);
+        for (int i = 0; i < 60 * 6 && gardener().state != GState::InHouse; i++) step(1);
+        std::printf("  state before roof press: %s\n", stateName(gardener().state));
+        M = ui::Mouse(); M.valid = true; M.x = 1.12f; M.y = 0.45f; M.down = true; M.pressed = true; step(1); M.down = false; step(1); M.valid = false;
+        std::printf("  state after roof press: %s\n", stateName(gardener().state));
+        CHECK(gardener().state == GState::InHouse || gardener().state == GState::Leaving, "press on the roof does not bring him out");
+    }
+
+    workOutside(); carryTo(-1.10f, -0.70f);
+    CHECK(lastDrop() == Drop::Water && !inLake(gardener().x, gardener().y), "dropped in the lake: he ends up on the shore, not in the water");
+    workOutside(); { const cg::V2 q = bridgeAt(0.5f); carryTo(q.x, q.y); }
+    CHECK(lastDrop() == Drop::Bridge && onBridge(gardener().x, gardener().y), "dropped on the bridge: he stands on the deck");
+
+    std::printf("== 7. the bridge leads to the far bank: those flowers get watered too ==\n");
+    {
+        reset(); update(DT, S, M, true); M = ui::Mouse(); M.valid = false;
+        bool crossed = false, wateredFar = false, gateOpened = false;
+        for (int i = 0; i < 60 * 60 * 8; i++)
+        {
+            step(1);
+            const Gardener& g = gardener();
+            if (onBridge(g.x, g.y) && g.state != GState::Dragged) crossed = true;
+            if (g.state == GState::Watering && g.x < -0.9f && g.y > -0.36f) wateredFar = true;
+            if (gateOpen() > 0.8f) gateOpened = true;
+            if (!inLake(g.x, g.y) || onBridge(g.x, g.y)) continue;
+            CHECK(false, "gardener walked into the water"); break;
+        }
+        CHECK(crossed, "he walks across the bridge");
+        CHECK(wateredFar, "he waters the flowers on the far bank");
+        CHECK(gateOpened, "the garden gate opens when he passes through it");
+    }
+
+    std::printf("== 8. windmill click ==\n");
+    reset(); setWindmillHub(0.30f, 0.58f); update(DT, S, M, true); M = ui::Mouse(); M.valid = false;
     float a0 = windAngle(); step(60); float calm = windAngle() - a0;
-    M.valid = true; M.x = 1.18f; M.y = 0.25f; M.pressed = true; M.down = true; a0 = windAngle(); step(1); M.down = false; M.valid = false; step(59);
+    M.valid = true; M.x = 0.30f; M.y = 0.58f; M.pressed = true; M.down = true; a0 = windAngle(); step(1); M.down = false; M.valid = false; step(59);
     float gust = windAngle() - a0;
     std::printf("  calm: %.0f deg/s   after click: %.0f deg/s\n", calm, gust);
     CHECK(gust > calm * 3.0f, "clicking the windmill makes it spin faster, then it slows down again");

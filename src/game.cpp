@@ -19,6 +19,8 @@ namespace
 int   score_ = 0;
 int   perWhere_[(int)Where::COUNT] = {0, 0, 0, 0};
 float shown_ = 0.0f;                 // displayed score rolls towards score_ (exponential smoothing)
+float shownWhere_[(int)Where::COUNT] = {0, 0, 0, 0};   // the same for every scene's own score
+Where lastWhere_ = Where::Garden;
 float pulse_ = 0.0f;                 // panel "bump" when points arrive
 int   lastDelta_ = 0;
 float lastDeltaT_ = 10.0f;
@@ -41,8 +43,9 @@ void push(Where w, int delta, const char* text)
     if (events_.size() > 60) events_.erase(events_.begin());
     if (delta != 0)
     {
-        score_ += delta;
-        perWhere_[(int)w] += delta;
+        score_ += delta;                 // the TOTAL score (all scenes together)
+        perWhere_[(int)w] += delta;      // the score of this scene only
+        lastWhere_ = w;
     }
 }
 
@@ -52,6 +55,7 @@ void init()
 {
     score_ = 0; shown_ = 0.0f; pulse_ = 0.0f; lastDelta_ = 0; lastDeltaT_ = 10.0f; restarts_ = 0;
     for (int& v : perWhere_) v = 0;
+    for (float& v : shownWhere_) v = 0.0f;
     events_.clear(); injured_.clear(); healed_.clear(); tokens_.clear();
 }
 
@@ -61,6 +65,11 @@ void update(double dtIn)
     for (Event& e : events_) e.age += dt;
     shown_ += (score_ - shown_) * (1.0f - std::exp(-dt * 6.0f));
     if (std::fabs(score_ - shown_) < 0.02f) shown_ = (float)score_;
+    for (int i = 0; i < (int)Where::COUNT; i++)
+    {
+        shownWhere_[i] += (perWhere_[i] - shownWhere_[i]) * (1.0f - std::exp(-dt * 6.0f));
+        if (std::fabs(perWhere_[i] - shownWhere_[i]) < 0.02f) shownWhere_[i] = (float)perWhere_[i];
+    }
     pulse_ = std::max(0.0f, pulse_ - dt * 2.5f);
     lastDeltaT_ += dt;
     for (Token& t : tokens_)
@@ -95,7 +104,8 @@ void addAt(Where w, int delta, float x, float y, const char* fmt, ...)
     {
         lastDelta_ = delta; lastDeltaT_ = 0.0f;
         // control point above the midpoint -> a gentle arc up to the score
-        tokens_.push_back(Token{x, y, (x + HUD_X) * 0.5f, std::max(y, HUD_Y) + 0.35f, 0.0f, delta});   // arc to the score
+        float sx, sy; scorePos(sx, sy);
+        tokens_.push_back(Token{x, y, (x + sx) * 0.5f, std::max(y, sy) + 0.35f, 0.0f, delta});   // arc to the scene score
     }
 }
 
@@ -115,7 +125,12 @@ bool takeHealed(int& kidId)
     return true;
 }
 
+// where the scene-score number sits in the HUD (the flying tokens land there; see game_hud.cpp)
+void scorePos(float& x, float& y) { x = -0.10f - 0.12f; y = 0.845f + 0.035f; }
+
 float shownScore() { return shown_; }
+float shownSceneScore(Where w) { return shownWhere_[(int)w]; }
+Where lastDeltaWhere() { return lastWhere_; }
 float pulse()      { return pulse_; }
 int   lastDelta()  { return lastDelta_; }
 float lastDeltaAge() { return lastDeltaT_; }

@@ -16,6 +16,12 @@ Use it as the source for the report. Reusable maths is in `src/cgmath.h` (namesp
 | Layered parallax camera: screen = Z^f · (p − f·C) | `mountain.cpp` (`pushLayer`, `cameraAt`) | Each layer has a depth f in 0..1. Far layers move and zoom less than near ones, which gives depth while the camera zooms. |
 | Zoom-to-point camera: C = (T − S / Z^f) / f | `mountain.cpp` | Keeps a chosen world point (a peak, then the village) fixed at a moving screen position while zooming. |
 | Mountains part left/right | `mountain.cpp` (`drawMountainScene`) | Translates the two giant ranges outward with an eased offset to reveal the plateau. |
+| Elevated aerial view (pseudo-perspective) | `world.h` (`depthScale`), `village.cpp` | Ground objects are scaled by s(y) = 0.62 − 0.80·y. Nearer objects (lower on screen) are bigger, so the village reads as seen from above at an angle. Roads widen toward the viewer, and so does the river. |
+| Skew reflection y' = 2(ax + b) − y | `garden.cpp` (bridge reflection) | Water is horizontal, so each deck point is mirrored vertically about the water line under the bridge. That line is slanted, so the transform is the affine matrix [1 0 0; 2a −1 2b]. |
+| Gate swing as a projected rotation | `garden.cpp` (fence gate) | A leaf turning by θ about its vertical hinge projects to width w·cos θ. The opening is eased by the simulation. |
+| One shared world layout + map transform | `world.h`, `scenes.cpp` (`mapX`, `mapY`) | The film's village and the world map read the same coordinates (`world::PLACES`). The map uses one uniform scale about the centre of the visitable places, M(p) = k·(p − c). The places therefore sit in the middle, and every distance and road between them keeps its real proportions. |
+| Fair rides (village) | `village.cpp` (`drawFerrisWheel`, `drawCarousel`, `drawChairSwing`) | Ferris wheel: spokes rotate, but each gondola is placed with the rotation and stays upright (it does not inherit the rotation). Carousel and chair swing: riders move on an ellipse (x = r cos a, depth = r sin a). They are drawn in two passes, back half then front half, which is a painter's order for a rotating ring. |
+| Additive light bulbs + stateless fireworks | `village.cpp` (`bulb`, fireworks) | In the evening, ride bulbs get additive glows. Each firework's rockets and sparks are a closed-form function of time (launch, burst radius ∝ √t, gravity sag), so no particle state is stored. |
 | Hierarchical transforms (push/pop matrix) | `garden.cpp` (windmill sails, butterflies, gardener), `playground.cpp` (swing pendulum, see-saw) | Child parts rotate about their parent's pivot. |
 
 ## 2. Curves and animation
@@ -24,9 +30,11 @@ Use it as the source for the report. Reusable maths is in `src/cgmath.h` (namesp
 |---|---|---|
 | Kochanek–Bartels (TCB) Hermite spline in log-zoom space | `mountain.cpp` (`buildKeys`, `splineAt`), `cg::hermite`, `cg::kbTangent` | Smooth camera path through 3–5 peak close-ups, the reveal and the village. Interpolating log(zoom) makes the zoom speed feel uniform. Tension slows the camera near each key. |
 | Smootherstep easing (6t⁵ − 15t⁴ + 10t³) | `animation.cpp` | C²-continuous fades and transitions (title fade, cross-fades, garden blend). |
+| Two clocks: film clock + ambient clock | `animation.cpp` | The camera follows the film clock, which stops at the village until the user clicks. Water, people, smoke and the train follow an always-running clock, so the paused village stays alive. |
+| Monotone zoom path | `mountain.cpp` (`buildKeys`) | The camera's log-zoom only ever increases (no zoom-out before the reveal). The village frame keeps the last peak's zoom and tilts down onto the plateau. |
 | easeOutBack | `font.cpp` (`drawLogo`) | Per-letter "pop" entrance of the title logo. |
 | Quadratic / cubic Bézier curves | `cgmath.h`; `font.cpp` (logo flourishes); `game.cpp` + `game_hud.cpp` (flying "+N" score tokens); `mountain.cpp`, `garden.cpp` (water ribbons) | Curved shapes and motion paths. |
-| Arc-length re-parameterisation (`cg::ArcLength`) | `mountain.cpp` (waterfalls, stream), `garden.cpp` (garden waterfall) | Converts a curve parameter to distance, so water streaks flow at constant speed along the Bézier ribbon. |
+| Arc-length re-parameterisation (`cg::ArcLength`) | `mountain.cpp` (mountain cascade, stream, ledge waterfall) | Converts a curve parameter to distance, so water streaks flow at constant speed along the Bézier ribbon. The water course is continuous: cascade → stream → waterfall → pond → river off the bottom edge. |
 | Frame-time smoothing (clamp + exponential moving average) | `main.cpp` | Filters frame-time spikes so every simulation moves evenly. |
 
 ## 3. Procedural modelling
@@ -57,9 +65,15 @@ Use it as the source for the report. Reusable maths is in `src/cgmath.h` (namesp
 |---|---|---|
 | Sutherland–Hodgman polygon clipping | `cg::clipPolygonSH`; `mountain.cpp` (sun light shafts) | Each 2.6-unit light-shaft wedge is clipped to the view rectangle before drawing, and per-vertex alpha is recomputed from distance to the sun. Same image, less fill. |
 | Cohen–Sutherland line clipping | `cg::clipLineCS`; `station.cpp` (passenger route line) | Route segments are clipped to the play area so the line never crosses the score bar. |
-| Point in polygon (ray casting, even-odd) | `cg::pointInPolygon`; `hospitalsim.cpp` (`overHospital`) | "Dropped on the hospital" is tested against the building's real stepped silhouette, not its bounding box. |
+| Point in polygon (ray casting, even-odd) | `cg::pointInPolygon`; `hospitalsim.cpp` (`overHospital`); `gardensim.cpp` (`inLake`) | "Dropped on the hospital" is tested against the building's real stepped silhouette. The garden lake is a free-form shore polygon that runs off the screen edges; clicks, ripples and the gardener are tested against it. |
+| Nearest point on a polyline (projection onto segments) | `gardensim.cpp` (`pushOutOfPond`) | A gardener dropped into the water moves to the closest shore point, plus a small step onto land. |
+| Star-shaped polygon fill (triangle fan from a kernel point) | `garden.cpp` (lake) | The shore is star-shaped as seen from an off-screen corner, so one triangle fan fills it. The same fan, grown outward, draws the sand and mud banks. |
+| Arc-length sampling with minimum spacing | `garden.cpp` (shore stones) | Stones are placed every 0.11 units of shore length, so they can never overlap. Gaps are left at the path, the bridge feet and the filling spot. |
+| Scissor test | `scenes.cpp` (world map) | Everything painted on the map is clipped to the parchment rectangle with `glScissor`. |
+| Inverse layer transform (picking) | `mountain.cpp` (`drawPlateau`) | The mouse position is mapped back into plateau coordinates (inverse scale and pan), so hovering a building in the zoomed village shows its name. |
 | Stencil buffer masking | `garden.cpp` (pond) | Pass 1 writes the pond shape into the stencil (value 1). Reflections and ripples are then drawn with `GL_EQUAL 1`, so they appear only inside the water. |
-| Painter's algorithm (depth sort by y) | `hospital.cpp`, `playground.cpp`, `station.cpp` | People and objects are sorted back-to-front each frame. |
+| Painter's algorithm (depth sort by y) | `hospital.cpp`, `playground.cpp`, `station.cpp`, `village.cpp` | People, buildings, trees and the train are sorted back-to-front each frame. |
+| Catmull–Rom splines | `village.cpp` (roads), `garden.cpp` (stepping-stone path) | Smooth roads and paths through a few control points. |
 | Display lists (geometry caching) | `mountain.cpp` (ranges per tint, plateau), `garden.cpp` (static scenery) | Static geometry is compiled once with `glNewList` and replayed with `glCallList`. |
 
 ## 6. Lighting and effects
@@ -87,7 +101,7 @@ Use it as the source for the report. Reusable maths is in `src/cgmath.h` (namesp
 
 ## 8. Supporting algorithms (game logic)
 
-A* on a waypoint graph (`pathfind.h`, gardener) · Dijkstra on the station walkway graph (passengers re-route when the bridge or crossing closes) · priority queue with ageing (hospital triage) · greedy interval partitioning (platform planning) · FIFO queues (rides, doors) · finite-state machines (ambulances, signals, children, trains) · Poisson arrivals (station passengers).
+A* on a waypoint graph (`pathfind.h`, gardener: door → gate → paths → bridge → far bank) · Dijkstra on the station walkway graph (passengers re-route when the bridge or crossing closes) · priority queue with ageing (hospital triage) · greedy interval partitioning (platform planning) · FIFO queues (rides, doors) · finite-state machines (ambulances, signals, children, trains) · Poisson arrivals (station passengers).
 
 ---
 

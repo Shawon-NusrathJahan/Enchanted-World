@@ -26,7 +26,7 @@ namespace timeline
 constexpr double OPENING_START = 0.0;
 constexpr double TITLE_OUT     = 1.8;    // logo has faded away
 constexpr double REVEAL_START  = 14.6;   // mountains start parting sideways
-constexpr double JOURNEY_START = 20.4;   // village fully revealed, zoom begins
+constexpr double JOURNEY_START = 20.4;   // village fully revealed: the film WAITS here for a click, then the zoom begins
 constexpr double GARDEN_START  = 27.4;   // garden starts fading in + animating
 constexpr double LIVING_START  = 30.4;   // garden fully visible, loops forever
 constexpr double LOGO_IN       = 3.6;    // seconds the logo needs to appear on the title screen
@@ -43,11 +43,15 @@ struct AnimState
     float  gardenBlend;   // 0 = village only .. 1 = garden only
     double gardenTime;    // seconds since the garden started animating
     bool   paused;
+    bool   villageWait;   // the village is revealed and the film waits for a click
+    float  holdT;         // seconds spent waiting at the village (for the small hint)
+    double ambient;       // always-running seconds (water, people, smoke keep moving while waiting)
 };
 
 void initializeAnimation(double currentTime);
 void updateAnimation(double currentTime);
 void startFilm(double currentTime);                             // the first click on the title screen
+void continueFilm();                                            // click while waiting at the village
 void toggleAnimation();
 void resetAnimation(double currentTime);                        // back to the title screen
 void jumpToPhase(Phase phase, double currentTime);
