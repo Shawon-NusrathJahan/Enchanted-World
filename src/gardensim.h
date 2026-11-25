@@ -11,7 +11,9 @@
 //   Traversal   : systematic row-by-row (boustrophedon / serpentine) walk from the nearest row end
 //   Pathfinding : A* on a waypoint graph (door, garden path, pond bank, row ends)
 //   Butterflies : Reynolds steering behaviours (seek, arrival, flee) + fitness-proportionate
-//                 (roulette wheel) waypoint selection; four fixed sensitivity personalities
+//                 (roulette wheel) waypoint selection; four fixed sensitivity personalities.
+//                 Fleeing is SMOOTH: the heading turns with a limited angular speed, the speed
+//                 changes with a limited acceleration and the flee urgency ramps with distance.
 
 #ifndef GARDENSIM_H
 #define GARDENSIM_H
@@ -27,7 +29,8 @@ namespace gardensim
 {
 
 // pond geometry (shared with garden.cpp so clicks hit exactly what is drawn)
-constexpr float POND_X = 1.02f, POND_Y = -0.54f, POND_RX = 0.62f, POND_RY = 0.20f;
+constexpr float POND_X = -1.02f, POND_Y = -0.54f, POND_RX = 0.62f, POND_RY = 0.20f;   // pond on the LEFT
+constexpr float FALL_X = -1.38f, FALL_Y = -0.375f;          // where the mountain waterfall plunges into the pond
 
 constexpr int   CAN_CAPACITY = 12;        // flowers one can of water serves
 constexpr float RIPPLE_LIFE  = 2.4f;      // seconds
@@ -51,6 +54,7 @@ struct Flower
     float health;       // 0 dead .. 1 perfect
     bool  dead;
     float deadTime;
+    bool  bloomed = false;  // full bloom reached (scored once)
 };
 
 enum class GState { InHouse, Leaving, ToPond, Filling, ToRow, ToFlower, Watering, Returning, Entering, Dragged, UserWalk };
@@ -83,6 +87,7 @@ struct Butterfly
     bool   fleeing = false;
     std::array<Spark, 16> sparks{};
     // behaviour internals
+    float  flapRate = 14.0f;        // wing beats ease between calm and frightened
     float  wpX = 0, wpY = 0, feedTimer = 0, react = 0, dwell = 0, cooldown = 0, fleeTimer = 0, sparkTimer = 0;
     float  fleeDirX = 0, fleeDirY = 0;
     bool   feeding = false;

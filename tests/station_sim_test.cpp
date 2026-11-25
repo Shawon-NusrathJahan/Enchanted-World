@@ -1,5 +1,6 @@
 // Headless test of the train-station simulation (no window, no OpenGL).
 #include "stationsim.h"
+#include "game.h"
 #include <cmath>
 #include <cstdio>
 #include <algorithm>
@@ -185,7 +186,7 @@ int main()
     reset(); testSetArrivals(false);
     int any = -1; for (const Passenger& q : passengers()) if (q.ticket >= 0) { any = q.id; break; }
     const float ox = findPassenger(any)->x, oy = findPassenger(any)->y;
-    testDropPassenger(any, 0.3f, TRACK_Y[0]);
+    testDropPassenger(any, 0.3f, TRACK_Y[1]);          // empty track (a train stands on track 0)
     CHECK(std::fabs(findPassenger(any)->x - ox) < 1e-4f && std::fabs(findPassenger(any)->y - oy) < 1e-4f, "dropped on the track: put back where it was");
     testDropPassenger(any, 0.9f, P2_Y + 0.02f);
     CHECK(std::fabs(findPassenger(any)->y - P2_Y) < 1e-4f && !findPassenger(any)->path.empty(), "dropped on platform 2: placed there with a new Dijkstra route");
@@ -201,6 +202,62 @@ int main()
         q = findPassenger(wid);
         CHECK(q && q->st != Passenger::Dragged && std::fabs(q->x - qx) < 0.01f && std::fabs(q->y - qy) < 0.01f && !dragging(), "clicking without moving does not pick the passenger up");
     }
+
+    std::printf("== 12. HOLD during boarding delays the departure ==\n");
+    reset(); testSetArrivals(false); game::init();
+    secs(1.0f);
+    const Service* s1 = findService(1);
+    const float depA = expectedDeparture(*s1);
+    CHECK(holdTrain(1), "hold accepted while the train is boarding");
+    CHECK(expectedDeparture(*findService(1)) >= depA + stationcfg::HOLD_STEP - 1.5f, "expected departure moved later by the hold");
+    secs(depA - now() + 2.0f);
+    CHECK(trainOn(0) && trainOn(0)->svc == 1 && trainOn(0)->st == Train::Dwell, "train still at the platform after its old departure time");
+
+    std::printf("== 13. DEPART NOW in the middle of boarding ==\n");
+    reset(); testSetArrivals(false); game::init();
+    secs(0.5f);
+    int waiting1 = 0; for (const Passenger& q : passengers()) if (q.ticket == 1) waiting1++;
+    const int sc = game::score();
+    CHECK(departNow(1), "depart accepted at any time");
+    bool left = false; for (int i = 0; i < 60 * 8 && !left; i++) { step(1); const Service* q = findService(1); left = q && q->st == SvcState::Departed; }
+    CHECK(left, "the train leaves within seconds");
+    std::printf("  %d passengers had tickets, left behind %d, score %d -> %d\n", waiting1, stats().leftBehind, sc, game::score());
+    CHECK(stats().leftBehind > 0 && game::score() < sc, "passengers left behind cost points");
+
+    std::printf("== 14. drop a passenger onto a train ==\n");
+    reset(); testSetArrivals(false); game::init();
+    secs(2.0f);
+    const int good = testSpawnPassenger(1), bad = testSpawnPassenger(2);
+    step(1);
+    int g0 = game::score();
+    float tx = trainOn(0)->x - TRAIN_L / 2, ty = trackY(0, tx) + 0.08f;
+    testDropPassenger(good, tx, ty);
+    CHECK(findPassenger(good) == nullptr || findPassenger(good)->st == Passenger::Board, "right ticket: boards at once");
+    CHECK(game::score() == g0 + stationcfg::SCORE_HELP_BOARD, "right train adds points");
+    g0 = game::score();
+    testDropPassenger(bad, tx, ty);
+    CHECK(findPassenger(bad) && findPassenger(bad)->st != Passenger::Board, "wrong ticket: gets off again");
+    CHECK(game::score() == g0 + stationcfg::SCORE_WRONG_TRAIN, "wrong train costs points");
+
+    std::printf("== 15. pulling a train along the track: interlocking still applies ==\n");
+    reset(); testSetArrivals(false); game::init();
+    int app = -1;
+    for (int i = 0; i < 60 * 40 && app < 0; i++) { step(1); for (const Train& t : trains()) if (t.st == Train::Approach && t.x > -2.6f) app = t.svc; }
+    CHECK(app >= 0, "an approaching train exists");
+    testToggleHome();                                           // home signal held at red
+    const int b0 = stats().dragBlocked;
+    testDragTrain(app, STOP_X, 6.0f);
+    const Train* at = nullptr; for (const Train& t : trains()) if (t.svc == app) at = &t;
+    CHECK(at && at->x <= HOME_X + 1e-3f && !at->routed, "cannot pull it past a red home signal");
+    CHECK(stats().dragBlocked > b0, "the player is told why (red signal)");
+    const float xb = at->x;
+    testDragTrain(app, xb - 0.5f, 2.0f);
+    at = nullptr; for (const Train& t : trains()) if (t.svc == app) at = &t;
+    CHECK(at && at->x < xb - 0.2f, "it can be shunted back along the track");
+    testToggleHome();
+    testDragTrain(app, STOP_X, 8.0f);
+    at = nullptr; for (const Train& t : trains()) if (t.svc == app) at = &t;
+    CHECK(at && at->routed && at->x > HOME_X, "with a clear signal it can be pulled into the station");
 
     std::printf("== 11. 10-minute stability run ==\n");
     reset(); safe = true;

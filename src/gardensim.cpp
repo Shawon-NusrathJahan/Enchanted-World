@@ -1,6 +1,7 @@
 #include "gardensim.h"
 
 #include "pathfind.h"
+#include "game.h"
 #include "theme.h"
 
 #include <algorithm>
@@ -32,7 +33,7 @@ constexpr float WAKE_DEADLINE = 15.0f;    // ... or when any flower will be crit
 constexpr float REPLANT_AFTER = 25.0f;    // dead flower is replaced by a new seed after this long
 constexpr float GARDENER_SCALE = 0.46f;
 
-const Vec2 DOOR{-1.12f, -0.22f};
+const Vec2 DOOR{1.12f, -0.22f};                 // cottage door (cottage on the RIGHT)
 
 struct Row
 {
@@ -59,6 +60,8 @@ std::vector<Vec2>       meadow_;
 float  windAngle_ = 0.0f, windBoost_ = 0.0f, windX_ = 1.18f, windY_ = 0.2f;
 bool   hudOn_ = true, started_ = false;
 double simTime_ = 0.0;
+int    bloomed_ = 0, withered_ = 0;   // batched gameplay events
+float  reportT_ = 0.0f;
 
 // gardener working memory
 std::vector<Vec2> route_;
@@ -95,11 +98,12 @@ void seedFlower(Flower& f, int index, int generation)
     if (hash1(k + 6.0f) > 0.82f) f.thirst *= 2.0f;          // a few flowers are real drinkers
     f.growRate = lerpf(0.022f, 0.050f, hash1(k + 2.0f));
     f.frail    = hash1(k + 3.0f);
-    f.growth   = 0.0f;                                   // empty garden: nothing has grown yet
+    f.growth   = generation == 0 ? lerpf(0.35f, 0.95f, hash1(k + 8.0f)) : 0.0f;   // first garden: already blooming
     f.water    = lerpf(0.10f, 0.48f, hash1(k + 4.0f));   // soil is already dry
     f.health   = 0.85f;
     f.dead     = false;
     f.deadTime = 0.0f;
+    f.bloomed  = false;
 }
 
 bool  isNeedy(const Flower& f)  { return !f.dead && f.water < NEED_WATER; }
@@ -146,7 +150,8 @@ void updateFlowers(float dt)
             if (f.growth > 0.05f) f.growth = std::max(0.05f, f.growth - 0.004f * dt);
         }
         else if (f.frail > 0.70f) f.health -= 0.0025f * dt;           // fragile ones slowly deteriorate
-        if (f.health <= 0.0f) { f.health = 0.0f; f.dead = true; f.deadTime = 0.0f; }
+        if (f.health <= 0.0f) { f.health = 0.0f; f.dead = true; f.deadTime = 0.0f; withered_++; }
+        if (f.growth >= 1.0f && !f.bloomed) { f.bloomed = true; bloomed_++; }
     }
 }
 
@@ -165,10 +170,11 @@ void buildLayout()
     static const int cyc[] = {8, 10, 12, 15};
 
     struct Bed { const char* tag; float xa, xb, y0, dy; int rows, cols; float seed; };
-    const Bed beds[] = {{"A", -1.62f, -0.76f, -0.66f, -0.10f, 3, 6, 1.0f},
-                        {"B", 0.62f, 1.62f, -0.90f, -0.085f, 2, 6, 7.0f},
-                        {"C", -0.50f, 0.30f, -0.285f, 0.0f, 1, 6, 13.0f},
-                        {"D", 0.98f, 1.62f, -0.285f, 0.0f, 1, 4, 19.0f}};
+    // layout is mirrored: pond + waterfall on the left, cottage on the right
+    const Bed beds[] = {{"A", 0.76f, 1.62f, -0.66f, -0.10f, 3, 6, 1.0f},
+                        {"B", -1.62f, -0.62f, -0.90f, -0.085f, 2, 6, 7.0f},
+                        {"C", -0.30f, 0.50f, -0.285f, 0.0f, 1, 6, 13.0f},
+                        {"D", -1.22f, -0.92f, -0.285f, 0.0f, 1, 3, 19.0f}};
 
     flowers_.clear();
     rows_.clear();
@@ -176,9 +182,9 @@ void buildLayout()
 
     // --- walking graph ---
     nodeDoor_ = graph_.add(DOOR.x, DOOR.y);
-    const int p0 = graph_.add(-1.00f, -0.28f), p1 = graph_.add(-0.60f, -0.44f);
-    const int p2 = graph_.add(-0.16f, -0.66f), p3 = graph_.add(0.06f, -0.88f);
-    nodePond_    = graph_.add(0.24f, -0.60f);
+    const int p0 = graph_.add(1.00f, -0.28f), p1 = graph_.add(0.60f, -0.44f);
+    const int p2 = graph_.add(0.16f, -0.66f), p3 = graph_.add(-0.06f, -0.88f);
+    nodePond_    = graph_.add(-0.24f, -0.60f);
     graph_.link(nodeDoor_, p0); graph_.link(p0, p1); graph_.link(p1, p2); graph_.link(p2, p3); graph_.link(p2, nodePond_);
 
     int bedFirstRow[4] = {0, 0, 0, 0};
@@ -232,18 +238,18 @@ void buildLayout()
             graph_.link(rows_[r].nodeR, rows_[r + 1].nodeR);
         }
     }
-    // bed A (rows 0..2): right ends toward the path
-    graph_.link(rows_[0].nodeR, p1); graph_.link(rows_[0].nodeR, p2);
-    graph_.link(rows_[1].nodeR, p2); graph_.link(rows_[2].nodeR, p2); graph_.link(rows_[2].nodeR, p3);
-    // bed B (rows 3..4): left ends toward the path
-    graph_.link(rows_[3].nodeL, p3); graph_.link(rows_[4].nodeL, p3);
-    // bed C (row 5), bed D (row 6)
-    graph_.link(rows_[5].nodeL, p1); graph_.link(rows_[5].nodeR, p2);
-    graph_.link(rows_[5].nodeR, rows_[6].nodeL);
+    // bed A (rows 0..2, right side): left ends toward the path
+    graph_.link(rows_[0].nodeL, p1); graph_.link(rows_[0].nodeL, p2);
+    graph_.link(rows_[1].nodeL, p2); graph_.link(rows_[2].nodeL, p2); graph_.link(rows_[2].nodeL, p3);
+    // bed B (rows 3..4, left side in front of the pond): right ends toward the path
+    graph_.link(rows_[3].nodeR, p3); graph_.link(rows_[4].nodeR, p3);
+    // bed C (row 5), bed D (row 6, behind the pond)
+    graph_.link(rows_[5].nodeR, p1); graph_.link(rows_[5].nodeL, p2);
+    graph_.link(rows_[5].nodeL, rows_[6].nodeR);
 
     // butterfly meadow points
     meadow_.clear();
-    const float mx[] = {-1.5f, -1.0f, -0.5f, 0.0f, 0.5f, 1.0f, 1.5f, -1.2f, -0.2f, 0.6f, 1.3f, 0.2f};
+    const float mx[] = {1.5f, 1.0f, 0.5f, 0.0f, -0.5f, -1.0f, -1.5f, 1.2f, 0.2f, -0.6f, -1.3f, -0.2f};
     const float my[] = {-0.55f, -0.75f, -0.45f, -0.30f, -0.50f, -0.20f, -0.80f, -0.30f, -0.90f, -0.95f, -0.30f, -0.15f};
     for (int i = 0; i < 12; i++) meadow_.push_back(Vec2{mx[i], my[i]});
 }
@@ -404,7 +410,7 @@ void updateGardener(float dt)
         if (stateTime_ >= 0.4f) decideNext();
         break;
     case GState::ToPond:
-        if (followRoute(dt)) { g_.facing = 1.0f; setState(GState::Filling); }   // faces the pond
+        if (followRoute(dt)) { g_.facing = -1.0f; setState(GState::Filling); }  // faces the pond (on his left)
         break;
     case GState::Filling:
         g_.filling = std::min(1.0f, stateTime_ / 0.4f);
@@ -479,10 +485,10 @@ struct Personality
 };
 
 const Personality PERS[4] = {
-    {"HIGHLY SENSITIVE",  0.46f, 0.00f, 0.0f, 1.35f, 1.30f, 0.42f, 2.6f, 0.0f, false, -1.00f, -0.55f, 0.90f, rgb(1.00f, 0.62f, 0.20f), 0.045f},
-    {"MODERATE",          0.30f, 0.30f, 0.0f, 1.00f, 1.10f, 0.36f, 2.2f, 0.0f, false,  1.00f, -0.70f, 0.90f, rgb(0.55f, 0.55f, 1.00f), 0.042f},
-    {"STRONG REPULSION",  0.42f, 0.00f, 0.0f, 1.30f, 0.90f, 0.40f, 2.6f, 0.0f, true,   0.00f, -0.45f, 1.10f, rgb(1.00f, 0.45f, 0.70f), 0.040f},
-    {"LEAST SENSITIVE",   0.10f, 0.00f, 1.5f, 0.85f, 2.00f, 0.32f, 1.8f, 1.2f, false,  0.30f, -0.25f, 1.30f, rgb(0.70f, 0.95f, 0.45f), 0.038f},
+    {"HIGHLY SENSITIVE",  0.46f, 0.00f, 0.0f, 1.35f, 1.30f, 0.42f, 2.6f, 0.0f, false,  1.00f, -0.55f, 0.90f, rgb(1.00f, 0.62f, 0.20f), 0.045f},
+    {"MODERATE",          0.30f, 0.30f, 0.0f, 1.00f, 1.10f, 0.36f, 2.2f, 0.0f, false, -1.00f, -0.70f, 0.90f, rgb(0.55f, 0.55f, 1.00f), 0.042f},
+    {"STRONG REPULSION",  0.42f, 0.00f, 0.0f, 1.80f, 0.90f, 0.40f, 2.6f, 0.0f, true,   0.00f, -0.45f, 1.10f, rgb(1.00f, 0.45f, 0.70f), 0.040f},
+    {"LEAST SENSITIVE",   0.10f, 0.00f, 1.5f, 0.85f, 2.00f, 0.32f, 1.8f, 1.2f, false, -0.30f, -0.25f, 1.30f, rgb(0.70f, 0.95f, 0.45f), 0.038f},
 };
 
 const float BX0 = -1.72f, BX1 = 1.72f, BY0 = -0.98f, BY1 = 0.52f;
@@ -576,20 +582,48 @@ void updateButterfly(Butterfly& b, float dt, bool cursorOn, float cx, float cy)
         float l = std::hypot(ax, ay);
         if (!cursorOn || l < 1e-4f) { ax = b.fleeDirX; ay = b.fleeDirY; l = std::hypot(ax, ay); if (l < 1e-4f) { ax = 1; ay = 0; l = 1; } }
         ax /= l; ay /= l;
-        float bestScore = -1e9f, bx = ax, by = ay;
-        for (int k = -1; k <= 1; k++)
+        // containment steering (Reynolds): the borders push back before the butterfly reaches them,
+        // so it curves along the edge instead of being trapped in a corner
         {
-            const float ang = k * 0.7f, c = std::cos(ang), s = std::sin(ang);
-            const float dx = ax * c - ay * s, dy = ax * s + ay * c;
-            const float px = b.x + dx * 0.5f, py = b.y + dy * 0.5f;
+            const float R = 0.45f;
+            auto push = [&](float d) { const float k = clampf(1.0f - d / R, 0.0f, 1.0f); return 2.2f * k * k; };
+            ax += push(b.x - BX0) - push(BX1 - b.x);
+            ay += push(b.y - BY0) - push(BY1 - b.y);
+            const float l2 = std::hypot(ax, ay);
+            if (l2 > 1e-4f) { ax /= l2; ay /= l2; }
+        }
+        // escape planning: test 16 headings; score = predicted clearance from the cursor after
+        // 0.35 s + room left to the borders (+ a small preference for the plain "away" direction)
+        float bestScore = -1e9f, bx = ax, by = ay;
+        for (int k = 0; k < 16; k++)
+        {
+            const float ang = TAU * k / 16.0f, dx = std::cos(ang), dy = std::sin(ang);
+            float px = b.x + dx * P.fleeSpeed * 0.35f, py = b.y + dy * P.fleeSpeed * 0.35f;
+            clampBounds(px, py);
             const float room = std::min(std::min(px - BX0, BX1 - px), std::min(py - BY0, BY1 - py));
-            const float score = std::min(room, 0.4f) * 2.0f + (dx * ax + dy * ay);
+            const float clear = cursorOn ? std::hypot(px - cx, py - cy) : 1.0f;
+            const float turn = dx * std::cos(std::atan2(b.vy, b.vx)) + dy * std::sin(std::atan2(b.vy, b.vx));   // avoid U-turns
+            const float score = clear + 0.9f * std::min(room, 0.35f) + 0.25f * (dx * ax + dy * ay) + 0.08f * turn;
             if (score > bestScore) { bestScore = score; bx = dx; by = dy; }
         }
         b.fleeDirX = bx; b.fleeDirY = by;
-        float wx = bx * P.fleeSpeed - b.vx, wy = by * P.fleeSpeed - b.vy;
-        limit(wx, wy, P.maxForce * dt * 2.0f);
-        b.vx += wx; b.vy += wy;
+        // SMOOTH escape (no "thrown away" look):
+        //  * urgency grows smoothly as the cursor gets closer
+        //  * the heading turns toward the escape direction with a LIMITED angular speed
+        //  * the speed changes with a LIMITED acceleration
+        const float urgency = cursorOn ? 1.0f - smoothstep(TWO_CM, P.detectR * 1.6f + 0.05f, dist) : 0.3f;
+        const float targetSpeed = P.fleeSpeed * (0.55f + 0.45f * urgency);
+        float speed = std::hypot(b.vx, b.vy);
+        float heading = speed > 1e-3f ? std::atan2(b.vy, b.vx) : std::atan2(by, bx);
+        float want = std::atan2(by, bx), dAng = want - heading;
+        while (dAng > PI) dAng -= TAU;
+        while (dAng < -PI) dAng += TAU;
+        const float maxTurn = (4.0f + 4.0f * urgency) * dt;            // rad per frame
+        heading += clampf(dAng, -maxTurn, maxTurn);
+        const float maxAcc = P.maxForce * 0.75f * dt;
+        speed += clampf(targetSpeed - speed, -maxAcc, maxAcc);
+        b.vx = std::cos(heading) * speed;
+        b.vy = std::sin(heading) * speed;
         b.fleeTimer -= dt;
         b.shimmer = SHIMMER_TIME;                                   // only butterflies that evade get the glow
         const float safe = P.dwell > 0.0f ? P.detectR * 4.0f : P.detectR * 1.35f;
@@ -626,8 +660,15 @@ void updateButterfly(Butterfly& b, float dt, bool cursorOn, float cx, float cy)
 
     b.x += b.vx * dt; b.y += b.vy * dt;
     // soft keep-in-garden
-    if (b.x < BX0 + 0.05f) b.vx += 1.5f * dt; if (b.x > BX1 - 0.05f) b.vx -= 1.5f * dt;
-    if (b.y < BY0 + 0.05f) b.vy += 1.5f * dt; if (b.y > BY1 - 0.05f) b.vy -= 1.5f * dt;
+    if (b.x < BX0 + 0.05f) b.vx += 1.5f * dt;
+    if (b.x > BX1 - 0.05f) b.vx -= 1.5f * dt;
+    if (b.y < BY0 + 0.05f) b.vy += 1.5f * dt;
+    if (b.y > BY1 - 0.05f) b.vy -= 1.5f * dt;
+    // collision response with the garden borders: reflect the normal velocity (damped)
+    if (b.x <= BX0 && b.vx < 0.0f) b.vx = -0.5f * b.vx;
+    if (b.x >= BX1 && b.vx > 0.0f) b.vx = -0.5f * b.vx;
+    if (b.y <= BY0 && b.vy < 0.0f) b.vy = -0.5f * b.vy;
+    if (b.y >= BY1 && b.vy > 0.0f) b.vy = -0.5f * b.vy;
     clampBounds(b.x, b.y);
 
     // strong repulsion: hard minimum distance - the cursor can never reach it
@@ -641,24 +682,37 @@ void updateButterfly(Butterfly& b, float dt, bool cursorOn, float cx, float cy)
             float nx = cx + dx * TWO_CM, ny = cy + dy * TWO_CM;
             float tx = nx, ty = ny;
             clampBounds(tx, ty);
-            if (std::hypot(tx - cx, ty - cy) < TWO_CM - 1e-3f)        // pinned against an edge: slide along it
-            {
-                const float s[2] = {1.0f, -1.0f};
-                for (int k = 0; k < 2; k++)
+            if (std::hypot(tx - cx, ty - cy) < TWO_CM - 1e-3f)        // pinned against an edge:
+            {                                                           // nearest in-bounds point of the safety circle
+                float best = 1e9f;
+                for (int k = 0; k < 24; k++)
                 {
-                    float px = cx + (-dy) * s[k] * TWO_CM, py = cy + dx * s[k] * TWO_CM;
-                    clampBounds(px, py);
-                    if (std::hypot(px - cx, py - cy) >= TWO_CM - 1e-3f) { tx = px; ty = py; break; }
+                    const float a = TAU * k / 24.0f;
+                    const float px = cx + std::cos(a) * TWO_CM * 1.02f, py = cy + std::sin(a) * TWO_CM * 1.02f;
+                    if (px < BX0 || px > BX1 || py < BY0 || py > BY1) continue;
+                    const float d2 = (px - b.x) * (px - b.x) + (py - b.y) * (py - b.y);
+                    if (d2 < best) { best = d2; tx = px; ty = py; }
                 }
             }
-            b.x = tx; b.y = ty;
+            // move toward the safe point with a bounded speed (2.6 u/s): a fast cursor can never
+            // catch it, but a sudden jump of the cursor does not throw the butterfly away
+            const float cx2 = tx - b.x, cy2 = ty - b.y, cd = std::hypot(cx2, cy2), maxStep = 2.6f * dt;
+            if (cd > maxStep) { b.x += cx2 / cd * maxStep; b.y += cy2 / cd * maxStep; }
+            else { b.x = tx; b.y = ty; }
+            if (cd > 1e-4f)                                         // fly WITH the correction, not against it
+            {
+                const float k = 1.0f - std::exp(-dt * 10.0f), sp = std::max(0.9f, std::hypot(b.vx, b.vy));
+                b.vx += (cx2 / cd * sp - b.vx) * k; b.vy += (cy2 / cd * sp - b.vy) * k;
+            }
             b.fleeing = true; b.fleeTimer = std::max(b.fleeTimer, 0.5f);
             b.shimmer = SHIMMER_TIME;
         }
     }
 
     // wings + glow bookkeeping
-    b.flapPhase += dt * (b.fleeing ? 26.0f : 14.0f + 2.0f * b.kind);
+    const float wantRate = b.fleeing ? 24.0f : 14.0f + 2.0f * b.kind;     // wing beats ease in/out
+    b.flapRate += (wantRate - b.flapRate) * (1.0f - std::exp(-dt * 3.0f));
+    b.flapPhase += dt * b.flapRate;
     if (!b.fleeing) b.shimmer = std::max(0.0f, b.shimmer - dt);
     for (Spark& s : b.sparks)
         if (s.on) { s.age += dt; s.x += s.vx * dt; s.y += s.vy * dt; s.vy -= 0.10f * dt; if (s.age > 0.9f) s.on = false; }
@@ -769,11 +823,8 @@ void update(double dtIn, const AnimState& s, const ui::Mouse& m, bool interactiv
     if (dt > 0.05f) dt = 0.05f;
     if (dt < 0.0f)  dt = 0.0f;
 
-    if (s.time < timeline::LIVING_START)          // the garden has not started yet
-    {
-        if (started_) reset();                    // e.g. the back button: back to the empty garden
-        return;
-    }
+    if (s.waiting || s.time < timeline::LIVING_START)   // the garden is not on screen yet (title / film):
+        return;                                         // it simply pauses - restarting never resets it
     started_ = true;
     simTime_ += dt;
 
@@ -785,6 +836,16 @@ void update(double dtIn, const AnimState& s, const ui::Mouse& m, bool interactiv
 
     for (Ripple& r : ripples_) r.age += dt;
     ripples_.erase(std::remove_if(ripples_.begin(), ripples_.end(), [](const Ripple& r) { return r.age > RIPPLE_LIFE; }), ripples_.end());
+
+    // gameplay: report blooms / withered flowers in small batches (keeps the event feed readable)
+    reportT_ += dt;
+    if (reportT_ > 4.0f)
+    {
+        reportT_ = 0.0f;
+        if (bloomed_ > 0)  game::add(game::Where::Garden, 2 * bloomed_, bloomed_ == 1 ? "A flower burst into full bloom" : "%d flowers burst into full bloom", bloomed_);
+        if (withered_ > 0) game::add(game::Where::Garden, -5 * withered_, withered_ == 1 ? "A flower withered - it was too dry" : "%d flowers withered - too dry", withered_);
+        bloomed_ = withered_ = 0;
+    }
 
     windAngle_ += (36.0f + windBoost_) * dt;
     if (windAngle_ > 3600.0f) windAngle_ -= 3600.0f;

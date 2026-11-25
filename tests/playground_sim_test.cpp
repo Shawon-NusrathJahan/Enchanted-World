@@ -1,5 +1,6 @@
 // Headless test of the playground simulation (no window, no OpenGL).
 #include "playgroundsim.h"
+#include "game.h"
 #include <cmath>
 #include <cstdio>
 #include <vector>
@@ -138,6 +139,46 @@ int main()
     IN = Input(); IN.valid = true; IN.x = q3->x; IN.y = q3->y + 0.12f; IN.down = true; IN.pressed = true; step(1);
     IN.down = false; IN.released = true; step(1); IN = Input();
     CHECK(queue(Ride::Swing).size() == qlen && queue(Ride::Swing).back() == qid, "clicking without moving leaves the queue unchanged");
+
+    std::printf("== 11. consequence: pushed too high -> falls, hurt, sent to the hospital ==\n");
+    clean(); game::init();
+    testSetMat(-1.0f, 0.5f);                                 // mat far away
+    testSendKid(2, Ride::Swing);
+    for (int i = 0; i < 600 && !riding(2); i++) step(1);
+    const int s0 = game::score(), seat = findKid(2)->seat;
+    bool fell11 = false;
+    for (int i = 0; i < 60 * 30 && !fell11; i++) { if (i % 30 == 0) testPushSwing(seat); step(1); if (findKid(2)->st == KState::Falling) fell11 = true; }
+    CHECK(fell11 && stats().falls >= 1, "over-pushing the swing makes the child let go (projectile fall)");
+    secs(3);
+    CHECK(stats().injuries >= 1 && game::score() < s0 + 1, "landing on the grass injures the child and costs points");
+    secs(HOSPITAL_DELAY + 1);
+    CHECK(game::injuredWaiting() >= 1, "the injured child is queued for the hospital");
+    game::Injury inj; CHECK(game::takeInjured(inj) && inj.kidId == 2, "hospital receives kid #2");
+
+    std::printf("== 12. consequence: the safety mat saves a falling child ==\n");
+    clean(); game::init();
+    testSendKid(3, Ride::Swing);
+    for (int i = 0; i < 600 && !riding(3); i++) step(1);
+    const int seat3 = findKid(3)->seat; bool fell3 = false;
+    for (int i = 0; i < 60 * 30 && !fell3; i++) { if (i % 30 == 0) testPushSwing(seat3); step(1); fell3 = findKid(3)->st == KState::Falling; }
+    CHECK(fell3, "kid #3 falls");
+    // place the mat under the child each frame until it lands (the user can drag it)
+    for (int i = 0; i < 60 * 3; i++) { const Kid* k = findKid(3); if (k->st == KState::Falling) testSetMat(k->x, k->landY); step(1); }
+    CHECK(stats().saves >= 1 && stats().injuries == 0, "landing on the mat: safe, no injury");
+
+    std::printf("== 13. ball: user shot into the goal scores ==\n");
+    clean(); game::init();
+    const int g0 = stats().userGoals;
+    for (int tries = 0; tries < 6 && stats().userGoals == g0; tries++) { testThrowBall(0.0f, 0.05f, -3.0f, 0.4f); secs(3); }
+    for (int tries = 0; tries < 6 && stats().userGoals == g0; tries++) { testThrowBall(0.0f, 0.05f, 3.0f, 0.4f); secs(3); }
+    CHECK(stats().userGoals > g0 && game::score() > 0, "a thrown ball reaches a goal and adds score");
+
+    std::printf("== 14. waxed slide: children go faster ==\n");
+    clean();
+    testSendKid(5, Ride::Slide); secs(12); const float v0 = stats().maxSlideSpeed;
+    clean(); testWaxSlide(); testSendKid(5, Ride::Slide); secs(12);
+    std::printf("  max speed %.2f -> %.2f\n", v0, stats().maxSlideSpeed);
+    CHECK(stats().maxSlideSpeed > v0 * 1.15f, "wax raises the slide speed");
 
     std::printf("== 10. 10-minute stability run ==\n");
     reset();

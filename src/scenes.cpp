@@ -1,6 +1,7 @@
 #include "scenes.h"
 
 #include "gfx.h"
+#include "game.h"
 #include "gardensim.h"
 #include "hospital.h"
 #include "playground.h"
@@ -186,6 +187,19 @@ bool drawMapNodes(float t, SceneId& picked)
         setColor(rgb(0.30f, 0.20f, 0.10f, 0.88f)); rect(n.x - w, n.y - 0.255f, n.x + w, n.y - 0.185f);
         ui::drawText(n.x, n.y - 0.238f, px, rgb(1.0f, 0.97f, 0.88f), n.label, true);
 
+        // points earned at this place (gold badge, top-right of the disc)
+        {
+            const game::Where w = n.id == SceneId::Playground ? game::Where::Playground
+                                : n.id == SceneId::Station    ? game::Where::Station
+                                : (n.id == SceneId::HospitalOutside || n.id == SceneId::HospitalInside) ? game::Where::Hospital
+                                : game::Where::Garden;
+            char b[16]; std::snprintf(b, sizeof(b), "%+d", game::scoreAt(w));
+            const float bx = n.x + 0.13f, by = n.y + 0.12f, bw = ui::textWidth(b, 0.0060f) * 0.5f + 0.025f;
+            setColor(rgb(0, 0, 0, 0.25f)); rect(bx - bw + 0.006f, by - 0.032f, bx + bw + 0.006f, by + 0.030f);
+            setColor(game::scoreAt(w) < 0 ? rgb(0.80f, 0.25f, 0.22f) : rgb(0.96f, 0.74f, 0.18f)); rect(bx - bw, by - 0.026f, bx + bw, by + 0.036f);
+            ui::drawText(bx, by - 0.012f, 0.0060f, rgb(1, 1, 1), b, true);
+        }
+
         if (here)    // "you are here" pin
         {
             const float by = 0.012f * std::sin(t * 4.0f);
@@ -215,14 +229,15 @@ const char* name(SceneId id)
     }
 }
 
+// Restart = replay the opening film from the title screen. The GAME SESSION is kept:
+// score, events and every location's state (patients, children, trains, flowers) stay
+// exactly as they are. Only closing the application starts a new session.
 void restartFromBeginning(double now)
 {
-    resetAnimation(now);          // the ONE shared clock goes back to t = 0 (no second timeline is created)
+    resetAnimation(now);          // the ONE shared clock goes back to the title screen
     current = SceneId::Intro;
     mapOpen = false;
-    hospital::reset();
-    playground::reset();
-    station::reset();
+    game::countRestart();
 }
 
 void updateLocation(double dt)
@@ -294,13 +309,22 @@ void drawUI(const AnimState& s, double now)
     }
 
     if (!mapOpen && (current == SceneId::Garden || (current == SceneId::Intro && s.phase == PHASE_LIVING_GARDEN)))
-        gardensim::drawHud();
+    {
+        char stat[96];
+        const gardensim::Gardener& g = gardensim::gardener();
+        const char* doing = g.state == gardensim::GState::InHouse ? "resting" : g.state == gardensim::GState::Watering ? "watering" :
+                            g.state == gardensim::GState::Filling ? "filling the can" : "on the way";
+        std::snprintf(stat, sizeof(stat), "Blooming %d   Thirsty %d   Gardener: %s", gardensim::bloomCount(), gardensim::thirstyCount(), doing);
+        game::drawHud(game::Where::Garden, "The Garden", stat);
+        game::drawFeed();
+    }
 
     if (!mapOpen && (current == SceneId::HospitalOutside || current == SceneId::HospitalInside))
         hospital::drawOverlay(current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside);
     if (!mapOpen && current == SceneId::Playground) playground::drawOverlay();
     if (!mapOpen && current == SceneId::Station)    station::drawOverlay();
 
+    if (s.waiting) { gfx::useTint = true; return; }       // title screen: no buttons, any click starts the film
     if (ui::backButton()) restartFromBeginning(now);
     if (!mapOpen && mapAllowed && ui::mapButton()) mapOpen = true;
 

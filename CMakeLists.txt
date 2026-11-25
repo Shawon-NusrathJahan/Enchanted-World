@@ -18,6 +18,9 @@ add_executable(EnchantedGarden
     src/animation.cpp
     src/theme.cpp
     src/ui.cpp
+    src/font.cpp
+    src/game.cpp
+    src/game_hud.cpp
     src/scenes.cpp
     src/gardensim.cpp
     src/hospitalsim.cpp
@@ -43,18 +46,18 @@ target_link_libraries(EnchantedGarden PRIVATE
 option(BUILD_TESTS "Build the garden simulation test" OFF)
 if(BUILD_TESTS)
     add_executable(garden_sim_test
-        tests/garden_sim_test.cpp src/gardensim.cpp src/theme.cpp src/ui.cpp)
+        tests/garden_sim_test.cpp src/gardensim.cpp src/theme.cpp src/ui.cpp src/font.cpp src/game.cpp)
     target_include_directories(garden_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
     target_link_libraries(garden_sim_test PRIVATE GLEW::GLEW OpenGL::GL)
 
-    add_executable(hospital_sim_test tests/hospital_sim_test.cpp src/hospitalsim.cpp)
+    add_executable(hospital_sim_test tests/hospital_sim_test.cpp src/hospitalsim.cpp src/game.cpp)
     target_include_directories(hospital_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 
-    add_executable(playground_sim_test tests/playground_sim_test.cpp src/playgroundsim.cpp)
+    add_executable(playground_sim_test tests/playground_sim_test.cpp src/playgroundsim.cpp src/game.cpp)
     target_include_directories(playground_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
-    add_executable(station_sim_test tests/station_sim_test.cpp src/stationsim.cpp)
+    add_executable(station_sim_test tests/station_sim_test.cpp src/stationsim.cpp src/game.cpp)
     target_include_directories(station_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 endif()

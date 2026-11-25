@@ -1,5 +1,6 @@
 // Headless test of the hospital simulation (no window, no OpenGL).
 #include "hospitalsim.h"
+#include "game.h"
 #include <cstdio>
 #include <cmath>
 #include <string>
@@ -176,6 +177,31 @@ int main()
     for (int i = 0; i < 60 * 600; i++) step(1, View::Outside);
     std::printf("  admitted %d, released %d, inside now %d, ambulances %d, auto-assigned %d\n", stats().admitted, stats().released, insideCount(), stats().ambulances, stats().autoAssigned);
     CHECK(stats().released > 5 && insideCount() <= hospitalcfg::MAX_INSIDE, "hospital keeps working and never overfills");
+
+
+    std::printf("== 12. score: right room +, wrong room - ==\n");
+    clearWorld(); game::init();
+    testSpawnPatient(Kind::General, Cond::Fever, 1);
+    const int g = last()->id; seat(g);
+    int sc0 = game::score();
+    dragTo(g, 0.56f, -0.40f);                                  // fever into the ER: wrong
+    CHECK(game::score() == sc0 + hospitalcfg::SCORE_WRONG_ROOM, "wrong room costs points");
+    seat(g); sc0 = game::score();
+    dragTo(g, 1.38f, -0.40f);                                  // consultation: right
+    CHECK(game::score() == sc0 + hospitalcfg::SCORE_CORRECT_ROOM, "right room adds points");
+
+    std::printf("== 13. injured playground child arrives, is healed and goes back ==\n");
+    clearWorld(); game::init();
+    game::Injury inj; inj.kidId = 7; inj.cond = (int)Cond::BrokenArm; inj.severity = 3;
+    game::sendToHospital(inj);
+    step(2);
+    const Patient* kp = last();
+    CHECK(kp && kp->kidId == 7 && kp->kind == Kind::Emergency, "child admitted as an emergency patient");
+    const int kid = kp ? kp->id : -1; seat(kid);
+    dragTo(kid, 0.40f, -0.30f);
+    secs(60);
+    int healed = -1;
+    CHECK(stats().kidsHealed == 1 && game::takeHealed(healed) && healed == 7, "treated, released, and sent back to the playground");
 
     std::printf("\n%s (%d failure%s)\n", fails ? "SOME TESTS FAILED" : "ALL TESTS PASSED", fails, fails == 1 ? "" : "s");
     return fails ? 1 : 0;

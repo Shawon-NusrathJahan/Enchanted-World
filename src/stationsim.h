@@ -79,6 +79,10 @@ struct Service
     int   load = 30, alight = 3;
     float actualArr = -1, depTime = -1;
     float flash = 0;                  // platform-change highlight
+    float planDwell = 10;             // timetable stop length (dwell grows when you HOLD)
+    float held = 0;                   // seconds of HOLD you added
+    bool  early = false;              // you sent it off before its planned time
+    bool  rushed = false;             // DEPART NOW was used
 };
 
 struct Train
@@ -96,6 +100,10 @@ struct Train
     bool  departNow = false;          // user clicked "dispatch now"
     bool  closing = false;            // doors are closing for departure (latched)
     float target = STOP_X;            // current braking target (for the HUD)
+    bool  manual = false;             // being dragged along the track by you
+    float wantX = 0;                  // where you are pulling it to
+    bool  userHold = false;           // HOLD before the station (stops at the home signal)
+    float blockedT = 0;               // drag feedback throttle
 };
 
 struct Passenger
@@ -126,6 +134,7 @@ struct Stats
     int boarded = 0, alighted = 0, missed = 0, entered = 0, exited = 0;
     int reroutes = 0, platformChanges = 0, interlockRefusals = 0, drags = 0;
     float totalDelay = 0;
+    int departNow = 0, holds = 0, helped = 0, wrongTrain = 0, leftBehind = 0, trainDrags = 0, dragBlocked = 0;
 };
 
 void init(unsigned seed = 777u);
@@ -162,6 +171,18 @@ int    hoverPassengerId();
 int    hoverTrainSvc();                          // service id of the train under the cursor (-1 none)
 int    hoverThing();                             // 0 none 1 home signal 2 starter P1 3 starter P2 4 points 5 bridge 6 entrance 7 crossing
 bool   dragging();
+// ---- dispatcher controls (the panel of the selected train) ----
+constexpr float PANEL_X0 = 0.98f, PANEL_X1 = 1.74f, PANEL_Y0 = -0.97f, PANEL_Y1 = -0.54f;
+constexpr float BTN_X0 = 1.02f, BTN_X1 = 1.70f;
+constexpr float BTN_DEP_Y0 = -0.79f, BTN_DEP_Y1 = -0.70f;     // DEPART NOW
+constexpr float BTN_HOLD_Y0 = -0.92f, BTN_HOLD_Y1 = -0.83f;   // HOLD +10 S
+int    selectedTrain();                          // service id (-1 none)
+int    draggedTrain();                           // service id being pulled along the track (-1 none)
+bool   departNow(int svc);                       // any time, also while boarding
+bool   holdTrain(int svc);                       // +HOLD_STEP s at the platform, or wait at the home signal
+const char* banner(float& age);                  // latest timetable change (for the big banner)
+float  plannedDeparture(const Service& s);       // timetable departure time
+float  expectedDeparture(const Service& s);      // with delays and holds
 
 // test helpers
 void   testSetArrivals(bool on);                 // automatic passenger arrivals on/off
@@ -171,6 +192,7 @@ void   testToggleHome();
 void   testToggleStarter(int platform);
 bool   testSwapPoints();
 void   testDropPassenger(int id, float x, float y);
+void   testDragTrain(int svc, float toX, float seconds);   // pull a train along its track
 
 }   // namespace station
 

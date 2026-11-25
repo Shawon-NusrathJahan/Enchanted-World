@@ -1,6 +1,8 @@
 // station.cpp - draws the train station (building, platforms, footbridge, trains, people) and its HUD
 
 #include "station.h"
+#include "game.h"
+#include "cgmath.h"
 
 #include "gfx.h"
 #include "theme.h"
@@ -293,39 +295,42 @@ void canopyAndBoard(float t)
     selfLitRect(bx0 - 0.008f, by0 - 0.008f, bx1 + 0.008f, by1 + 0.008f, rgb(0.20f, 0.22f, 0.26f));
     selfLitRect(bx0, by0, bx1, by1, rgb(0.03f, 0.04f, 0.08f));
     const bool o = gfx::useTint; gfx::useTint = false;
-    const float px = 0.0034f, cName = bx0 + 0.015f, cDest = bx0 + 0.15f, cPlat = bx0 + 0.46f, cDue = bx0 + 0.58f, cLate = bx0 + 0.74f;
+    const float px = 0.0034f, cName = bx0 + 0.015f, cDest = bx0 + 0.14f, cPlat = bx0 + 0.40f, cDue = bx0 + 0.47f, cLate = bx0 + 0.62f;
     const Color head = rgb(0.55f, 0.75f, 1.0f);
     ui::drawText(cName, by1 - 0.032f, px, head, "TRAIN");
     ui::drawText(cDest, by1 - 0.032f, px, head, "TO");
-    ui::drawText(cPlat, by1 - 0.032f, px, head, "PLAT");
-    ui::drawText(cDue, by1 - 0.032f, px, head, "DUE");
-    ui::drawText(cLate, by1 - 0.032f, px, head, "LATE");
+    ui::drawText(cPlat, by1 - 0.032f, px, head, "PL");
+    ui::drawText(cDue, by1 - 0.032f, px, head, "LEAVES");
+    ui::drawText(cLate, by1 - 0.032f, px, head, "STATUS");
     int row = 0;
     for (const Service& s : services())
     {
         if (s.st == SvcState::Departed) continue;
         if (row >= 4) break;
         const Train* tr = nullptr; for (const Train& x : trains()) if (x.svc == s.id) tr = &x;
-        char due[16], plat[8], late[16] = "";
-        if (s.st == SvcState::AtPlatform) std::snprintf(due, sizeof(due), tr && tr->closing ? "DEPART" : "BOARD");
-        else
-        {
-            const float eta = s.estArr - now();
-            if (eta <= 1.0f) std::snprintf(due, sizeof(due), "ARRIVE");
-            else std::snprintf(due, sizeof(due), "%.0fS", eta);
-        }
+        char due[16], plat[8], status[20];
+        const float dep = expectedDeparture(s), late = dep - plannedDeparture(s);
+        if (s.st == SvcState::AtPlatform && tr && tr->closing) std::snprintf(due, sizeof(due), "NOW");
+        else std::snprintf(due, sizeof(due), "%.0f S", std::max(0.0f, dep - now()));
         const bool known = s.confirmed || s.locked || s.st != SvcState::Scheduled;
         std::snprintf(plat, sizeof(plat), known ? "%d" : "%d?", s.platform + 1);
-        const float lateBy = (s.actualArr >= 0 ? s.actualArr : s.estArr) - s.planArr;
-        if (lateBy > 3.0f) std::snprintf(late, sizeof(late), "+%.0fS", lateBy);
+        Color sc = rgb(0.55f, 1.0f, 0.60f);
+        if (tr && tr->userHold)            { std::snprintf(status, sizeof(status), "HELD");            sc = rgb(1.0f, 0.70f, 0.30f); }
+        else if (s.flash > 0.0f)           { std::snprintf(status, sizeof(status), "PLAT CHANGE");     sc = rgb(1.0f, 0.95f, 0.40f); }
+        else if (late > 3.0f)              { std::snprintf(status, sizeof(status), "+%.0f S LATE", late); sc = rgb(1.0f, 0.45f, 0.40f); }
+        else if (late < -3.0f)             { std::snprintf(status, sizeof(status), "%.0f S EARLY", -late); sc = rgb(0.45f, 0.90f, 1.0f); }
+        else if (s.st == SvcState::AtPlatform) std::snprintf(status, sizeof(status), tr && tr->closing ? "DEPARTING" : "BOARDING");
+        else                                std::snprintf(status, sizeof(status), "ON TIME");
         const float y = by1 - 0.068f - row * 0.033f;
         Color c = rgb(1.0f, 0.80f, 0.30f);
-        if (s.flash > 0.0f && std::fmod(t * 4.0f, 1.0f) < 0.6f) c = rgb(1.0f, 1.0f, 1.0f);
+        const bool blink = (s.flash > 0.0f || (tr && tr->userHold)) && std::fmod(t * 4.0f, 1.0f) < 0.6f;
+        if (blink) { c = rgb(1.0f, 1.0f, 1.0f); setColor(rgb(1.0f, 0.85f, 0.3f, 0.18f)); rect(bx0 + 0.004f, y - 0.006f, bx1 - 0.004f, y + 0.026f); }
+        if (tr && tr->svc == selectedTrain()) { setColor(rgb(0.4f, 0.8f, 1.0f, 0.22f)); rect(bx0 + 0.004f, y - 0.006f, bx1 - 0.004f, y + 0.026f); }
         ui::drawText(cName, y, px, c, s.name);
-        ui::drawText(cDest, y, px, c, destName(s.dest));
+        ui::drawText(cDest, y, fitPx(destName(s.dest), 0.25f, px), c, destName(s.dest));
         ui::drawText(cPlat + 0.01f, y, px, known ? c : rgb(0.7f, 0.6f, 0.4f), plat);
-        ui::drawText(cDue, y, px, s.st == SvcState::AtPlatform ? rgb(0.55f, 1.0f, 0.60f) : c, due);
-        if (late[0]) ui::drawText(cLate, y, px, rgb(1.0f, 0.45f, 0.40f), late);
+        ui::drawText(cDue, y, px, c, due);
+        ui::drawText(cLate, y, fitPx(status, bx1 - cLate - 0.01f, px), sc, status);
         row++;
     }
     gfx::useTint = o;
@@ -509,6 +514,22 @@ void drawTrain(const Train& tr, float t)
 {
     const Service* s = findService(tr.svc);
     if (!s) return;
+    if (tr.svc == selectedTrain() || tr.svc == draggedTrain())             // selected: glowing outline
+    {
+        const float y0 = trackY(tr.track, tr.x - TRAIN_L / 2), pulse = 0.5f + 0.5f * std::sin(t * 6.0f);
+        const bool o = gfx::useTint; gfx::useTint = false;
+        setColor(rgb(0.35f, 0.85f, 1.0f, 0.25f + 0.25f * pulse));
+        rect(tr.x - TRAIN_L - 0.025f, y0 - 0.03f, tr.x + 0.025f, y0 + CAR_H + 0.03f);
+        gfx::useTint = o;
+    }
+    if (tr.manual)                                                          // where you are pulling it
+    {
+        const bool o = gfx::useTint; gfx::useTint = false;
+        const float y = trackY(tr.track, tr.wantX) + 0.02f;
+        setColor(rgb(1.0f, 0.9f, 0.3f, 0.8f)); thickLine(tr.x, y, tr.wantX, y, 0.008f);
+        circle(tr.wantX, y, 0.018f, 12);
+        gfx::useTint = o;
+    }
     for (int c = CARS - 1; c >= 0; c--) drawCar(tr, *s, c, t);
     // destination label above the lead car while visible
     const float yf = trackY(tr.track, tr.x);
@@ -620,49 +641,85 @@ void drawOverlay()
     gfx::useTint = false;
     const Stats& s = stats();
 
-    // ---- statistics bar ----
-    const float x0 = -1.18f, x1 = 1.55f;
-    setColor(rgb(0.04f, 0.06f, 0.14f, 0.74f)); rect(x0, 0.795f, x1, 1.0f);
-    setColor(rgb(1.0f, 0.75f, 0.30f, 0.9f)); rect(x0, 0.793f, x1, 0.797f);
-    char l1[96], l2[160], l3[160];
-    std::snprintf(l1, sizeof(l1), "%s  -  DISPATCHER VIEW", stationcfg::NAME);
-    std::snprintf(l2, sizeof(l2), "TRAINS: ARRIVED %d  DEPARTED %d  ON TIME %d  LATE %d    PASSENGERS: BOARDED %d  ALIGHTED %d  MISSED %d",
-                  s.arrived, s.departed, s.onTime, s.delayed, s.boarded, s.alighted, s.missed);
-    std::snprintf(l3, sizeof(l3), "WAITING P1 %d  P2 %d   BRIDGE %s  CROSSING %s   DIJKSTRA RE-ROUTES %d   PLATFORM CHANGES %d",
-                  waitingOn(0), waitingOn(1), bridgeOpen() ? "OPEN" : "CLOSED", crossingOpen() ? "OPEN" : "CLOSED", s.reroutes, s.platformChanges);
-    ui::drawText(x0 + 0.03f, 0.925f, fitPx(l1, 2.0f, 0.0090f), rgb(1.0f, 0.90f, 0.55f), l1);
-    ui::drawText(x0 + 0.03f, 0.865f, fitPx(l2, 2.65f, 0.0068f), rgb(1, 1, 1), l2);
-    ui::drawText(x0 + 0.03f, 0.812f, fitPx(l3, 2.65f, 0.0068f), rgb(0.85f, 0.92f, 1.0f), l3);
+    // ---- game HUD ----
+    {
+        char stat[96];
+        std::snprintf(stat, sizeof(stat), "On time %d   Late %d   Boarded %d   Missed %d   Waiting %d",
+                      s.onTime, s.delayed, s.boarded, s.missed, waitingOn(0) + waitingOn(1));
+        game::drawHud(game::Where::Station, stationcfg::NAME, stat);
+    }
+    // ---- timetable change banner (big and clear) ----
+    {
+        float age = 99.0f;
+        const char* b = banner(age);
+        if (b[0] && age < 5.0f)
+        {
+            const float a = std::min(1.0f, std::min(age * 4.0f, (5.0f - age) * 1.5f)), drop = 0.04f * (1.0f - std::min(1.0f, age * 4.0f));
+            const float px = 0.0062f, w = ui::textWidth(b, px) * 0.5f + 0.10f, y = 0.755f + drop;
+            setColor(rgb(0.95f, 0.70f, 0.15f, 0.95f * a)); rect(-w, y - 0.035f, w, y + 0.045f);
+            setColor(rgb(0.10f, 0.08f, 0.05f, 0.9f * a)); rect(-w, y - 0.035f, -w + 0.012f, y + 0.045f); rect(w - 0.012f, y - 0.035f, w, y + 0.045f);
+            ui::drawText(-w + 0.05f, y - 0.010f, 0.0046f, rgb(0.15f, 0.08f, 0.02f, a), "!", false);
+            ui::drawText(0.0f, y - 0.012f, px, rgb(0.12f, 0.06f, 0.02f, a), b, true);
+        }
+    }
+    // ---- dispatcher panel of the selected train ----
+    if (const Service* sel = selectedTrain() >= 0 ? findService(selectedTrain()) : nullptr)
+    {
+        const Train* tr = nullptr; for (const Train& x : trains()) if (x.svc == sel->id) tr = &x;
+        if (tr)
+        {
+            setColor(rgb(0.04f, 0.07f, 0.14f, 0.92f)); rect(PANEL_X0, PANEL_Y0, PANEL_X1, PANEL_Y1);
+            setColor(rgb(0.35f, 0.85f, 1.0f)); rect(PANEL_X0, PANEL_Y1 - 0.006f, PANEL_X1, PANEL_Y1);
+            char h[48]; std::snprintf(h, sizeof(h), "%s to %s", sel->name, destName(sel->dest));
+            ui::drawText((PANEL_X0 + PANEL_X1) / 2, PANEL_Y1 - 0.050f, fitPx(h, PANEL_X1 - PANEL_X0 - 0.04f, 0.0058f), rgb(1.0f, 0.92f, 0.6f), h, true);
+            const bool dwell = tr->st == Train::Dwell, appr = tr->st == Train::Approach;
+            const char* depL = dwell ? (tr->closing || tr->departNow ? "DEPARTING..." : "DEPART NOW") : appr && tr->userHold ? "LET IT IN" : "DEPART NOW";
+            const char* holdL = dwell ? "HOLD +10 S" : appr ? (tr->userHold ? "HELD AT SIGNAL" : "HOLD OUTSIDE") : "HOLD";
+            const bool depOk = dwell || (appr && tr->userHold), holdOk = dwell || (appr && !tr->routed);
+            auto button = [&](float y0, float y1, const char* label, bool ok, const Color& c) {
+                const bool hov = ok && ui::mouse.valid && ui::mouse.x >= BTN_X0 && ui::mouse.x <= BTN_X1 && ui::mouse.y >= y0 && ui::mouse.y <= y1;
+                Color bc = ok ? c : rgb(0.35f, 0.38f, 0.42f);
+                if (hov) bc = mix(bc, rgb(1, 1, 1), 0.25f);
+                setColor(rgb(0, 0, 0, 0.35f)); rect(BTN_X0 + 0.008f, y0 - 0.008f, BTN_X1 + 0.008f, y1 - 0.008f);
+                setColor(bc); rect(BTN_X0, y0, BTN_X1, y1);
+                ui::drawText((BTN_X0 + BTN_X1) / 2, (y0 + y1) / 2 - 0.016f, 0.0058f, rgb(1, 1, 1, ok ? 1.0f : 0.6f), label, true);
+            };
+            button(BTN_DEP_Y0, BTN_DEP_Y1, depL, depOk, rgb(0.20f, 0.62f, 0.30f));
+            button(BTN_HOLD_Y0, BTN_HOLD_Y1, holdL, holdOk, rgb(0.85f, 0.50f, 0.12f));
+            char inf[64];
+            if (dwell) std::snprintf(inf, sizeof(inf), "%d aboard - leaves in %.0f s", sel->load, std::max(0.0f, expectedDeparture(*sel) - now()));
+            else if (appr) std::snprintf(inf, sizeof(inf), "Drag it along the track");
+            else std::snprintf(inf, sizeof(inf), "Leaving the station");
+            ui::drawText((PANEL_X0 + PANEL_X1) / 2, BTN_DEP_Y1 + 0.032f, 0.0044f, rgb(0.8f, 0.9f, 1.0f), inf, true);
+        }
+    }
 
     // ---- route of the passenger under the cursor (the Dijkstra path) ----
     const int hp = dragging() ? -1 : hoverPassengerId();
     if (hp >= 0)
         if (const Passenger* p = findPassenger(hp))
         {
+            std::vector<cg::V2> pts;
+            pts.push_back(cg::V2(p->x, p->y + 0.01f));
+            for (size_t i = p->pathIdx; i < p->path.size(); i++) pts.push_back(cg::V2(NODE_X[p->path[i]], NODE_Y[p->path[i]] + 0.01f));
+            if (p->ticket >= 0 && p->door >= 0)
+                if (const Service* sv = findService(p->ticket)) { float dx, dy; doorPos(sv->platform, p->door, dx, dy); pts.push_back(cg::V2(dx, dy + 0.01f)); }
+            // Cohen-Sutherland: every segment is clipped to the play area so the route line
+            // never runs over the score bar at the top of the screen
             glLineWidth(3.0f);
             glColor4f(1.0f, 0.90f, 0.25f, 0.9f);
-            glBegin(GL_LINE_STRIP);
-            glVertex2f(p->x, p->y + 0.01f);
-            for (size_t i = p->pathIdx; i < p->path.size(); i++) glVertex2f(NODE_X[p->path[i]], NODE_Y[p->path[i]] + 0.01f);
-            if (p->ticket >= 0 && p->door >= 0)
-                if (const Service* sv = findService(p->ticket)) { float dx, dy; doorPos(sv->platform, p->door, dx, dy); glVertex2f(dx, dy + 0.01f); }
+            glBegin(GL_LINES);
+            for (size_t i = 1; i < pts.size(); i++)
+            {
+                cg::V2 a = pts[i - 1], b = pts[i];
+                if (cg::clipLineCS(a, b, -WORLD_W, -1.0f, WORLD_W, 0.80f)) { glVertex2f(a.x, a.y); glVertex2f(b.x, b.y); }
+            }
             glEnd();
             glLineWidth(1.0f);
             for (size_t i = p->pathIdx; i < p->path.size(); i++) { setColor(rgb(1.0f, 0.9f, 0.25f)); circle(NODE_X[p->path[i]], NODE_Y[p->path[i]] + 0.01f, 0.012f, 10); }
         }
 
-    // ---- event feed (newest at the bottom) ----
-    {
-        const std::vector<LogLine>& lg = log();
-        const int n = (int)std::min<size_t>(3, lg.size());
-        setColor(rgb(0.03f, 0.05f, 0.12f, 0.74f)); rect(-0.66f, -1.0f, WORLD_W + 0.1f, -0.86f);
-        for (int i = 0; i < n; i++)
-        {
-            const LogLine& l = lg[lg.size() - n + i];
-            Color c = uiColor(l.color); c.a = 0.55f + 0.45f * (float)(i + 1) / n;
-            ui::drawText(-0.63f, -0.895f - i * 0.043f, fitPx(l.text, 2.35f, 0.0052f), c, l.text);
-        }
-    }
+    game::drawFeed();
 
     // ---- floating pop-ups ----
     for (const Popup& p : popups())
@@ -678,12 +735,14 @@ void drawOverlay()
     // ---- drag hint ----
     if (dragging() && ui::mouse.valid)
     {
-        const char* b = std::fabs(ui::mouse.y - P1_Y) < 0.13f ? "DROP ON PLATFORM 1 - DIJKSTRA FINDS A NEW ROUTE"
-                      : std::fabs(ui::mouse.y - P2_Y) < 0.10f ? "DROP ON PLATFORM 2 - DIJKSTRA FINDS A NEW ROUTE" : "NOT HERE - THAT IS THE TRACK!";
+        const int ht = hoverTrainSvc();
+        const char* b = ht >= 0 ? "DROP ON THE TRAIN: RIGHT TICKET +2, WRONG TRAIN -2"
+                      : std::fabs(ui::mouse.y - P1_Y) < 0.13f ? "DROP ON PLATFORM 1 - FINDS THE QUICKEST WAY"
+                      : std::fabs(ui::mouse.y - P2_Y) < 0.10f ? "DROP ON PLATFORM 2 - FINDS THE QUICKEST WAY" : "NOT HERE - THAT IS THE TRACK!";
         const float px = 0.0058f, w = ui::textWidth(b, px) + 0.04f;
         const float x = clampf(ui::mouse.x + 0.06f, -WORLD_W + 0.02f, WORLD_W - w - 0.02f), y = clampf(ui::mouse.y + 0.06f, -0.80f, 0.70f);
         setColor(rgb(0.02f, 0.06f, 0.10f, 0.88f)); rect(x, y, x + w, y + 0.07f);
-        ui::drawText(x + 0.02f, y + 0.02f, px, std::fabs(ui::mouse.y - P1_Y) < 0.13f || std::fabs(ui::mouse.y - P2_Y) < 0.10f ? rgb(0.6f, 1.0f, 0.6f) : rgb(1.0f, 0.5f, 0.45f), b);
+        ui::drawText(x + 0.02f, y + 0.02f, px, ht >= 0 || std::fabs(ui::mouse.y - P1_Y) < 0.13f || std::fabs(ui::mouse.y - P2_Y) < 0.10f ? rgb(0.6f, 1.0f, 0.6f) : rgb(1.0f, 0.5f, 0.45f), b);
     }
 
     // ---- hover tooltip ----
@@ -699,14 +758,14 @@ void drawOverlay()
             if (sv) std::snprintf(t1, sizeof(t1), "PASSENGER #%d  TICKET %s TO %s  PLATFORM %d", p->id, sv->name, destName(sv->dest), sv->platform + 1);
             else    std::snprintf(t1, sizeof(t1), "PASSENGER #%d  ARRIVED - WALKING TO THE EXIT", p->id);
             if (p->st == Passenger::NoRoute) std::snprintf(t2, sizeof(t2), "NO ROUTE: BRIDGE AND CROSSING CLOSED - WAITING");
-            else if (p->st == Passenger::Wait) std::snprintf(t2, sizeof(t2), "WAITING AT DOOR %d (FIFO, %d AT THIS DOOR)", p->door + 1, sv ? doorLoad(sv->platform, p->door) : 0);
-            else std::snprintf(t2, sizeof(t2), "DIJKSTRA ROUTE: %s, %.0fS WALK", p->viaBridge ? "VIA FOOTBRIDGE" : p->viaCrossing ? "VIA LEVEL CROSSING" : "ALONG THE PLATFORM", p->routeCost);
-            std::snprintf(t3, sizeof(t3), "DRAG ME TO ANOTHER SPOT - I WILL RE-ROUTE");
+            else if (p->st == Passenger::Wait) std::snprintf(t2, sizeof(t2), "WAITING AT DOOR %d (%d IN LINE)", p->door + 1, sv ? doorLoad(sv->platform, p->door) : 0);
+            else std::snprintf(t2, sizeof(t2), "WALKING %s, ABOUT %.0f S", p->viaBridge ? "VIA FOOTBRIDGE" : p->viaCrossing ? "VIA LEVEL CROSSING" : "ALONG THE PLATFORM", p->routeCost);
+            std::snprintf(t3, sizeof(t3), "DRAG ME TO A PLATFORM - OR ONTO MY TRAIN");
         }
         else if (thing == 1)
         {
             std::snprintf(t1, sizeof(t1), "HOME SIGNAL: %s%s", homeAspect() == Aspect::Red ? "RED (STOP)" : "YELLOW (ROUTE SET)", homeHeld() ? " - HELD BY YOU" : "");
-            std::snprintf(t2, sizeof(t2), "INTERLOCKING: RED WHILE POINTS OR PLATFORM ARE OCCUPIED");
+            std::snprintf(t2, sizeof(t2), "RED WHILE THE POINTS OR THE PLATFORM ARE BUSY");
             std::snprintf(t3, sizeof(t3), "CLICK TO %s ARRIVING TRAINS", homeHeld() ? "RELEASE" : "HOLD");
         }
         else if (thing == 2 || thing == 3)
@@ -719,25 +778,25 @@ void drawOverlay()
         else if (thing == 4)
         {
             std::snprintf(t1, sizeof(t1), "POINTS: SET FOR PLATFORM %d%s", pointsTrack() + 1, pointsLocked() ? " - LOCKED (TRAIN ON THEM)" : "");
-            std::snprintf(t2, sizeof(t2), "PLANNER: GREEDY INTERVAL PARTITIONING OF PLATFORMS");
+            std::snprintf(t2, sizeof(t2), "THE TIMETABLE MOVES TRAINS TO A FREE PLATFORM");
             std::snprintf(t3, sizeof(t3), "CLICK TO SEND THE NEXT TRAIN TO THE OTHER PLATFORM");
         }
         else if (thing == 5)
         {
             std::snprintf(t1, sizeof(t1), "FOOTBRIDGE: %s", bridgeOpen() ? "OPEN" : "CLOSED FOR MAINTENANCE");
-            std::snprintf(t2, sizeof(t2), "STAIRS COST %.1fX WALKING TIME IN DIJKSTRA", stationcfg::STAIR_FACTOR);
+            std::snprintf(t2, sizeof(t2), "STAIRS ARE %.1fX SLOWER THAN WALKING", stationcfg::STAIR_FACTOR);
             std::snprintf(t3, sizeof(t3), "CLICK TO %s IT - EVERYONE RE-ROUTES", bridgeOpen() ? "CLOSE" : "OPEN");
         }
         else if (thing == 6)
         {
             std::snprintf(t1, sizeof(t1), "STATION ENTRANCE");
-            std::snprintf(t2, sizeof(t2), "PASSENGERS ARRIVE AS A POISSON PROCESS (MEAN %.1fS)", stationcfg::ARRIVAL_MEAN);
+            std::snprintf(t2, sizeof(t2), "A NEW PASSENGER ABOUT EVERY %.1f S", stationcfg::ARRIVAL_MEAN);
             std::snprintf(t3, sizeof(t3), "CLICK FOR A RUSH: 5 MORE PASSENGERS");
         }
         else if (thing == 7)
         {
             std::snprintf(t1, sizeof(t1), "LEVEL CROSSING: %s", crossingOpen() ? "OPEN" : "GATES DOWN - TRAIN PASSING");
-            std::snprintf(t2, sizeof(t2), "WHEN CLOSED ITS EDGE COSTS INFINITY IN DIJKSTRA");
+            std::snprintf(t2, sizeof(t2), "WHILE THE GATES ARE DOWN NOBODY CAN CROSS");
             std::snprintf(t3, sizeof(t3), "PASSENGERS USE THE BRIDGE OR WAIT");
         }
         else if (hoverTrainSvc() >= 0)
@@ -745,9 +804,9 @@ void drawOverlay()
             const Service* sv = findService(hoverTrainSvc());
             const Train* tr = nullptr; for (const Train& x : trains()) if (x.svc == sv->id) tr = &x;
             std::snprintf(t1, sizeof(t1), "%s TO %s  LOAD %d/%d", sv->name, destName(sv->dest), sv->load, stationcfg::CAPACITY);
-            if (tr->st == Train::Dwell) std::snprintf(t2, sizeof(t2), "AT PLATFORM %d  DWELL %.0f/%.0fS  DOORS %s", tr->track + 1, tr->t, sv->dwell, tr->closing ? "CLOSING" : "OPEN");
-            else std::snprintf(t2, sizeof(t2), "SPEED %.2f U/S  BRAKES FOR X=%.2f (A = V2/2D)", tr->v, tr->target);
-            std::snprintf(t3, sizeof(t3), tr->st == Train::Dwell ? "CLICK TO DISPATCH NOW" : "PLATFORM %d", tr->track + 1);
+            if (tr->st == Train::Dwell) std::snprintf(t2, sizeof(t2), "PLATFORM %d - LEAVES IN %.0f S - DOORS %s", tr->track + 1, std::max(0.0f, expectedDeparture(*sv) - now()), tr->closing ? "CLOSING" : "OPEN");
+            else std::snprintf(t2, sizeof(t2), "%s", tr->userHold ? "HELD OUTSIDE THE STATION" : tr->v > 0.05f ? "RUNNING IN" : "WAITING AT THE SIGNAL");
+            std::snprintf(t3, sizeof(t3), tr->st == Train::Dwell ? "CLICK FOR CONTROLS - DRAG FORWARD TO DEPART" : "CLICK FOR CONTROLS - DRAG ALONG THE TRACK");
         }
         else show = false;
         if (show)

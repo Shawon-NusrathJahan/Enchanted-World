@@ -70,6 +70,7 @@ struct Patient
     float checkT = 0, walkPhase = 0, flash = 0, worsenT = 0;
     int   skin = 0, hair = 0, shirt = 0;
     bool  fromAmbulance = false;
+    int   kidId = 0;                     // > 0: injured child from the playground
 };
 
 struct Pedestrian
@@ -91,6 +92,7 @@ struct Ambulance
     float x = -2.4f, dir = 1, stopX = 0.45f, t = 0, wheel = 0, siren = 0;
     St    st = Approach;
     int   cargo = 0, unloaded = 0;
+    int   kids = 0;                      // injured playground children on board
     bool  active = true;
 };
 
@@ -104,6 +106,7 @@ struct Stats
     int released = 0, turnedAway = 0;
     int correct = 0, wrong = 0, rejected = 0, autoAssigned = 0;
     int ambulances = 0;
+    int kidsAdmitted = 0, kidsHealed = 0;
 };
 
 void init(unsigned seed = 12345u);
@@ -133,6 +136,8 @@ std::vector<int>  triageOrder();               // waiting patient ids, highest p
 float priorityOf(const Patient& p);
 const char* condName(Cond c);
 const char* kindName(Kind k);
+const char* zoneName(Zone z);
+Zone  rightZone(const Patient& p);             // where this patient should be treated
 bool  draggingSomething();
 bool  overHospital(float x, float y);          // outside: is this point "on the hospital"?
 Zone  zoneAt(float x, float y);                // inside: which area is under this point?

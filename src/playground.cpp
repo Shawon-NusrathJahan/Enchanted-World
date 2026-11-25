@@ -5,6 +5,8 @@
 #include "gfx.h"
 #include "theme.h"
 #include "ui.h"
+#include "game.h"
+#include "font.h"
 
 #include <algorithm>
 #include <cmath>
@@ -25,6 +27,7 @@ const Color SHIRT[6] = {rgb(0.92f, 0.32f, 0.30f), rgb(0.28f, 0.58f, 0.92f), rgb(
                         rgb(0.68f, 0.42f, 0.85f), rgb(0.98f, 0.55f, 0.70f)};
 const Color PANTS[3] = {rgb(0.25f, 0.32f, 0.55f), rgb(0.50f, 0.32f, 0.20f), rgb(0.30f, 0.30f, 0.34f)};
 const float KID_S    = 0.25f;                     // height of a standing child
+float       waxClock = 0.0f;
 
 Color uiColor(int c)
 {
@@ -68,7 +71,31 @@ void kidHead(const Kid& k)
     if (k.id % 3 == 0) { circle(-0.15f, 0.86f, 0.05f, 10); circle(0.11f, 0.95f, 0.04f, 8); }   // pigtails / curls
     setColor(rgb(0.12f, 0.08f, 0.08f)); circle(0.06f, 0.83f, 0.014f, 8);
     setColor(rgb(0.90f, 0.45f, 0.45f, 0.6f)); circle(0.075f, 0.78f, 0.022f, 8);                // cheek
-    setColor(rgb(0.45f, 0.15f, 0.12f)); rect(0.04f, 0.755f, 0.10f, 0.765f);                     // smile
+    // mouth shows the mood: smile, flat line or frown (a little parabola)
+    const float m = k.mood;
+    const float curve = m > 0.55f ? -0.018f : m > 0.3f ? 0.0f : 0.016f;
+    setColor(rgb(0.45f, 0.15f, 0.12f));
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= 6; i++)
+    {
+        const float u = i / 6.0f, x = 0.035f + 0.07f * u, y = 0.765f + curve * (1.0f - 4.0f * (u - 0.5f) * (u - 0.5f));
+        glVertex2f(x, y - 0.006f); glVertex2f(x, y + 0.006f);
+    }
+    glEnd();
+    if (k.st == KState::Hurt || (m < 0.2f && k.st != KState::Away))     // tears
+    {
+        setColor(rgb(0.45f, 0.75f, 1.0f, 0.9f));
+        const float f = fract(k.t * 1.5f);
+        ellipse(0.07f, 0.80f - 0.12f * f, 0.014f, 0.022f, 8);
+    }
+    if (k.bandage > 0.0f || k.st == KState::Hurt || k.st == KState::ToGate)   // plaster on the forehead
+    {
+        setColor(rgb(0.98f, 0.92f, 0.86f));
+        glPushMatrix(); glTranslatef(-0.01f, 0.90f, 0); glRotatef(-20, 0, 0, 1);
+        rect(-0.06f, -0.018f, 0.06f, 0.018f);
+        setColor(rgb(0.85f, 0.30f, 0.30f)); rect(-0.012f, -0.012f, 0.012f, 0.012f);
+        glPopMatrix();
+    }
 }
 
 void kid(float x, float y, float s, const Kid& k, Pose pose, float facing, float rotDeg = 0.0f)
@@ -136,6 +163,28 @@ void kid(float x, float y, float s, const Kid& k, Pose pose, float facing, float
 
 void drawStandingKid(const Kid& k)
 {
+    if (k.st == KState::Away) return;
+    if (k.st == KState::Falling)                                   // tumbling through the air
+    {
+        kid(k.x, k.y, KID_S, k, Pose::Held, k.vx >= 0 ? 1.0f : -1.0f, k.spin);
+        setColor(rgb(0, 0, 0, 0.18f)); ellipse(k.x, k.landY, 0.05f, 0.012f, 14);   // shadow where it will land
+        return;
+    }
+    if (k.st == KState::Hurt)                                      // sitting on the ground, crying
+    {
+        kid(k.x, k.y + 0.02f, KID_S, k, Pose::Sit, k.facing);
+        if (k.serious)
+        {
+            const bool o = gfx::useTint; gfx::useTint = false;
+            const float b = 0.01f * std::sin(k.t * 6.0f);
+            setColor(rgb(1, 1, 1)); circle(k.x, k.y + 0.31f + b, 0.032f, 18);
+            setColor(rgb(0.90f, 0.15f, 0.15f));
+            rect(k.x - 0.007f, k.y + 0.293f + b, k.x + 0.007f, k.y + 0.327f + b);
+            rect(k.x - 0.017f, k.y + 0.303f + b, k.x + 0.017f, k.y + 0.317f + b);
+            gfx::useTint = o;
+        }
+        return;
+    }
     Pose p = Pose::Stand;
     if (k.st == KState::Dragged) p = Pose::Held;
     if (k.st == KState::Playing && k.flash > 0.0f) p = Pose::Kick;
@@ -292,6 +341,16 @@ void drawSwingSet(float t)
         setColor(rgb(0.20f, 0.20f, 0.22f)); rect(-0.05f, -0.012f, 0.05f, 0.006f);
         setColor(i ? rgb(0.98f, 0.75f, 0.20f) : rgb(0.30f, 0.70f, 0.40f)); rect(-0.048f, -0.008f, 0.048f, 0.010f);
         glPopMatrix();
+        if (s.rider >= 0 && swingAmplitude(i) > playgroundcfg::SWING_DANGER_AMP)   // pulsing red warning
+        {
+            const bool o = gfx::useTint; gfx::useTint = false;
+            const float p = 0.5f + 0.5f * std::sin(t * 12.0f);
+            glLineWidth(3.0f);
+            setColor(rgb(1.0f, 0.2f, 0.15f, 0.5f + 0.4f * p));
+            ring(sx, sy + 0.10f, 0.15f + 0.02f * p, 0.15f + 0.02f * p, 32);
+            glLineWidth(1.0f);
+            gfx::useTint = o;
+        }
         if (s.rider >= 0)
             if (const Kid* k = findKid(s.rider))
             {
@@ -306,7 +365,6 @@ void drawSwingSet(float t)
             gfx::useTint = o;
         }
     }
-    (void)t;
 }
 
 void drawSeesaw()
@@ -380,6 +438,20 @@ void drawSlide()
         else if (k.slideStage == 2) kid(k.x, k.y + 0.02f, KID_S, k, Pose::Sit, 1.0f, -a * 57.2958f);
         else kid(k.x, k.y + 0.02f, KID_S, k, Pose::Sit, 1.0f);
     }
+    if (slideWax() > 0.0f)                                           // waxed: glints racing down the chute
+    {
+        const bool o = gfx::useTint; gfx::useTint = false;
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        const float fade = std::min(1.0f, slideWax() / 2.0f);
+        for (int k = 0; k < 5; k++)
+        {
+            const float u = fract(waxClock * 0.9f + k / 5.0f);
+            const float x = lerpf(SLIDE_TOP_X, SLIDE_BOT_X, u), y = lerpf(SLIDE_TOP_Y, SLIDE_BOT_Y, u) + 0.004f;
+            glow(x, y, 0.035f, rgb(1.0f, 1.0f, 0.85f, 0.8f * fade), 14);
+        }
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gfx::useTint = o;
+    }
     // chute side rail drawn over the sliding child
     setColor(shade(chute, 0.9f)); thickLine(SLIDE_TOP_X, SLIDE_TOP_Y + 0.045f, SLIDE_BOT_X - 0.02f, SLIDE_BOT_Y + 0.04f, 0.008f);
 }
@@ -399,6 +471,52 @@ void drawBall()
     }
     circle(b.x, y, BALL_R * 0.22f, 8);
     setColor(rgb(1, 1, 1, 0.5f)); circle(b.x - BALL_R * 0.35f, y + BALL_R * 0.4f, BALL_R * 0.2f, 8);
+}
+
+void drawMat()
+{
+    const Mat& m = mat();
+    const float x0 = m.x - MAT_HW, x1 = m.x + MAT_HW, y0 = m.y - MAT_HH, y1 = m.y + MAT_HH;
+    setColor(rgb(0, 0, 0, 0.2f)); ellipse(m.x, y0 - 0.005f, MAT_HW * 1.05f, 0.012f, 20);
+    setColor(rgb(0.20f, 0.42f, 0.85f)); quad(x0, y0, x1, y0, x1 - 0.02f, y1, x0 + 0.02f, y1);
+    setColor(rgb(0.32f, 0.58f, 0.98f)); quad(x0 + 0.01f, y0 + 0.012f, x1 - 0.01f, y0 + 0.012f, x1 - 0.025f, y1 - 0.004f, x0 + 0.025f, y1 - 0.004f);
+    setColor(rgb(1.0f, 0.85f, 0.20f));
+    for (int k = 1; k < 4; k++) { const float x = lerpf(x0, x1, k / 4.0f); rect(x - 0.004f, y0 + 0.006f, x + 0.004f, y1 - 0.004f); }
+    if (hoverMat() || matCovers(m.x, m.y))
+    {
+        const bool o = gfx::useTint; gfx::useTint = false;
+        ui::drawText(m.x, y1 + 0.015f, 0.0034f, rgb(1, 1, 1, 0.9f), "SAFETY MAT", true);
+        gfx::useTint = o;
+    }
+}
+
+void drawGate()
+{
+    const float x = GATE_X - 0.02f, y = GATE_Y;
+    setColor(rgb(0.55f, 0.36f, 0.20f)); rect(x - 0.01f, y, x + 0.01f, y + 0.30f); rect(x + 0.12f, y, x + 0.14f, y + 0.30f);
+    setColor(rgb(0.70f, 0.48f, 0.26f)); rect(x - 0.01f, y + 0.27f, x + 0.14f, y + 0.30f);
+    const bool o = gfx::useTint; gfx::useTint = false;
+    ui::drawText(x + 0.065f, y + 0.315f, 0.0030f, rgb(1, 1, 1, 0.85f), "TO HOSPITAL", true);
+    gfx::useTint = o;
+}
+
+// while you hold the ball: dotted parabola of the throw you are about to make
+void drawThrowPreview()
+{
+    float vx, vh;
+    if (!ball().held || !predictThrow(vx, vh)) return;
+    const bool o = gfx::useTint; gfx::useTint = false;
+    const Ball& b = ball();
+    const float G = playgroundcfg::G;
+    for (int i = 1; i < 26; i++)
+    {
+        const float t = i * 0.045f;
+        const float x = b.x + vx * t, h = b.h + vh * t - 0.5f * G * t * t;
+        if (h < -0.01f) break;
+        setColor(rgb(1.0f, 1.0f, 1.0f, 0.75f * (1.0f - i / 26.0f)));
+        circle(x, BALL_Y + BALL_R + h, 0.007f, 8);
+    }
+    gfx::useTint = o;
 }
 
 void drawFireflies(float t)
@@ -443,22 +561,34 @@ void dropHighlight()
 void draw(float t)
 {
     drawBackdrop(t);
+    waxClock = t;
+    drawGate();
+    drawMat();
     drawSwingSet(t);
     drawSeesaw();
     drawSlide();
+    if (ball().goalFlash > 0.0f)                                     // goal celebration
+    {
+        const bool o = gfx::useTint; gfx::useTint = false;
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glow(ball().goalSide * (WALL_X - 0.02f), BALL_Y + 0.08f, 0.35f, rgb(1.0f, 0.95f, 0.4f, 0.5f * ball().goalFlash), 30);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gfx::useTint = o;
+    }
 
     // children on the ground and the ball, back (high y) to front (low y)
     struct Item { float y; const Kid* k; };
     std::vector<Item> items;
     for (const Kid& k : kids())
-        if (k.st != KState::Riding && k.st != KState::Dragged) items.push_back({k.y, &k});
+        if (k.st != KState::Riding && k.st != KState::Dragged && k.st != KState::Falling && k.st != KState::Away) items.push_back({k.y, &k});
     items.push_back({BALL_Y - 0.001f, nullptr});
     std::sort(items.begin(), items.end(), [](const Item& a, const Item& b) { return a.y > b.y; });
     for (const Item& it : items) { if (it.k) drawStandingKid(*it.k); else drawBall(); }
 
+    drawThrowPreview();
     drawFireflies(t);
     dropHighlight();
-    for (const Kid& k : kids()) if (k.st == KState::Dragged) drawStandingKid(k);     // held child on top
+    for (const Kid& k : kids()) if (k.st == KState::Dragged || k.st == KState::Falling) drawStandingKid(k);   // flying / held on top
 }
 
 void drawOverlay()
@@ -467,63 +597,15 @@ void drawOverlay()
     gfx::useTint = false;
     const Stats& s = stats();
 
-    // ---- statistics bar ----
-    const float x0 = -1.18f, x1 = 1.55f;
-    setColor(rgb(0.05f, 0.12f, 0.08f, 0.72f)); rect(x0, 0.795f, x1, 1.0f);
-    setColor(rgb(0.55f, 0.95f, 0.45f, 0.9f)); rect(x0, 0.793f, x1, 0.797f);
-    char l1[96], l2[140], l3[160];
-    std::snprintf(l1, sizeof(l1), "%s  -  PHYSICS + RIDE QUEUES", playgroundcfg::NAME);
-    std::snprintf(l2, sizeof(l2), "RIDES: SWINGS %d  SEE-SAW %d  SLIDE %d    PUSHES %d  KICKS %d (YOU %d)  BOUNCES %d  DRAGS %d",
-                  s.rides[0], s.rides[1], s.rides[2], s.pushes + s.seesawPushes, s.kicks + s.userKicks, s.userKicks, s.bounces, s.drags);
-    std::snprintf(l3, sizeof(l3), "QUEUES (FIFO): SWINGS %d WAIT %.0fS  SEE-SAW %d WAIT %.0fS  SLIDE %d WAIT %.0fS  BALL %d/%d   MAX SWING %.0f DEG",
-                  (int)queue(Ride::Swing).size(), expectedWait(Ride::Swing), (int)queue(Ride::Seesaw).size(), expectedWait(Ride::Seesaw),
-                  (int)queue(Ride::Slide).size(), expectedWait(Ride::Slide), ballPlayers(), playgroundcfg::BALL_MAX_PLAYERS, s.maxSwingDeg);
-    ui::drawText(x0 + 0.03f, 0.925f, fitPx(l1, 2.0f, 0.0090f), rgb(1.0f, 0.95f, 0.6f), l1);
-    ui::drawText(x0 + 0.03f, 0.865f, fitPx(l2, 2.65f, 0.0068f), rgb(1, 1, 1), l2);
-    ui::drawText(x0 + 0.03f, 0.812f, fitPx(l3, 2.65f, 0.0068f), rgb(0.85f, 1.0f, 0.85f), l3);
-
-    // ---- live physics board ----
+    // ---- game HUD (score + the few numbers that matter) and the gameplay feed ----
     {
-        const float bx0 = -0.66f, by0 = 0.47f, bx1 = 0.62f, by1 = 0.77f, bw = bx1 - bx0 - 0.04f;
-        setColor(rgb(0.06f, 0.10f, 0.08f, 0.80f)); rect(bx0, by0, bx1, by1);
-        setColor(rgb(0.55f, 0.95f, 0.45f)); rect(bx0, by1 - 0.002f, bx1, by1 + 0.005f);
-        ui::drawText(bx0 + 0.02f, by1 - 0.040f, 0.0042f, rgb(1.0f, 0.95f, 0.6f), "LIVE PHYSICS");
-        char b[96];
-        const float px = 0.0040f;
-        auto line = [&](float y, const Color& c, const char* txt) { ui::drawText(bx0 + 0.02f, y, fitPx(txt, bw, px), c, txt); };
-        for (int i = 0; i < SWINGS; i++)
-        {
-            const Swing& w = swing(i);
-            std::snprintf(b, sizeof(b), "SWING %d: AMP %2.0f DEG  W %+.2f RAD/S  T %.2fS%s", i + 1, swingAmplitude(i) * 57.2958f, w.omega,
-                          swingPeriod(), w.rider >= 0 ? "" : "  (EMPTY)");
-            line(by1 - 0.080f - i * 0.036f, rgb(0.85f, 1.0f, 0.85f), b);
-        }
-        const Seesaw& q = seesaw();
-        std::snprintf(b, sizeof(b), "SEE-SAW: TORQUE %+.1f  TILT %+.0f DEG  ARMS %.2f/%.2f  BALANCE %s", q.torque, q.phi * 57.2958f,
-                      q.arm[0], q.arm[1], q.balance ? "ON" : "OFF");
-        line(by1 - 0.152f, rgb(1.0f, 0.85f, 0.70f), b);
-        const float a = slideAngle();
-        std::snprintf(b, sizeof(b), "SLIDE: A = G(SIN %.0f - MU COS) = %.2f U/S2  TOP SPEED %.2f",
-                      a * 57.2958f, playgroundcfg::G * (std::sin(a) - playgroundcfg::SLIDE_FRICTION * std::cos(a)), s.maxSlideSpeed);
-        line(by1 - 0.188f, rgb(0.75f, 0.88f, 1.0f), b);
-        const Ball& bb = ball();
-        std::snprintf(b, sizeof(b), "BALL: H %.2f  VX %+.2f  VY %+.2f  MAX H %.2f  E %.2f", bb.h, bb.vx, bb.vh, s.maxBallHeight,
-                      playgroundcfg::BALL_RESTITUTION);
-        line(by1 - 0.224f, rgb(1.0f, 1.0f, 0.80f), b);
-        line(by0 + 0.015f, rgb(0.65f, 0.75f, 0.70f), "CLICK A SWING, THE SEE-SAW OR THE BALL - CLICK THE PIVOT = BALANCE - DRAG CHILDREN");
-    }
-
-    // ---- event feed (newest at the bottom) ----
-    {
-        const std::vector<LogLine>& lg = log();
-        const int n = (int)std::min<size_t>(3, lg.size());
-        setColor(rgb(0.03f, 0.08f, 0.05f, 0.72f)); rect(-0.66f, -1.0f, WORLD_W + 0.1f, -0.86f);
-        for (int i = 0; i < n; i++)
-        {
-            const LogLine& l = lg[lg.size() - n + i];
-            Color c = uiColor(l.color); c.a = 0.55f + 0.45f * (float)(i + 1) / n;
-            ui::drawText(-0.63f, -0.895f - i * 0.043f, fitPx(l.text, 2.35f, 0.0052f), c, l.text);
-        }
+        char stat[96];
+        int kidsHere = 0;
+        for (const Kid& k : kids()) if (k.st != KState::Away) kidsHere++;
+        std::snprintf(stat, sizeof(stat), "Happy kids %d/%d   Hurt %d   Goals %d%s", happyCount(), kidsHere, injuredCount(), s.goals,
+                      slideWax() > 0.0f ? "   Slide waxed!" : "");
+        game::drawHud(game::Where::Playground, playgroundcfg::NAME, stat);
+        game::drawFeed();
     }
 
     // ---- floating pop-ups ----
@@ -551,8 +633,8 @@ void drawOverlay()
         ui::drawText(x + 0.02f, y + 0.02f, px, rgb(0.6f, 1.0f, 0.6f), b);
     }
 
-    // ---- hover tooltip ----
-    if (ui::mouse.valid && !dragging())
+    // ---- hover tooltip (what can I do here?) ----
+    if (ui::mouse.valid && !dragging() && !ball().held)
     {
         char t1[80] = "", t2[80] = "", t3[80] = "";
         bool show = true;
@@ -561,56 +643,62 @@ void drawOverlay()
         if (kidId >= 0)
         {
             const Kid* k = findKid(kidId);
-            std::snprintf(t1, sizeof(t1), "KID #%d  MASS %.0f KG", k->id, k->mass);
-            if (k->st == KState::Queued || k->st == KState::ToQueue)
-            {
-                const auto& q = queue(k->ride);
-                const int pos = (int)(std::find(q.begin(), q.end(), k->id) - q.begin()) + 1;
-                std::snprintf(t2, sizeof(t2), "%s: %s, PLACE %d", stateName(*k), rideName(k->ride), pos);
-            }
-            else std::snprintf(t2, sizeof(t2), "%s  (LAST: %s, RIDES %d)", stateName(*k), rideName(k->lastRide), k->rides);
-            std::snprintf(t3, sizeof(t3), "DRAG ME TO A RIDE OR THE BALL PITCH");
+            std::snprintf(t1, sizeof(t1), "Kid #%d  -  %s", k->id, k->mood > 0.7f ? "very happy" : k->mood > 0.45f ? "happy" : k->mood > 0.2f ? "a bit sad" : "upset");
+            std::snprintf(t2, sizeof(t2), "%s", stateName(*k));
+            std::snprintf(t3, sizeof(t3), "Drag me to a ride or to the ball pitch");
         }
         else if (hoverBall())
         {
-            const Ball& b = ball();
-            std::snprintf(t1, sizeof(t1), "BALL  HEIGHT %.2f  SPEED %.2f", b.h, std::hypot(b.vx, b.vh));
-            std::snprintf(t2, sizeof(t2), "PROJECTILE: X += VX DT, VY -= G DT, BOUNCE E=%.2f", playgroundcfg::BALL_RESTITUTION);
-            std::snprintf(t3, sizeof(t3), "CLICK TO KICK IT AWAY FROM THE CURSOR");
+            std::snprintf(t1, sizeof(t1), "The ball");
+            std::snprintf(t2, sizeof(t2), "Click to kick - or drag and let go to THROW it");
+            std::snprintf(t3, sizeof(t3), "Score in a goal (+%d). Don't hit the children!", playgroundcfg::SCORE_GOAL);
+        }
+        else if (hoverMat())
+        {
+            std::snprintf(t1, sizeof(t1), "Safety mat");
+            std::snprintf(t2, sizeof(t2), "Drag it under a swing or the end of the slide");
+            std::snprintf(t3, sizeof(t3), "A child who lands on it is not hurt");
         }
         else if (hoverSwing() >= 0)
         {
             const int i = hoverSwing();
-            std::snprintf(t1, sizeof(t1), "SWING %d  %s", i + 1, swing(i).rider >= 0 ? "OCCUPIED" : "EMPTY");
-            std::snprintf(t2, sizeof(t2), "PENDULUM: AMPLITUDE %.0f DEG, PERIOD %.2fS", swingAmplitude(i) * 57.2958f, swingPeriod());
-            std::snprintf(t3, sizeof(t3), "CLICK TO PUSH (+%.1f RAD/S)", playgroundcfg::SWING_PUSH);
+            const float deg = swingAmplitude(i) * 57.2958f;
+            std::snprintf(t1, sizeof(t1), "Swing %d  -  %.0f degrees%s", i + 1, deg, swing(i).rider >= 0 ? "" : "  (empty)");
+            std::snprintf(t2, sizeof(t2), "Click to push. Children love 25-60 degrees");
+            std::snprintf(t3, sizeof(t3), "Above 75 degrees they let go and FALL!");
+        }
+        else if (hoverSlide())
+        {
+            std::snprintf(t1, sizeof(t1), "The slide%s", slideWax() > 0.0f ? "  -  WAXED" : "");
+            std::snprintf(t2, sizeof(t2), "Click to wax it: children slide much faster");
+            std::snprintf(t3, sizeof(t3), "Too fast and they fly off the end - put the mat there!");
         }
         else if (hoverSeesaw(side))
         {
             const Seesaw& q = seesaw();
             if (side == 2)
             {
-                std::snprintf(t1, sizeof(t1), "SEE-SAW PIVOT  LEVER BALANCE %s", q.balance ? "ON" : "OFF");
-                std::snprintf(t2, sizeof(t2), "M1 x D1 = M2 x D2 : HEAVIER CHILD SITS CLOSER");
-                std::snprintf(t3, sizeof(t3), "CLICK TO TURN BALANCING %s", q.balance ? "OFF" : "ON");
+                std::snprintf(t1, sizeof(t1), "See-saw pivot  -  balancing %s", q.balance ? "ON" : "OFF");
+                std::snprintf(t2, sizeof(t2), "ON: the heavier child sits closer to the middle");
+                std::snprintf(t3, sizeof(t3), "Click to switch");
             }
             else
             {
-                std::snprintf(t1, sizeof(t1), "SEE-SAW  NET TORQUE %+.1f", q.torque);
-                std::snprintf(t2, sizeof(t2), "TILT %+.0f DEG  SEATS AT %.2f / %.2f FROM PIVOT", q.phi * 57.2958f, q.arm[0], q.arm[1]);
-                std::snprintf(t3, sizeof(t3), "CLICK TO PUSH THE %s SIDE DOWN", side == 0 ? "LEFT" : "RIGHT");
+                std::snprintf(t1, sizeof(t1), "See-saw");
+                std::snprintf(t2, sizeof(t2), "Click a side to push it down");
+                std::snprintf(t3, sizeof(t3), "Push too hard and it slams: BUMP!");
             }
         }
         else show = false;
         if (show)
         {
-            const float px = 0.0056f;
-            const float w = std::max(ui::textWidth(t1, px), std::max(ui::textWidth(t2, px), ui::textWidth(t3, px))) + 0.04f;
+            const float px = 0.0050f;
+            const float w = std::max(ui::textWidth(t1, px * 1.1f), std::max(ui::textWidth(t2, px), ui::textWidth(t3, px))) + 0.05f;
             const float x = clampf(ui::mouse.x + 0.05f, -WORLD_W + 0.02f, WORLD_W - w - 0.02f), y = clampf(ui::mouse.y + 0.05f, -0.80f, 0.60f);
-            setColor(rgb(0.02f, 0.06f, 0.04f, 0.88f)); rect(x, y, x + w, y + 0.18f);
-            ui::drawText(x + 0.02f, y + 0.13f, px, rgb(1.0f, 0.95f, 0.6f), t1);
-            ui::drawText(x + 0.02f, y + 0.08f, px, rgb(1, 1, 1), t2);
-            ui::drawText(x + 0.02f, y + 0.03f, px, rgb(0.6f, 1.0f, 0.7f), t3);
+            setColor(rgb(0.04f, 0.08f, 0.14f, 0.88f)); rect(x, y, x + w, y + 0.17f);
+            ui::drawText(x + 0.025f, y + 0.12f, px * 1.1f, rgb(1.0f, 0.92f, 0.55f), t1);
+            ui::drawText(x + 0.025f, y + 0.07f, px, rgb(1, 1, 1), t2);
+            ui::drawText(x + 0.025f, y + 0.025f, px, rgb(0.65f, 1.0f, 0.75f), t3);
         }
     }
     gfx::useTint = old;

@@ -1,4 +1,5 @@
 #include "hospital.h"
+#include "game.h"
 
 #include "gfx.h"
 #include "theme.h"
@@ -514,6 +515,16 @@ void chair(float x, float y, bool front)
     }
 }
 
+// rooms light up one after another the first time you step inside (and on every visit)
+float introT = 99.0f;
+double introLast = -1.0;
+float introGlow(int room)
+{
+    const float k = introT - 0.6f * room;
+    if (k < 0.0f || k > 1.2f) return 0.0f;
+    return std::sin(k / 1.2f * PI);
+}
+
 void drawInteriorBackdrop(float t)
 {
     const Color wallA = rgb(0.90f, 0.95f, 0.97f), wallB = rgb(0.80f, 0.90f, 0.94f);
@@ -540,11 +551,41 @@ void drawInteriorBackdrop(float t)
         setColor(rgb(0.60f, 0.72f, 0.80f)); rect(x - 0.012f, -1.0f, x + 0.012f, ROOM_TOP);
         setColor(rgb(0.75f, 0.90f, 0.98f, 0.30f)); rect(x - 0.05f, -0.15f, x + 0.05f, 0.55f);
     }
-    // zone name plates
-    plate(-1.37f, 0.67f, 0.74f, 0.085f, rgb(0.15f, 0.55f, 0.58f), "RECEPTION", rgb(1, 1, 1), 0.0085f);
-    plate(-0.40f, 0.67f, 0.94f, 0.085f, rgb(0.20f, 0.58f, 0.34f), "WAITING AREA", rgb(1, 1, 1), 0.0085f);
-    plate(0.565f, 0.67f, 0.70f, 0.085f, rgb(0.80f, 0.14f, 0.16f), "EMERGENCY ROOM", rgb(1, 1, 1), 0.0085f);
-    plate(1.38f, 0.67f, 0.70f, 0.085f, rgb(0.20f, 0.38f, 0.82f), "GENERAL CONSULTATION", rgb(1, 1, 1), 0.0085f);
+    // coloured floor per room (instantly tells the rooms apart)
+    {
+        const Color fl[4] = {rgb(0.45f, 0.85f, 0.85f, 0.30f), rgb(0.55f, 0.85f, 0.50f, 0.30f), rgb(1.00f, 0.45f, 0.45f, 0.34f), rgb(0.50f, 0.62f, 1.00f, 0.34f)};
+        for (int z = 0; z < 4; z++) { setColor(fl[z]); rect(ZONE_X[z] + 0.012f, -1.0f, ZONE_X[z + 1] - 0.012f, 0.02f); }
+    }
+    // room signs: big coloured plates with an icon and "who goes here"
+    {
+        struct Sign { float cx, w; Color c; const char* name; const char* who; int icon; };
+        const Sign sg[4] = {
+            {-1.37f, 0.74f, rgb(0.15f, 0.55f, 0.58f), "RECEPTION",    "everyone checks in here", 0},
+            {-0.40f, 0.94f, rgb(0.20f, 0.58f, 0.34f), "WAITING ROOM", "wait for your room",      1},
+            {0.565f, 0.70f, rgb(0.82f, 0.14f, 0.16f), "EMERGENCY",    "bleeding, broken bones, surgery", 2},
+            {1.38f,  0.70f, rgb(0.20f, 0.38f, 0.82f), "CONSULTATION", "fever, cough, check-up",  3}};
+        for (int i = 0; i < 4; i++)
+        {
+            const Sign& g = sg[i];
+            const float glowA = introGlow(i);
+            if (glowA > 0.0f) { setColor(rgb(1.0f, 0.95f, 0.5f, 0.35f * glowA)); rect(ZONE_X[i] + 0.012f, -1.0f, ZONE_X[i + 1] - 0.012f, ROOM_TOP); }
+            const float y = 0.665f, h = 0.10f;
+            setColor(rgb(0, 0, 0, 0.18f)); rect(g.cx - g.w / 2 + 0.01f, y - h / 2 - 0.012f, g.cx + g.w / 2 + 0.01f, y + h / 2 - 0.012f);
+            setColor(g.c); rect(g.cx - g.w / 2, y - h / 2, g.cx + g.w / 2, y + h / 2);
+            setColor(rgb(1, 1, 1, 0.25f)); rect(g.cx - g.w / 2, y + h / 2 - 0.012f, g.cx + g.w / 2, y + h / 2);
+            // icon disc
+            const float ix = g.cx - g.w / 2 + 0.065f;
+            setColor(rgb(1, 1, 1)); circle(ix, y, 0.038f, 20);
+            if (g.icon == 0) { setColor(g.c); ellipse(ix, y - 0.004f, 0.022f, 0.016f, 14); rect(ix - 0.026f, y - 0.016f, ix + 0.026f, y - 0.010f); circle(ix, y + 0.016f, 0.005f, 8); }   // bell
+            if (g.icon == 1) { setColor(g.c); rect(ix - 0.018f, y - 0.004f, ix + 0.018f, y + 0.002f); rect(ix - 0.018f, y, ix - 0.012f, y + 0.024f); rect(ix - 0.016f, y - 0.022f, ix - 0.011f, y - 0.004f); rect(ix + 0.011f, y - 0.022f, ix + 0.016f, y - 0.004f); }   // chair
+            if (g.icon == 2) { setColor(g.c); rect(ix - 0.007f, y - 0.024f, ix + 0.007f, y + 0.024f); rect(ix - 0.024f, y - 0.007f, ix + 0.024f, y + 0.007f); }   // red cross
+            if (g.icon == 3) { setColor(g.c); thickLine(ix - 0.016f, y + 0.020f, ix - 0.016f, y - 0.002f, 0.006f); thickLine(ix + 0.016f, y + 0.020f, ix + 0.016f, y - 0.002f, 0.006f);
+                               thickLine(ix - 0.016f, y - 0.002f, ix, y - 0.018f, 0.006f); thickLine(ix + 0.016f, y - 0.002f, ix, y - 0.018f, 0.006f); circle(ix + 0.020f, y - 0.020f, 0.008f, 10); }   // stethoscope
+            const float tx = (ix + 0.05f + g.cx + g.w / 2) * 0.5f;
+            ui::drawText(tx, y + 0.002f, fitPx(g.name, g.cx + g.w / 2 - ix - 0.07f, 0.0080f), rgb(1, 1, 1), g.name, true);
+            ui::drawText(tx, y - 0.040f, fitPx(g.who, g.cx + g.w / 2 - ix - 0.07f, 0.0042f), rgb(1, 1, 1, 0.9f), g.who, true);
+        }
+    }
 
     // ---- reception wall: hospital name, door, desk ----
     {
@@ -754,6 +795,9 @@ void draw(View view, float time)
     if (view == View::Outside) { drawExterior(time); return; }
     const Color keep = gfx::tintColor;                                // indoors the daylight tint is much weaker
     gfx::tintColor = mix(rgb(1, 1, 1), keep, 0.35f);
+    if (introLast < 0.0 || time - introLast > 0.5 || time < introLast) introT = 0.0f;   // just walked in
+    else introT += (float)(time - introLast);
+    introLast = time;
     drawInterior(time);
     gfx::tintColor = keep;
 }
@@ -764,46 +808,54 @@ void drawOverlay(View view)
     gfx::useTint = false;
     const Stats& s = stats();
 
-    // ---- statistics bar ----
-    const float x0 = -1.18f, x1 = 1.55f;
-    setColor(rgb(0.03f, 0.08f, 0.15f, 0.72f)); rect(x0, 0.795f, x1, 1.0f);
-    setColor(rgb(0.4f, 0.75f, 0.95f, 0.9f)); rect(x0, 0.793f, x1, 0.797f);
-    char l1[96], l2[112], l3[128];
-    std::snprintf(l1, sizeof(l1), "%s  -  %s", hospitalcfg::NAME, view == View::Inside ? "INSIDE" : "OUTSIDE");
-    std::snprintf(l2, sizeof(l2), "ADMITTED %d (EMERG %d / GENERAL %d)  RELEASED %d  AMBULANCES %d  TURNED AWAY %d", s.admitted, s.admittedEmergency, s.admittedGeneral, s.released, s.ambulances, s.turnedAway);
-    std::snprintf(l3, sizeof(l3), "EMERG WAIT %d TREAT %d  GENERAL WAIT %d TREAT %d  INSIDE %d/%d  OK %d WRONG %d NO-ROOM %d",
-                  waitingCount(Kind::Emergency), treatingCount(Kind::Emergency), waitingCount(Kind::General), treatingCount(Kind::General),
-                  insideCount(), hospitalcfg::MAX_INSIDE, s.correct, s.wrong, s.rejected);
-    ui::drawText(x0 + 0.03f, 0.925f, fitPx(l1, 2.0f, 0.0090f), rgb(1.0f, 0.95f, 0.6f), l1);
-    ui::drawText(x0 + 0.03f, 0.865f, fitPx(l2, 2.65f, 0.0068f), rgb(1, 1, 1), l2);
-    ui::drawText(x0 + 0.03f, 0.812f, fitPx(l3, 2.65f, 0.0068f), rgb(0.85f, 0.95f, 1.0f), l3);
+    // ---- game HUD (score + a few plain numbers) ----
+    {
+        char stat[96];
+        std::snprintf(stat, sizeof(stat), "Waiting %d   Being treated %d   Healed %d   Right rooms %d   Wrong %d",
+                      waitingCount(Kind::Emergency) + waitingCount(Kind::General), treatingCount(Kind::Emergency) + treatingCount(Kind::General),
+                      s.released, s.correct, s.wrong);
+        game::drawHud(game::Where::Hospital, hospitalcfg::NAME, stat);
+    }
 
     // ---- interior: EXIT button + triage board ----
     if (view == View::Inside)
     {
+        if (introT < 4.5f)                                            // welcome banner while the rooms light up
+        {
+            const float a = std::min(1.0f, std::min(introT * 3.0f, (4.5f - introT) * 2.0f));
+            const char* m1 = "Four rooms: Reception, Waiting, Emergency, Consultation";
+            const char* m2 = "Drag each patient to the right room: +5 right, -3 wrong";
+            setColor(rgb(0.03f, 0.08f, 0.15f, 0.80f * a)); rect(-0.95f, 0.06f, 0.95f, 0.22f);
+            ui::drawText(0.0f, 0.155f, 0.0068f, rgb(1.0f, 0.95f, 0.6f, a), m1, true);
+            ui::drawText(0.0f, 0.090f, 0.0060f, rgb(1, 1, 1, a), m2, true);
+        }
         const bool hov = ui::mouse.valid && ui::mouse.x >= EXIT_X0 && ui::mouse.x <= EXIT_X1 && ui::mouse.y >= EXIT_Y0 && ui::mouse.y <= EXIT_Y1;
         setColor(hov ? rgb(0.85f, 0.25f, 0.25f, 0.96f) : rgb(0.55f, 0.15f, 0.15f, 0.88f)); rect(EXIT_X0, EXIT_Y0, EXIT_X1, EXIT_Y1);
         setColor(rgb(1, 1, 1, 0.8f)); glLineWidth(2.0f); glBegin(GL_LINE_LOOP); glVertex2f(EXIT_X0, EXIT_Y0); glVertex2f(EXIT_X1, EXIT_Y0); glVertex2f(EXIT_X1, EXIT_Y1); glVertex2f(EXIT_X0, EXIT_Y1); glEnd(); glLineWidth(1.0f);
         ui::drawText((EXIT_X0 + EXIT_X1) / 2, EXIT_Y0 + 0.032f, 0.0075f, rgb(1, 1, 1), "EXIT", true);
 
-        const float bx0 = -0.50f, by0 = 0.22f, bx1 = 0.12f, by1 = 0.58f;       // triage monitor on the wall
-        setColor(rgb(0.08f, 0.10f, 0.14f, 0.92f)); rect(bx0, by0, bx1, by1);
-        setColor(rgb(0.4f, 0.75f, 0.95f)); rect(bx0, by1 - 0.002f, bx1, by1 + 0.006f);
-        ui::drawText(bx0 + 0.02f, by1 - 0.045f, 0.0040f, rgb(1.0f, 0.95f, 0.6f), "TRIAGE QUEUE (PRIORITY HEAP)");
-        const std::vector<int> order = triageOrder();
-        for (int i = 0; i < 6; i++)
+        const float bx0 = -0.50f, by0 = 0.20f, bx1 = 0.12f, by1 = 0.58f;       // "who is next" board on the waiting-room wall
+        setColor(rgb(0.10f, 0.22f, 0.16f, 0.95f)); rect(bx0, by0, bx1, by1);
+        setColor(rgb(0.55f, 0.40f, 0.25f)); rect(bx0 - 0.012f, by0 - 0.012f, bx1 + 0.012f, by0); rect(bx0 - 0.012f, by1, bx1 + 0.012f, by1 + 0.012f);
+        rect(bx0 - 0.012f, by0, bx0, by1); rect(bx1, by0, bx1 + 0.012f, by1);
+        ui::drawText((bx0 + bx1) / 2, by1 - 0.050f, 0.0050f, rgb(1.0f, 0.95f, 0.6f), "WAITING PATIENTS", true);
+        const std::vector<int> order = triageOrder();                // priority order (most urgent first)
+        for (int i = 0; i < 5; i++)
         {
-            char b[48];
+            char b[64];
+            const float ly = by1 - 0.100f - i * 0.050f;
             if (i < (int)order.size())
             {
                 const Patient* p = findPatient(order[i]);
-                std::snprintf(b, sizeof(b), "%d #%d %s S%d P%.0f", i + 1, p->id, p->kind == Kind::Emergency ? "EMERG" : "GEN", p->severity, priorityOf(*p));
-                ui::drawText(bx0 + 0.02f, by1 - 0.095f - i * 0.043f, 0.0044f, p->kind == Kind::Emergency ? rgb(1.0f, 0.55f, 0.5f) : rgb(0.6f, 1.0f, 0.7f), b);
+                std::snprintf(b, sizeof(b), "%s%s", p->kidId > 0 ? "Child - " : "", condName(p->cond));
+                const Color c = p->kind == Kind::Emergency ? rgb(1.0f, 0.62f, 0.55f) : rgb(0.70f, 1.0f, 0.75f);
+                ui::drawText(bx0 + 0.025f, ly, fitPx(b, 0.40f, 0.0046f), c, b);
+                for (int h = 0; h < p->severity; h++) { setColor(c); circle(bx1 - 0.030f - h * 0.026f, ly + 0.014f, 0.009f, 10); }
             }
-            else if (i == 0) ui::drawText(bx0 + 0.02f, by1 - 0.095f, 0.0044f, rgb(0.6f, 0.7f, 0.8f), "NOBODY WAITING");
+            else if (i == 0) ui::drawText(bx0 + 0.025f, ly, 0.0046f, rgb(0.7f, 0.8f, 0.75f), "Nobody is waiting");
         }
-        char nx[64]; std::snprintf(nx, sizeof(nx), "BEDS FREE %d  ER QUEUE %d/%d  ROOMS FREE %d", erBedsFree(), erQueueCount(), ER_QUEUE, consultFree());
-        ui::drawText(bx0 + 0.02f, by0 + 0.015f, 0.0040f, rgb(0.7f, 0.85f, 1.0f), nx);
+        char nx[64]; std::snprintf(nx, sizeof(nx), "ER beds free %d   Rooms free %d", erBedsFree(), consultFree());
+        ui::drawText((bx0 + bx1) / 2, by0 + 0.018f, 0.0040f, rgb(0.8f, 0.95f, 0.85f), nx, true);
     }
     else
     {
@@ -812,20 +864,7 @@ void drawOverlay(View view)
         else if (!draggingSomething()) ui::drawText(0.0f, -0.97f + 0.0f, 0.0f, rgb(1, 1, 1), "", true);
     }
 
-    // ---- event feed (newest at the bottom) ----
-    {
-        const std::vector<LogLine>& lg = log();
-        const int n = (int)std::min<size_t>(3, lg.size());
-        setColor(rgb(0.03f, 0.06f, 0.12f, 0.72f)); rect(-0.66f, -1.0f, WORLD_W + 0.1f, -0.86f);
-        for (int i = 0; i < n; i++)
-        {
-            const LogLine& l = lg[lg.size() - n + i];
-            const float a = 0.55f + 0.45f * (float)(i + 1) / n;
-            Color c = uiColor(l.color); c.a = a;
-            ui::drawText(-0.63f, -0.895f - i * 0.043f, fitPx(l.text, 2.35f, 0.0052f), c, l.text);
-        }
-        // clearer newest-first order: draw newest on top line instead
-    }
+    game::drawFeed();
 
     // ---- floating pop-ups ----
     for (const Popup& p : popups())
@@ -849,12 +888,13 @@ void drawOverlay(View view)
             if (p)
             {
                 show = true;
-                std::snprintf(t1, sizeof(t1), "#%d %s - %s", p->id, kindName(p->kind), condName(p->cond));
-                std::snprintf(t2, sizeof(t2), "SEVERITY %d/5  PRIORITY %.0f  WAITED %.0fS", p->severity, priorityOf(*p), p->waited);
+                if (p->kidId > 0) std::snprintf(t1, sizeof(t1), "Child from the playground - %s", condName(p->cond));
+                else              std::snprintf(t1, sizeof(t1), "Patient #%d - %s", p->id, condName(p->cond));
+                std::snprintf(t2, sizeof(t2), "How bad: %d/5   Waiting %.0f s", p->severity, p->waited);
                 if (p->cooldown > 0.0f) std::snprintf(t3, sizeof(t3), "ER LOCKED FOR %.0fS", std::ceil(p->cooldown));
                 else if (p->st == PState::Treating) std::snprintf(t3, sizeof(t3), "TREATMENT %.0f%%", 100.0f * (1.0f - p->treatLeft / p->treatTotal));
-                else std::snprintf(t3, sizeof(t3), p->kind == Kind::Emergency ? "NEEDS THE EMERGENCY ROOM" : "NEEDS GENERAL CONSULTATION");
-                std::snprintf(t4, sizeof(t4), "DRAG ME TO AN AREA");
+                else std::snprintf(t3, sizeof(t3), "Which room? Emergency (+5) or Consultation");
+                std::snprintf(t4, sizeof(t4), "Drag me to the right room");
             }
         }
         else if (view == View::Outside && hoverPedestrianId() >= 0)

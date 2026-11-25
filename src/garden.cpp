@@ -3,6 +3,7 @@
 #include "village.h"
 #include "theme.h"
 #include "gardensim.h"
+#include "cgmath.h"
 
 #include <algorithm>
 #include <cmath>
@@ -15,11 +16,17 @@ namespace
 
 const float SPAN = 2.0f * (WORLD_W + 0.6f);     // wrap width for clouds / birds (off-screen both ends)
 
-Ridge farMts, hill1, hill2, lawn;
+Ridge farMts, nearMts, hill1, hill2, lawn;
 
 struct Blade  { float x, y, h, w, phase; Color col; };
 std::vector<int>    flowerOrder;      // flower indices sorted far -> near (for drawing)
 std::vector<Blade>  blades;
+
+// waterfall from the mountain into the pond + the stream above it (cubic Bezier ribbons)
+struct Ribbon { cg::V2 p0, p1, p2, p3; float w0, w1; cg::ArcLength arc; };
+Ribbon fall_, upperStream_;
+GLuint staticList = 0;
+Color  staticTint{-1, -1, -1, -1};
 
 // x position that wraps around the screen: n whole crossings per loop
 float loopX(float x0, float u, float n)
@@ -34,37 +41,293 @@ float catmull(float p0, float p1, float p2, float p3, float t)
                    (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t * t * t);
 }
 
-// ---------------------------------------------------------------------------
+cg::V2 ribbonAt(const Ribbon& r, float u) { return cg::cubicBezier(r.p0, r.p1, r.p2, r.p3, u); }
+
+// water ribbon with streaks that flow along the arc length (constant speed)
+void drawWater(const Ribbon& r, float time, float speed, float alpha)
+{
+    const int N = 40;
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= N; i++)
+    {
+        const float u = (float)i / N;
+        const cg::V2 p = ribbonAt(r, u), d = cg::cubicBezierTangent(r.p0, r.p1, r.p2, r.p3, u);
+        const float l = std::max(1e-5f, cg::len(d)), w = lerpf(r.w0, r.w1, u);
+        vtx(rgb(0.70f, 0.90f, 1.0f, alpha), p.x - d.y / l * w, p.y + d.x / l * w);
+        vtx(rgb(0.46f, 0.76f, 0.98f, alpha), p.x + d.y / l * w, p.y - d.x / l * w);
+    }
+    glEnd();
+    const float L = r.arc.total();
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    for (int lane = 0; lane < 6; lane++)
+    {
+        const float off = lane / 5.0f * 1.5f - 0.75f;
+        for (int k = 0; k < 9; k++)
+        {
+            const float ph = cg::hashU(lane * 17u + k * 3u);
+            const float s0 = fract(ph + k / 9.0f + time * speed / std::max(0.01f, L)) * L;
+            const float s1 = std::min(L, s0 + 0.03f + 0.03f * cg::hashU(lane * 7u + k));
+            const float u0 = r.arc.paramAt(s0), u1 = r.arc.paramAt(s1);
+            const cg::V2 a = ribbonAt(r, u0), b = ribbonAt(r, u1), d = cg::cubicBezierTangent(r.p0, r.p1, r.p2, r.p3, u0);
+            const float l = std::max(1e-5f, cg::len(d)), w = lerpf(r.w0, r.w1, u0) * off;
+            setColor(rgb(1.0f, 1.0f, 1.0f, 0.85f * alpha));
+            glVertex2f(a.x - d.y / l * w, a.y + d.x / l * w);
+            glVertex2f(b.x - d.y / l * w, b.y + d.x / l * w);
+        }
+    }
+    glEnd();
+    glLineWidth(1.0f);
+}
+
+// stateless particles: splash + mist where the waterfall hits the pond
+void drawSplash(float x, float y, float time)
+{
+    for (int k = 0; k < 34; k++)
+    {
+        const float life = 0.7f + 0.5f * cg::hashU(k * 7u + 1u);
+        const float age = fract(time / life + cg::hashU(k * 3u + 2u)) * life;
+        const float vx = (cg::hashU(k * 11u + 3u) - 0.5f) * 0.55f, vy = 0.18f + 0.22f * cg::hashU(k * 5u + 4u);
+        const float px = x + vx * age, py = y + vy * age - 0.55f * age * age;
+        if (py < y - 0.03f) continue;
+        setColor(rgb(1.0f, 1.0f, 1.0f, 0.75f * (1.0f - age / life)));
+        circle(px, py, 0.005f + 0.008f * age, 8);
+    }
+    for (int k = 0; k < 6; k++)
+    {
+        const float p = fract(time * 0.35f + k / 6.0f);
+        setColor(rgb(1.0f, 1.0f, 1.0f, 0.22f * (1.0f - p)));
+        ellipse(x + (cg::hashU(k * 5u) - 0.5f) * 0.12f, y + 0.02f + 0.10f * p, 0.04f + 0.08f * p, 0.03f + 0.05f * p, 18);
+    }
+}
+
+void drawSunRays(float x, float y, float r, float u)
+{
+    const bool old = gfx::useTint;
+    gfx::useTint = false;
+    const Color c = theme::sun(rgb(1.0f, 0.86f, 0.25f));
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glRotatef(360.0f * u, 0.0f, 0.0f, 1.0f);                       // one slow turn per loop
+    for (int k = 0; k < 14; k++)
+    {
+        const float a = TAU * k / 14.0f, w = 0.10f, L = r * (k & 1 ? 1.65f : 1.95f);
+        setColor(withAlpha(c, c.a * 0.85f));
+        tri(std::cos(a - w) * r * 1.05f, std::sin(a - w) * r * 1.05f, std::cos(a + w) * r * 1.05f, std::sin(a + w) * r * 1.05f,
+            std::cos(a) * L, std::sin(a) * L);
+    }
+    glPopMatrix();
+    gfx::useTint = old;
+}
+
 void drawSkyAndFar(float u)
 {
-    Stop stops[] = {{-1.2f, rgb(0.90f, 0.96f, 0.98f)}, {0.10f, rgb(0.84f, 0.94f, 0.99f)},
-                    {0.50f, rgb(0.62f, 0.84f, 0.98f)}, {1.60f, rgb(0.28f, 0.58f, 0.92f)}};
+    Stop stops[] = {{-1.2f, rgb(0.92f, 0.97f, 1.0f)}, {0.05f, rgb(0.78f, 0.92f, 1.0f)},
+                    {0.55f, rgb(0.42f, 0.72f, 0.98f)}, {1.60f, rgb(0.14f, 0.48f, 0.94f)}};
     for (Stop& st : stops) st.c = theme::skyColor(st.c, st.y);      // time-of-day sky
     gfx::useTint = false;                                           // sky is already final
     vGradient(-3.2f, 3.2f, stops, 4);
 
-    glow(-0.35f, 0.74f, 0.9f, theme::sun(rgb(1.0f, 0.97f, 0.80f, 0.75f)), 48);
-    setColor(theme::sun(rgb(1.0f, 0.97f, 0.78f)));
-    circle(-0.35f, 0.74f, 0.10f, 36);
-    theme::drawStarsAndMoon(-0.35f, 0.74f, 0.10f, u);               // integer-cycle twinkle => loops
+    const float sx = -0.20f, sy = 0.76f;
+    glow(sx, sy, 0.75f, theme::sun(rgb(1.0f, 0.95f, 0.70f, 0.70f)), 48);
+    gfx::useTint = true;
+    drawSunRays(sx, sy, 0.095f, u);
+    gfx::useTint = false;
+    setColor(theme::sun(rgb(1.0f, 0.86f, 0.22f)));
+    circle(sx, sy, 0.095f, 40);
+    setColor(theme::sun(rgb(1.0f, 0.95f, 0.55f)));
+    circle(sx - 0.02f, sy + 0.02f, 0.065f, 32);
+    theme::drawStarsAndMoon(sx, sy, 0.095f, u);                     // integer-cycle twinkle => loops
     gfx::useTint = true;
 
-    drawRidge(farMts, -0.3f, rgb(0.58f, 0.74f, 0.92f), rgb(0.82f, 0.92f, 0.98f));
-    drawRidgeShadows(farMts, rgb(0.46f, 0.64f, 0.86f, 0.45f));
-
     // clouds: translation, wrapping off-screen => seamless
-    drawCloud(loopX(-1.3f, u, 1), 0.78f, 0.80f, 0.15f);
-    drawCloud(loopX(0.6f, u, 1), 0.60f, 0.55f, 0.10f);
-    drawCloud(loopX(1.6f, u, 2), 0.86f, 0.42f, 0.10f);
+    drawCloud(loopX(-1.3f, u, 1), 0.80f, 0.62f, 0.0f);
+    drawCloud(loopX(0.6f, u, 1), 0.62f, 0.46f, 0.0f);
+    drawCloud(loopX(1.6f, u, 2), 0.88f, 0.40f, 0.0f);
+    drawCloud(loopX(-0.2f, u, 2), 0.95f, 0.30f, 0.0f, 0.9f);
 
     // birds: cross the sky several times per loop, wings flap
     for (int i = 0; i < 4; i++)
     {
         const float bx = loopX(-1.8f + i * 0.9f, u, 6.0f + (i & 1));
-        const float by = 0.50f + 0.06f * i + 0.04f * wave(u, 3.0f + i, i * 0.21f);
-        drawBird(bx, by, 0.030f, wave(u, 150.0f + 10.0f * i, i * 0.3f), rgb(0.14f, 0.18f, 0.28f));
+        const float by = 0.52f + 0.06f * i + 0.04f * wave(u, 3.0f + i, i * 0.21f);
+        drawBird(bx, by, 0.028f, wave(u, 150.0f + 10.0f * i, i * 0.3f), rgb(0.14f, 0.18f, 0.28f));
     }
 }
+
+// a lush, reference-style tree: trunk with roots and branches, many leaf clusters in 3 greens
+void drawLushTree(float x, float y, float h, float sway)
+{
+    setColor(rgb(0.45f, 0.28f, 0.15f));
+    quad(x - 0.09f * h, y, x + 0.09f * h, y, x + 0.045f * h, y + 0.55f * h, x - 0.045f * h, y + 0.55f * h);
+    tri(x - 0.20f * h, y - 0.01f, x - 0.05f * h, y, x - 0.05f * h, y + 0.12f * h);     // roots
+    tri(x + 0.20f * h, y - 0.01f, x + 0.05f * h, y, x + 0.05f * h, y + 0.12f * h);
+    setColor(rgb(0.36f, 0.22f, 0.12f));
+    rect(x + 0.01f * h, y + 0.05f * h, x + 0.03f * h, y + 0.45f * h);                  // bark line
+    thickLine(x, y + 0.45f * h, x - 0.28f * h, y + 0.70f * h, 0.04f * h);             // branches
+    thickLine(x, y + 0.48f * h, x + 0.26f * h, y + 0.74f * h, 0.035f * h);
+    const float cx = x + sway * 0.02f * h, cy = y + 0.86f * h;
+    static const float C[][3] = {{-0.38f, -0.08f, 0.22f}, {0.38f, -0.06f, 0.22f}, {-0.20f, 0.10f, 0.26f}, {0.20f, 0.12f, 0.26f},
+                                 {0.0f, 0.26f, 0.26f}, {-0.30f, 0.28f, 0.18f}, {0.30f, 0.30f, 0.18f}, {0.0f, -0.10f, 0.24f},
+                                 {-0.52f, 0.10f, 0.15f}, {0.52f, 0.12f, 0.15f}};
+    const Color shades[3] = {rgb(0.14f, 0.44f, 0.18f), rgb(0.30f, 0.62f, 0.20f), rgb(0.50f, 0.80f, 0.26f)};
+    for (int layer = 0; layer < 3; layer++)
+    {
+        setColor(shades[layer]);
+        for (int k = 0; k < 10; k++)
+        {
+            const float* c = C[k];
+            const float off = layer * 0.035f, sc = 1.0f - layer * 0.25f;
+            circle(cx + (c[0] - off * 0.6f) * h, cy + (c[1] + off) * h, c[2] * sc * h, 22);
+        }
+    }
+    setColor(rgb(0.62f, 0.90f, 0.32f, 0.8f));                         // sun-lit leaf tips
+    for (int k = 0; k < 14; k++)
+        circle(cx + (cg::hashU(k * 3u) - 0.6f) * 0.8f * h, cy + (0.05f + 0.35f * cg::hashU(k * 7u)) * h, 0.03f * h, 10);
+}
+
+// one decorative flower (borders): kind 0 daisy, 1 rose, 2 tulip, 3 sunflower, 4 lavender spike
+void decoFlower(float x, float y, float s, int kind, const Color& c, float sway)
+{
+    const float hx = x + sway * s * 0.4f, hy = y + s * 2.2f;
+    setColor(rgb(0.22f, 0.55f, 0.22f));
+    thickLine(x, y, hx, hy, s * 0.14f);
+    setColor(rgb(0.30f, 0.66f, 0.26f));
+    ellipse(x - s * 0.35f, y + s * 0.8f, s * 0.38f, s * 0.14f, 10);
+    ellipse(x + s * 0.35f, y + s * 1.1f, s * 0.38f, s * 0.14f, 10);
+    switch (kind)
+    {
+    case 0:                                                             // daisy
+        setColor(c);
+        for (int k = 0; k < 10; k++) { const float a = TAU * k / 10.0f; ellipse(hx + std::cos(a) * s * 0.55f, hy + std::sin(a) * s * 0.55f, s * 0.32f, s * 0.32f, 10); }
+        setColor(rgb(1.0f, 0.78f, 0.15f)); circle(hx, hy, s * 0.35f, 14);
+        break;
+    case 1:                                                             // rose
+        setColor(shade(c, 0.80f)); circle(hx, hy, s * 0.62f, 16);
+        setColor(c); circle(hx - s * 0.08f, hy + s * 0.08f, s * 0.48f, 16);
+        setColor(shade(c, 0.75f)); circle(hx, hy + s * 0.05f, s * 0.22f, 12);
+        break;
+    case 2:                                                             // tulip
+        setColor(c);
+        ellipse(hx, hy, s * 0.42f, s * 0.55f, 14);
+        tri(hx - s * 0.42f, hy, hx - s * 0.10f, hy, hx - s * 0.30f, hy + s * 0.78f);
+        tri(hx + s * 0.42f, hy, hx + s * 0.10f, hy, hx + s * 0.30f, hy + s * 0.78f);
+        break;
+    case 3:                                                             // sunflower
+        setColor(rgb(1.0f, 0.80f, 0.10f));
+        for (int k = 0; k < 14; k++) { const float a = TAU * k / 14.0f; ellipse(hx + std::cos(a) * s * 0.75f, hy + std::sin(a) * s * 0.75f, s * 0.30f, s * 0.30f, 8); }
+        setColor(rgb(0.45f, 0.28f, 0.10f)); circle(hx, hy, s * 0.55f, 18);
+        break;
+    default:                                                            // lavender / lupin spike
+        for (int k = 0; k < 7; k++)
+        {
+            setColor(k & 1 ? c : shade(c, 0.85f));
+            ellipse(x + sway * s * 0.4f * (k / 7.0f), y + s * (1.2f + 0.35f * k), s * (0.32f - 0.025f * k), s * 0.22f, 10);
+        }
+        break;
+    }
+}
+
+// a bush covered in blossoms (lush foreground beds)
+void blossomBush(float x, float y, float r, uint32_t seed)
+{
+    drawBush(x, y, r, rgb(0.12f, 0.42f, 0.18f), rgb(0.26f, 0.62f, 0.26f));
+    static const Color B[] = {rgb(1.0f, 0.40f, 0.62f), rgb(0.95f, 0.20f, 0.25f), rgb(1.0f, 0.96f, 0.98f), rgb(1.0f, 0.80f, 0.20f), rgb(0.68f, 0.45f, 0.95f)};
+    const Color c = B[seed % 5];
+    for (int k = 0; k < 14; k++)
+    {
+        const float a = PI * cg::hashU(seed * 31u + k * 7u), d = r * (0.4f + 0.9f * cg::hashU(seed + k * 13u));
+        const float bx = x + std::cos(a) * d * 1.3f, by = y + r * 0.5f + std::sin(a) * d;
+        setColor(c); circle(bx, by, r * 0.16f, 10);
+        setColor(rgb(1.0f, 0.90f, 0.40f)); circle(bx, by, r * 0.06f, 6);
+    }
+}
+
+const Color DECO[] = {rgb(1.0f, 0.42f, 0.62f), rgb(0.95f, 0.18f, 0.22f), rgb(1.0f, 0.95f, 0.98f), rgb(0.62f, 0.42f, 0.95f),
+                      rgb(1.0f, 0.62f, 0.20f), rgb(0.98f, 0.55f, 0.80f)};
+
+void flowerCluster(float x, float y, float spread, float s, int n, uint32_t seed, float u, bool animate)
+{
+    for (int k = 0; k < n; k++)
+    {
+        const float fx = x + (cg::hashU(seed + k * 13u) - 0.5f) * spread;
+        const float fy = y + (cg::hashU(seed + k * 7u) - 0.5f) * spread * 0.18f;
+        const int kind = (int)(cg::hashU(seed + k * 3u) * 5.0f) % 5;
+        const Color c = DECO[(int)(cg::hashU(seed + k * 19u) * 6.0f) % 6];
+        const float sw = animate ? wave(u, 8.0f + (k % 3), cg::hashU(seed + k)) : 0.0f;
+        decoFlower(fx, fy, s * (0.8f + 0.4f * cg::hashU(seed + k * 5u)), kind, kind == 4 ? rgb(0.55f, 0.40f, 0.92f) : c, sw);
+    }
+}
+
+// the rocky cliff on the left that the waterfall pours over
+void drawCliff()
+{
+    const float P[][2] = {{-1.95f, -0.42f}, {-1.95f, 0.62f}, {-1.80f, 0.58f}, {-1.62f, 0.49f}, {-1.48f, 0.38f},
+                          {-1.40f, 0.22f}, {-1.33f, 0.05f}, {-1.27f, -0.18f}, {-1.20f, -0.40f}};
+    glBegin(GL_TRIANGLE_FAN);
+    vtx(rgb(0.50f, 0.54f, 0.68f), -1.62f, 0.0f);
+    for (const auto& p : P) vtx(p[1] > 0.3f ? rgb(0.66f, 0.70f, 0.82f) : rgb(0.56f, 0.60f, 0.74f), p[0], p[1]);
+    glEnd();
+    setColor(rgb(0.38f, 0.42f, 0.58f, 0.6f));                          // shadowed right face
+    quad(-1.48f, 0.38f, -1.40f, 0.22f, -1.27f, -0.18f, -1.36f, -0.20f);
+    setColor(rgb(0.45f, 0.48f, 0.62f));                                // rock ledges
+    for (int k = 0; k < 6; k++)
+    {
+        const float y = 0.30f - 0.12f * k, x = -1.90f + 0.05f * (k & 1);
+        rect(x, y, x + 0.30f + 0.04f * k, y + 0.012f);
+    }
+    setColor(rgb(0.34f, 0.66f, 0.30f));                                // grassy top + moss
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 1; i < 6; i++) { vtx(rgb(0.42f, 0.74f, 0.32f), P[i][0], P[i][1] + 0.015f); vtx(rgb(0.30f, 0.58f, 0.28f), P[i][0], P[i][1] - 0.04f); }
+    glEnd();
+    drawPine(-1.82f, 0.45f, 0.30f, 0.0f, 1.0f);
+    drawPine(-1.66f, 0.44f, 0.24f, 0.0f, 0.9f);
+    drawBush(-1.30f, -0.36f, 0.06f, rgb(0.16f, 0.46f, 0.22f), rgb(0.32f, 0.66f, 0.30f));
+}
+
+void drawBridge()                                                      // wooden arch over the pond (Bezier deck)
+{
+    const cg::V2 a(-1.18f, -0.45f), c(-0.93f, -0.30f), b(-0.66f, -0.45f);
+    const int N = 24;
+    setColor(rgb(0.48f, 0.30f, 0.16f));
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= N; i++) { const cg::V2 p = cg::quadBezier(a, c, b, (float)i / N); glVertex2f(p.x, p.y); glVertex2f(p.x, p.y - 0.035f); }
+    glEnd();
+    setColor(rgb(0.70f, 0.46f, 0.24f));
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= N; i++) { const cg::V2 p = cg::quadBezier(a, c, b, (float)i / N); glVertex2f(p.x, p.y + 0.012f); glVertex2f(p.x, p.y - 0.010f); }
+    glEnd();
+    for (int i = 0; i <= 8; i++)                                       // posts + rail
+    {
+        const cg::V2 p = cg::quadBezier(a, c, b, i / 8.0f);
+        setColor(rgb(0.56f, 0.34f, 0.18f));
+        rect(p.x - 0.008f, p.y, p.x + 0.008f, p.y + 0.075f);
+        setColor(rgb(0.74f, 0.50f, 0.26f));
+        circle(p.x, p.y + 0.078f, 0.011f, 10);
+    }
+    setColor(rgb(0.66f, 0.42f, 0.22f));
+    glBegin(GL_TRIANGLE_STRIP);
+    for (int i = 0; i <= N; i++) { const cg::V2 p = cg::quadBezier(a, c, b, (float)i / N); glVertex2f(p.x, p.y + 0.072f); glVertex2f(p.x, p.y + 0.058f); }
+    glEnd();
+}
+
+// everything that never moves is compiled once into a display list (rebuilt when the tint changes)
+void buildStatic()
+{
+    drawRidge(farMts, -0.3f, rgb(0.60f, 0.74f, 0.96f), rgb(0.80f, 0.90f, 1.0f));
+    drawRidgeShadows(farMts, rgb(0.46f, 0.60f, 0.88f, 0.50f));
+    drawSnow(farMts, 0.33f, rgb(1.0f, 1.0f, 1.0f), rgb(0.88f, 0.92f, 1.0f));
+    drawRidge(nearMts, -0.3f, rgb(0.34f, 0.56f, 0.90f), rgb(0.52f, 0.74f, 0.92f));
+    drawRidgeShadows(nearMts, rgb(0.20f, 0.36f, 0.72f, 0.55f));
+    drawRidgeLights(nearMts, rgb(0.55f, 0.74f, 0.98f, 0.45f));
+    drawSnow(nearMts, 0.27f, rgb(1.0f, 1.0f, 1.0f), rgb(0.85f, 0.90f, 1.0f));
+    drawCliff();
+    drawRidge(hill1, -0.4f, rgb(0.40f, 0.74f, 0.40f), rgb(0.56f, 0.86f, 0.46f));
+}
+
+}   // namespace (art helpers)
+namespace
+{
 
 void drawWindmill(float x, float y, float angle)
 {
@@ -388,28 +651,36 @@ void drawGardener(float x, float y, float scale, const gardensim::Gardener& g, f
 // ---------------------------------------------------------------------------
 void initGarden()
 {
-    farMts = makeRidge(-2.8f, 2.8f, 0.02f, 0.12f, 0.30f, 5.3f, 2.2f);
-    hill1  = makeRolling(-2.8f, 2.8f, 0.02f, 0.04f, 0.14f, 0.7f, 2.0f);
-    hill2  = makeRolling(-2.8f, 2.8f, 0.02f, -0.10f, 0.10f, 3.4f, 2.7f);
-    lawn   = makeRolling(-2.8f, 2.8f, 0.02f, -0.19f, 0.03f, 1.9f, 3.0f);
+    std::vector<PeakDef> far = {{-1.3f, 0.30f, 0.45f}, {-0.55f, 0.36f, 0.45f}, {0.25f, 0.30f, 0.40f}, {0.95f, 0.38f, 0.45f}, {1.75f, 0.30f, 0.45f}};
+    std::vector<PeakDef> near = {{-0.95f, 0.22f, 0.40f}, {-0.15f, 0.26f, 0.42f}, {0.65f, 0.20f, 0.38f}, {1.45f, 0.24f, 0.42f}};
+    farMts  = makePeakRidge(-2.8f, 2.8f, 0.01f, 0.06f, far, 2.1f, 0.03f, false);
+    nearMts = makePeakRidge(-2.8f, 2.8f, 0.01f, 0.00f, near, 4.7f, 0.025f, false);
+    hill1  = makeRolling(-2.8f, 2.8f, 0.02f, 0.02f, 0.10f, 0.7f, 2.0f);
+    hill2  = makeRolling(-2.8f, 2.8f, 0.02f, -0.12f, 0.08f, 3.4f, 2.7f);
+    lawn   = makeRolling(-2.8f, 2.8f, 0.02f, -0.20f, 0.025f, 1.9f, 3.0f);
+
+    fall_ = Ribbon{cg::V2(-1.465f, 0.375f), cg::V2(-1.43f, 0.33f), cg::V2(-1.40f, 0.02f), cg::V2(gardensim::FALL_X, gardensim::FALL_Y), 0.028f, 0.060f, {}};
+    fall_.arc.build([](float t) { return ribbonAt(fall_, t); });
+    upperStream_ = Ribbon{cg::V2(-1.86f, 0.62f), cg::V2(-1.70f, 0.56f), cg::V2(-1.56f, 0.47f), cg::V2(-1.468f, 0.385f), 0.008f, 0.024f, {}};
+    upperStream_.arc.build([](float t) { return ribbonAt(upperStream_, t); });
 
     gardensim::init();                                               // flowers, rows, gardener, butterflies
-    gardensim::setWindmillHub(1.18f, ridgeAt(hill1, 1.18f) - 0.01f + 0.36f);
+    gardensim::setWindmillHub(0.30f, ridgeAt(hill1, 0.30f) - 0.01f + 0.36f);
     flowerOrder.clear();
     for (size_t i = 0; i < gardensim::flowers().size(); i++) flowerOrder.push_back((int)i);
     std::stable_sort(flowerOrder.begin(), flowerOrder.end(),
                      [](int a, int b) { return gardensim::flowers()[a].y > gardensim::flowers()[b].y; });   // far first
 
     blades.clear();
-    for (int i = 0; i < 200; i++)
+    for (int i = 0; i < 220; i++)
     {
         Blade b;
         b.x     = lerpf(-WORLD_W - 0.1f, WORLD_W + 0.1f, hash1(i * 3.7f));
-        b.y     = lerpf(-1.04f, -0.90f, hash1(i * 8.1f));
-        b.h     = 0.07f + 0.10f * hash1(i * 5.5f);
+        b.y     = lerpf(-1.04f, -0.92f, hash1(i * 8.1f));
+        b.h     = 0.06f + 0.09f * hash1(i * 5.5f);
         b.w     = 0.012f + 0.008f * hash1(i * 1.3f);
         b.phase = hash1(i * 2.2f);
-        b.col   = mix(rgb(0.20f, 0.52f, 0.20f), rgb(0.45f, 0.78f, 0.30f), hash1(i * 6.6f));
+        b.col   = mix(rgb(0.22f, 0.58f, 0.18f), rgb(0.50f, 0.86f, 0.28f), hash1(i * 6.6f));
         blades.push_back(b);
     }
 }
@@ -417,88 +688,137 @@ void initGarden()
 void drawGarden(const AnimState& st)
 {
     const float u = (float)(std::fmod(st.gardenTime, GARDEN_LOOP_SECONDS) / GARDEN_LOOP_SECONDS);
+    const float T = (float)st.gardenTime;
 
-    // while fading in, the garden settles from a slight zoom to rest
-    const float settle = 1.0f + 0.30f * (1.0f - st.gardenBlend);
+    // while fading in, the garden settles from a slight zoom to rest (eased)
+    const float settle = 1.0f + 0.30f * (1.0f - smootherstep(st.gardenBlend));
     pushCamera(settle, 0.0f, -0.10f, 0.0f, 0.0f);
 
     drawSkyAndFar(u);
 
-    // --- rolling hills + windmill ---
-    drawRidge(hill1, -0.4f, rgb(0.52f, 0.78f, 0.54f), rgb(0.62f, 0.84f, 0.58f));
-    drawWindmill(1.18f, ridgeAt(hill1, 1.18f) - 0.01f, gardensim::windAngle());
-    drawRidge(hill2, -0.5f, rgb(0.40f, 0.72f, 0.42f), rgb(0.52f, 0.80f, 0.46f));
-
-    // distant tree line
-    for (int i = 0; i < 16; i++)
+    // ---- static background (display list, rebuilt only when the time-of-day tint changes) ----
     {
-        const float x = -2.0f + i * 0.26f + 0.08f * hash1(i * 3.0f);
-        const float h = 0.16f + 0.08f * hash1(i * 7.0f);
+        const Color t = gfx::tintColor;
+        if (!staticList || std::fabs(t.r - staticTint.r) + std::fabs(t.g - staticTint.g) + std::fabs(t.b - staticTint.b) > 0.004f)
+        {
+            if (!staticList) staticList = glGenLists(1);
+            glNewList(staticList, GL_COMPILE);
+            buildStatic();
+            glEndList();
+            staticTint = t;
+        }
+        glCallList(staticList);
+    }
+    // the mountain stream and the waterfall into the pond (always flowing)
+    drawWater(upperStream_, T, 0.20f, 0.9f);
+    drawWater(fall_, T, 0.55f, 0.92f);
+
+    drawWindmill(0.30f, ridgeAt(hill1, 0.30f) - 0.01f, gardensim::windAngle());
+    drawRidge(hill2, -0.5f, rgb(0.32f, 0.68f, 0.34f), rgb(0.48f, 0.82f, 0.40f));
+    for (int i = 0; i < 16; i++)                                     // distant tree line
+    {
+        const float x = -1.0f + i * 0.20f + 0.06f * hash1(i * 3.0f);
+        const float h = 0.14f + 0.08f * hash1(i * 7.0f);
         if (visible(x, ridgeAt(hill2, x) + h * 0.6f, h * 0.6f))
             drawRoundTree(x, ridgeAt(hill2, x) - 0.015f, h, wave(u, 10.0f, hash1(i * 1.7f)),
-                          rgb(0.20f, 0.52f, 0.28f), rgb(0.36f, 0.68f, 0.34f));
+                          rgb(0.16f, 0.50f, 0.24f), rgb(0.34f, 0.72f, 0.30f));
     }
 
-    // --- lawn ---
-    drawRidge(lawn, -1.3f, rgb(0.46f, 0.77f, 0.40f), rgb(0.26f, 0.56f, 0.26f));
-    setColor(rgb(0.60f, 0.86f, 0.46f, 0.35f));
-    ellipse(0.2f, -0.55f, 1.3f, 0.35f, 40);                         // sunlit patch
+    // ---- lawn ----
+    drawRidge(lawn, -1.3f, rgb(0.50f, 0.84f, 0.36f), rgb(0.30f, 0.66f, 0.24f));
+    setColor(rgb(0.70f, 0.94f, 0.46f, 0.35f));
+    ellipse(0.35f, -0.55f, 1.2f, 0.30f, 48);                         // sunlit patch
 
-    // --- winding path from the cottage door to the viewer ---
+    // ---- stepping-stone path from the cottage door to the viewer (Catmull-Rom spine) ----
     {
-        static const float PX[] = {-1.04f, -1.00f, -0.62f, -0.18f, 0.06f, 0.16f, 0.20f};
-        static const float PY[] = {-0.17f, -0.21f, -0.42f, -0.64f, -0.86f, -1.12f, -1.30f};
-        static const float PW[] = {0.10f, 0.11f, 0.17f, 0.27f, 0.40f, 0.60f, 0.70f};
-        for (int pass = 0; pass < 2; pass++)
-        {
-            glBegin(GL_TRIANGLE_STRIP);
-            for (int seg = 0; seg < 5; seg++)
-                for (int k = 0; k < 10; k++)
-                {
-                    const float t = k / 10.0f;
-                    const float cx = catmull(PX[seg], PX[seg + 1], PX[seg + 2], PX[std::min(seg + 3, 6)], t);
-                    const float cy = catmull(PY[seg], PY[seg + 1], PY[seg + 2], PY[std::min(seg + 3, 6)], t);
-                    const float w  = catmull(PW[seg], PW[seg + 1], PW[seg + 2], PW[std::min(seg + 3, 6)], t) * (pass ? 1.0f : 1.22f);
-                    vtx(pass ? rgb(0.95f, 0.86f, 0.62f) : rgb(0.72f, 0.60f, 0.40f), cx - w * 0.5f, cy);
-                    vtx(pass ? rgb(0.88f, 0.76f, 0.52f) : rgb(0.72f, 0.60f, 0.40f), cx + w * 0.5f, cy);
-                }
-            glEnd();
-        }
-        setColor(rgb(0.78f, 0.68f, 0.48f));                         // pebbles
-        for (int i = 0; i < 26; i++)
-        {
-            const float v  = hash1(i * 4.3f);
-            const float cx = lerpf(-0.95f, 0.12f, 1.0f - v), cy = lerpf(-0.24f, -1.15f, v);
-            ellipse(cx + (hash1(i * 9.0f) - 0.5f) * 0.1f * (1 + v * 3), cy, 0.012f + 0.014f * v, 0.007f + 0.008f * v, 8);
-        }
+        static const float PX[] = {1.12f, 1.10f, 0.78f, 0.42f, 0.22f, 0.20f, 0.26f};
+        static const float PY[] = {-0.19f, -0.22f, -0.40f, -0.60f, -0.82f, -1.05f, -1.30f};
+        for (int seg = 0; seg < 5; seg++)
+            for (int k = 0; k < 4; k++)
+            {
+                const float t = (k + 0.5f) / 4.0f;
+                const float cx = catmull(PX[seg], PX[seg + 1], PX[seg + 2], PX[std::min(seg + 3, 6)], t);
+                const float cy = catmull(PY[seg], PY[seg + 1], PY[seg + 2], PY[std::min(seg + 3, 6)], t);
+                const float depth = clampf(-cy, 0.2f, 1.2f);
+                const float side = ((seg * 4 + k) & 1 ? 1.0f : -1.0f) * 0.035f * depth;
+                const float rx = 0.040f + 0.065f * depth, ry = 0.012f + 0.020f * depth;
+                setColor(rgb(0.55f, 0.48f, 0.38f));
+                ellipse(cx + side, cy - 0.006f, rx * 1.05f, ry * 1.1f, 24);
+                setColor(rgb(0.92f, 0.80f, 0.60f));
+                ellipse(cx + side, cy, rx, ry, 24);
+                setColor(rgb(1.0f, 0.92f, 0.76f, 0.6f));
+                ellipse(cx + side - rx * 0.2f, cy + ry * 0.3f, rx * 0.5f, ry * 0.4f, 16);
+            }
     }
 
-    // --- cottage (the same house style as the village) + chimney smoke ---
-    drawHouse(-1.12f, -0.17f, 0.62f, 1, true, GARDEN_LOOP_SECONDS * u);
+    // ---- cottage (the same house style as the village) + pots, roses, pine ----
+    drawPine(1.72f, -0.24f, 0.95f, wave(u, 5.0f, 0.2f) * 0.02f, 1.0f);
+    drawHouse(1.12f, -0.17f, 0.64f, 0, true, GARDEN_LOOP_SECONDS * u);
+    for (int side = -1; side <= 1; side += 2)                        // flower pots beside the door
+    {
+        const float px = 1.12f + side * 0.15f, py = -0.185f;
+        setColor(rgb(0.80f, 0.40f, 0.22f)); quad(px - 0.035f, py, px + 0.035f, py, px + 0.045f, py + 0.06f, px - 0.045f, py + 0.06f);
+        flowerCluster(px, py + 0.055f, 0.06f, 0.010f, 4, 50u + side, u, true);
+    }
+    flowerCluster(0.78f, -0.235f, 0.30f, 0.013f, 9, 61u, u, true);  // beds hugging the cottage
+    flowerCluster(1.48f, -0.235f, 0.26f, 0.013f, 8, 67u, u, true);
 
-    // --- fence, trees, bushes ---
-    drawFence(-0.58f, 1.85f, -0.235f, 0.12f, rgb(0.98f, 0.95f, 0.88f));
-    drawRoundTree(0.30f, -0.20f, 0.95f, wave(u, 6.0f, 0.1f), rgb(0.16f, 0.46f, 0.24f), rgb(0.34f, 0.68f, 0.30f), true);
-    drawRoundTree(1.62f, -0.20f, 0.78f, wave(u, 5.0f, 0.6f), rgb(0.18f, 0.50f, 0.26f), rgb(0.38f, 0.70f, 0.32f));
-    drawBush(-0.55f, -0.27f, 0.075f, rgb(0.14f, 0.42f, 0.22f), rgb(0.30f, 0.62f, 0.30f));
-    drawBush(0.78f, -0.27f, 0.085f, rgb(0.14f, 0.42f, 0.22f), rgb(0.30f, 0.62f, 0.30f));
-    drawBush(-1.70f, -0.22f, 0.090f, rgb(0.14f, 0.42f, 0.22f), rgb(0.30f, 0.62f, 0.30f));
+    // ---- fence, big tree, bushes ----
+    drawFence(-1.12f, 1.85f, -0.235f, 0.12f, rgb(0.86f, 0.62f, 0.38f));
+    flowerCluster(-0.10f, -0.245f, 0.80f, 0.010f, 12, 71u, u, true);
+    blossomBush(-0.98f, -0.28f, 0.07f, 3u);
+    blossomBush(0.62f, -0.28f, 0.075f, 4u);
+    blossomBush(1.58f, -0.24f, 0.06f, 5u);
+    drawLushTree(-0.50f, -0.23f, 0.82f, wave(u, 6.0f, 0.1f));
 
-    // --- pond with stones, lily pads and expanding ripples ---
+    // ---- pond: water, stencil-masked reflections, ripples, lilies, rocks, reeds ----
     {
         const float px = gardensim::POND_X, py = gardensim::POND_Y, rx = gardensim::POND_RX, ry = gardensim::POND_RY;
         setColor(rgb(0.0f, 0.0f, 0.0f, 0.16f));
-        ellipse(px, py - 0.03f, rx + 0.07f, ry + 0.05f, 40);
-        setColor(rgb(0.66f, 0.64f, 0.60f));
-        ellipse(px, py, rx + 0.05f, ry + 0.035f, 40);
-        setColor(rgb(0.24f, 0.54f, 0.74f));
-        ellipse(px, py, rx, ry, 40);
-        setColor(rgb(0.40f, 0.74f, 0.90f));
-        ellipse(px, py + 0.01f, rx * 0.88f, ry * 0.78f, 40);
-        setColor(rgb(0.72f, 0.92f, 0.98f, 0.55f));
-        ellipse(px - 0.18f, py + 0.05f, rx * 0.40f, ry * 0.30f, 30);   // sky reflection
+        ellipse(px, py - 0.03f, rx + 0.07f, ry + 0.05f, 64);
+        setColor(rgb(0.60f, 0.58f, 0.54f));
+        ellipse(px, py, rx + 0.05f, ry + 0.035f, 64);
 
-        // ripples appear ONLY where the user clicked the water (simulation: gardensim::ripples)
+        // 1) the water body also writes 1 into the STENCIL buffer
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glBegin(GL_TRIANGLE_FAN);
+        vtx(rgb(0.22f, 0.56f, 0.86f), px, py);
+        for (int i = 0; i <= 72; i++)
+        {
+            const float a = TAU * i / 72.0f;
+            vtx(mix(rgb(0.30f, 0.66f, 0.94f), rgb(0.56f, 0.86f, 1.0f), 0.5f + 0.5f * std::sin(a)), px + std::cos(a) * rx, py + std::sin(a) * ry);
+        }
+        glEnd();
+        // 2) planar reflection: the cliff, waterfall and bridge mirrored about the far shore
+        //    (homogeneous reflection matrix), drawn ONLY where the stencil is 1 (inside the water)
+        glStencilFunc(GL_EQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        {
+            float m[16];
+            cg::Mat3::reflectY(py + ry * 0.55f).toGL(m);
+            glPushMatrix();
+            glMultMatrixf(m);
+            const float oldA = gfx::alphaMul;
+            gfx::alphaMul = 0.35f;
+            drawCliff();
+            drawWater(fall_, T, 0.55f, 0.8f);
+            drawBridge();
+            drawLushTree(-0.50f, -0.23f, 0.82f, wave(u, 6.0f, 0.1f));
+            gfx::alphaMul = oldA;
+            glPopMatrix();
+        }
+        setColor(rgb(0.80f, 0.94f, 1.0f, 0.35f));
+        ellipse(px + 0.12f, py + 0.04f, rx * 0.42f, ry * 0.22f, 40);    // sky glint
+        for (int k = 0; k < 5; k++)                                     // rings spreading from the plunge pool
+        {
+            const float p = fract(T * 0.5f + k / 5.0f), rr = 0.03f + 0.22f * p;
+            setColor(rgb(1.0f, 1.0f, 1.0f, 0.6f * (1.0f - p)));
+            ring(gardensim::FALL_X + 0.02f, gardensim::FALL_Y - 0.02f, rr, rr * (ry / rx), 48);
+        }
+        // ripples appear where the user clicked the water (simulation: gardensim::ripples)
         glLineWidth(2.0f);
         for (const gardensim::Ripple& r : gardensim::ripples())
         {
@@ -507,63 +827,53 @@ void drawGarden(const AnimState& st)
             {
                 const float p = age - 0.10f * k;
                 if (p <= 0.0f || p >= 1.0f) continue;
-                const float rr = 0.03f + 0.26f * p, ry2 = rr * (ry / rx);
+                const float rr = 0.03f + 0.26f * p;
                 glColor4f(1.0f, 1.0f, 1.0f, 0.85f * (1.0f - p) * (1.0f - p * 0.3f));
-                glBegin(GL_LINES);
-                for (int i = 0; i < 40; i++)
-                {
-                    const float a0 = TAU * i / 40.0f, a1 = TAU * (i + 1) / 40.0f;
-                    const float x0 = r.x + std::cos(a0) * rr, y0 = r.y + std::sin(a0) * ry2;
-                    const float x1 = r.x + std::cos(a1) * rr, y1 = r.y + std::sin(a1) * ry2;
-                    auto inside = [&](float x, float y) { const float dx = (x - px) / rx, dy = (y - py) / ry; return dx * dx + dy * dy < 0.94f; };
-                    if (inside(x0, y0) && inside(x1, y1)) { glVertex2f(x0, y0); glVertex2f(x1, y1); }
-                }
-                glEnd();
+                ring(r.x, r.y, rr, rr * (ry / rx), 56);                 // the stencil clips it to the pond
             }
         }
         glLineWidth(1.0f);
-        // lily pads bob gently
-        for (int k = 0; k < 3; k++)
+        glDisable(GL_STENCIL_TEST);
+
+        drawSplash(gardensim::FALL_X, gardensim::FALL_Y, T);
+        drawBridge();
+        // lily pads + lotus flowers bob gently
+        for (int k = 0; k < 5; k++)
         {
-            const float lx = px - 0.25f + k * 0.30f, ly = py + 0.01f - 0.05f * (k & 1) + 0.006f * wave(u, 15.0f, k * 0.3f);
-            setColor(rgb(0.20f, 0.60f, 0.30f));
-            ellipse(lx, ly, 0.075f, 0.026f, 18);
-            setColor(rgb(0.40f, 0.74f, 0.90f));
-            tri(lx, ly, lx + 0.09f, ly + 0.01f, lx + 0.09f, ly - 0.01f);
-            if (k == 1)
+            const float lx = px - 0.30f + k * 0.16f, ly = py - 0.06f + 0.06f * (k & 1) + 0.006f * wave(u, 15.0f, k * 0.3f);
+            setColor(rgb(0.20f, 0.62f, 0.30f));
+            ellipse(lx, ly, 0.065f, 0.022f, 20);
+            setColor(rgb(0.40f, 0.76f, 0.94f));
+            tri(lx, ly, lx + 0.07f, ly + 0.008f, lx + 0.07f, ly - 0.008f);
+            if (k % 2 == 0)
             {
-                setColor(rgb(1.0f, 0.62f, 0.78f));
-                ellipse(lx, ly + 0.02f, 0.025f, 0.03f, 12);
+                setColor(rgb(1.0f, 0.62f, 0.80f));
+                for (int p2 = -2; p2 <= 2; p2++) ellipse(lx + p2 * 0.009f, ly + 0.022f - std::abs(p2) * 0.004f, 0.010f, 0.022f, 10);
                 setColor(rgb(1.0f, 0.85f, 0.35f));
-                circle(lx, ly + 0.015f, 0.010f, 8);
+                circle(lx, ly + 0.014f, 0.008f, 8);
             }
         }
-        // rim stones
-        for (int k = 0; k < 14; k++)
+        for (int k = 0; k < 16; k++)                                     // rim stones
         {
-            const float a = TAU * k / 14.0f + 0.2f;
-            setColor(shade(rgb(0.72f, 0.70f, 0.66f), 0.85f + 0.2f * hash1(k * 5.0f)));
-            ellipse(px + std::cos(a) * (rx + 0.05f), py + std::sin(a) * (ry + 0.04f), 0.04f, 0.022f, 10);
+            const float a = TAU * k / 16.0f + 0.2f;
+            if (std::sin(a) > 0.55f && std::cos(a) < -0.2f) continue;     // gap where the waterfall enters
+            setColor(shade(rgb(0.74f, 0.72f, 0.68f), 0.85f + 0.2f * hash1(k * 5.0f)));
+            ellipse(px + std::cos(a) * (rx + 0.05f), py + std::sin(a) * (ry + 0.04f), 0.05f, 0.028f, 14);
         }
-        // reeds on the left bank
-        for (int k = 0; k < 6; k++)
+        for (int k = 0; k < 7; k++)                                      // reeds on the right bank
         {
-            const float bx = px - rx - 0.02f + k * 0.022f, h = 0.20f + 0.08f * hash1(k * 4.0f);
+            const float bx = px + rx - 0.04f + k * 0.022f, h = 0.20f + 0.08f * hash1(k * 4.0f);
             const float sw = wave(u, 10.0f, k * 0.17f) * 0.025f;
-            setColor(rgb(0.30f, 0.56f, 0.26f));
+            setColor(rgb(0.30f, 0.60f, 0.26f));
             glBegin(GL_TRIANGLE_STRIP);
-            for (int s = 0; s <= 4; s++)
+            for (int s2 = 0; s2 <= 4; s2++)
             {
-                const float v = s / 4.0f;
+                const float v = s2 / 4.0f;
                 glVertex2f(bx - 0.004f + sw * v * v, py - 0.06f + h * v);
                 glVertex2f(bx + 0.004f + sw * v * v, py - 0.06f + h * v);
             }
             glEnd();
-            if (k % 2 == 0)
-            {
-                setColor(rgb(0.42f, 0.26f, 0.14f));
-                ellipse(bx + sw, py - 0.06f + h + 0.015f, 0.008f, 0.026f, 8);
-            }
+            if (k % 2 == 0) { setColor(rgb(0.42f, 0.26f, 0.14f)); ellipse(bx + sw, py - 0.06f + h + 0.015f, 0.008f, 0.026f, 8); }
         }
     }
 
@@ -610,12 +920,16 @@ void drawGarden(const AnimState& st)
     // --- butterflies: steering simulation (cursor avoidance) ---
     for (const gardensim::Butterfly& b : gardensim::butterflies())
     {
-        const float tilt = clampf(b.vx * 40.0f, -28.0f, 28.0f);
+        const float tilt = clampf(b.vx * 30.0f, -24.0f, 24.0f);
         drawButterfly(b.x, b.y, b.size, std::sin(b.flapPhase), b.col, -tilt);
         drawShimmer(b);
     }
 
-    // --- foreground grass: a travelling sine wave sways every blade ---
+    // --- foreground: big border flowers + grass (travelling sine wave sways every blade) ---
+    for (int k = 0; k < 5; k++) blossomBush(-1.70f + k * 0.17f, -1.06f + 0.02f * (k & 1), 0.075f, 100u + k);
+    for (int k = 0; k < 6; k++) blossomBush(0.80f + k * 0.19f, -1.06f + 0.02f * (k & 1), 0.08f, 120u + k);
+    flowerCluster(-1.25f, -0.99f, 0.80f, 0.024f, 12, 81u, u, true);
+    flowerCluster(1.25f, -0.99f, 0.95f, 0.024f, 14, 91u, u, true);
     glBegin(GL_TRIANGLES);
     for (const Blade& b : blades)
     {
@@ -627,6 +941,17 @@ void drawGarden(const AnimState& st)
         glVertex2f(b.x + sway, b.y + b.h);
     }
     glEnd();
+
+    // drifting petals (stateless particles, whole loop periodic)
+    for (int k = 0; k < 14; k++)
+    {
+        const float ph = fract(u * (3.0f + (k % 3)) + cg::hashU(k * 7u));
+        const float x = -1.9f + 3.8f * fract(cg::hashU(k * 3u) + ph * 0.8f), y = 0.55f - 1.5f * ph + 0.05f * std::sin(ph * 20.0f + k);
+        setColor(withAlpha(DECO[k % 6], 0.85f));
+        glPushMatrix(); glTranslatef(x, y, 0); glRotatef(ph * 720.0f + k * 40.0f, 0, 0, 1);
+        ellipse(0.0f, 0.0f, 0.010f, 0.005f, 8);
+        glPopMatrix();
+    }
 
     popCamera();
 }

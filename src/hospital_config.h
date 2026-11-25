@@ -32,6 +32,15 @@ constexpr int   MAX_INSIDE         = 14;      // hospital is "FULL" above this m
 
 constexpr float TREAT_SPEED        = 1.0f;    // 2.0 = treatments finish twice as fast
 
+// ---- score (shared game score, see game.h) -----------------------------------
+constexpr int SCORE_CORRECT_ROOM = +5;        // patient dropped in the right treatment room
+constexpr int SCORE_WRONG_ROOM   = -3;        // wrong room (e.g. a fever into the ER)
+constexpr int SCORE_ADMIT_SICK   = +3;        // you spotted a sick pedestrian and admitted them
+constexpr int SCORE_ADMIT_HEALTHY = -2;       // you dragged a healthy person in
+constexpr int SCORE_RELEASED     = +2;        // a patient went home healed
+constexpr int SCORE_KID_HEALED   = +5;        // an injured playground child was healed
+constexpr int SCORE_WORSENED     = -1;        // an emergency patient got worse while waiting
+
 }   // namespace hospitalcfg
 
 #endif

@@ -11,6 +11,10 @@
 //                then sliding friction on the ground  a = -mu_g G.
 //   Ball       : projectile motion with gravity, restitution on bounces, rolling friction,
 //                wall reflections.
+//   Consequences: swing over 75 deg -> the child flies off (projectile) and lands; the safety
+//                mat (AABB test) decides between a soft landing and an injury. A waxed slide
+//                launches fast children off the end. Ball vs child = circle-capsule collision
+//                with an impulse response; a fast hit hurts. Injured children go to the hospital.
 //   Scheduling : one FIFO queue per ride (multi-server for the 2 swings, pairs for the see-saw),
 //                round-robin time quantum RIDE_TIME, and "join the shortest expected wait"
 //                (load balancing) when a child picks the next activity.
@@ -27,7 +31,12 @@ namespace playground
 {
 
 enum class Ride   { None = -1, Swing = 0, Seesaw = 1, Slide = 2, Ball = 3 };
-enum class KState { Wander, ToQueue, Queued, ToRide, Riding, Playing, Dragged };
+enum class KState { Wander, ToQueue, Queued, ToRide, Riding, Playing, Dragged,
+                    Falling,     // flying through the air (projectile)
+                    Hurt,        // landed badly: crying, waiting for help
+                    ToGate,      // walking to the gate (to the hospital)
+                    Away,        // in the hospital (not on screen)
+                    Returning }; // back from the hospital
 
 struct Input { float x = 0, y = 0; bool valid = false, down = false, pressed = false, released = false; };
 
@@ -51,6 +60,9 @@ constexpr float SLIDE_TOP_X = 0.40f, SLIDE_TOP_Y = 0.14f;
 constexpr float SLIDE_BOT_X = 0.90f, SLIDE_BOT_Y = -0.24f;
 constexpr float SLIDE_LIP_X = 1.00f;
 
+constexpr float GATE_X = 1.74f, GATE_Y = -0.46f;     // children leave for / return from the hospital here
+constexpr float MAT_HW = 0.15f, MAT_HH = 0.03f;      // safety mat half size
+
 struct Kid
 {
     int   id = 0;
@@ -68,7 +80,17 @@ struct Kid
     float slideS = 0, slideV = 0;     // distance along the slide / speed
     float kickCd = 0, flash = 0;
     int   rides = 0;
+    float vx = 0, vy = 0, spin = 0;   // falling (projectile)
+    float landY = 0;                  // ground height where the fall ends
+    float mood = 0.7f;                // 0 crying .. 1 delighted
+    float bandage = 0;                // seconds the plaster stays visible
+    int   bumps = 0, injuries = 0;
+    bool  serious = false;            // hurt badly -> goes to the hospital
+    float hitCd = 0;                  // ball-hit cooldown
+    char  why[24] = "";               // what happened (tooltip)
 };
+
+struct Mat { float x = 1.32f, y = -0.40f; };      // the draggable safety mat
 
 struct Swing
 {
@@ -76,6 +98,8 @@ struct Swing
     int   rider = -1;                 // kid id sitting on it
     int   reserved = -1;              // kid id walking to it
     float pushT = 0;                  // visual: hand push
+    float rewardCd = 0;               // good-push reward cooldown
+    bool  warned = false;             // "too high" warning shown for this ride
     float maxAmp = 0;                 // largest amplitude seen (degrees, statistics)
 };
 
@@ -94,6 +118,9 @@ struct Ball
 {
     float x = 1.25f, h = 0.0f, vx = 0.0f, vh = 0.0f, spin = 0.0f;
     float maxH = 0.0f;
+    int   touch = 0;                  // last touched by: 0 nobody, 1 you, 2 a child
+    bool  held = false;               // you are holding it (drag to throw)
+    float goalFlash = 0; int goalSide = 0;
 };
 
 struct Popup   { float x = 0, y = 0, age = 0; char text[48] = ""; int color = 0; };   // 0 green 1 red 2 yellow 3 white
@@ -104,6 +131,7 @@ struct Stats
     int rides[3] = {0, 0, 0};         // swing, see-saw, slide
     int pushes = 0, kicks = 0, userKicks = 0, bounces = 0, drags = 0, seesawPushes = 0;
     float maxSwingDeg = 0, maxSlideSpeed = 0, maxBallHeight = 0;
+    int falls = 0, injuries = 0, goals = 0, userGoals = 0, bumps = 0, bonks = 0, saves = 0, superSlides = 0, returned = 0;
 };
 
 void init(unsigned seed = 4242u);
@@ -120,6 +148,14 @@ const std::vector<Popup>&   popups();
 const std::vector<LogLine>& log();
 const Stats&                stats();
 const Kid*  findKid(int id);
+const Mat&  mat();
+float slideWax();                                   // seconds of wax left (0 = normal slide)
+bool  hoverSlide();
+bool  hoverMat();
+bool  matCovers(float x, float y);                  // would a fall landing at (x, y) hit the mat?
+int   happyCount();
+int   injuredCount();                               // hurt + at the hospital
+bool  predictThrow(float& vx, float& vh);           // while holding the ball: release velocity
 int   hoverKidId();
 int   hoverSwing();                                 // -1 none
 bool  hoverSeesaw(int& side);                       // side 0 left, 1 right, 2 pivot
@@ -145,6 +181,9 @@ void  testSetSeesawBalance(bool on);
 void  testSendKid(int id, Ride r);                  // same as dropping the kid on that ride
 void  testFreeze(bool on);                          // children stop making their own decisions
 void  testClearRides();                             // everybody off the rides, queues empty, ball still
+void  testWaxSlide();
+void  testSetMat(float x, float y);
+void  testThrowBall(float x, float h, float vx, float vh);   // as if you threw it
 
 }   // namespace playground
 

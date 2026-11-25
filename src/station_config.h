@@ -34,6 +34,18 @@ constexpr float STAIR_FACTOR   = 1.8f;
 constexpr float BRIDGE_FACTOR  = 1.1f;
 constexpr float BOARD_TIME     = 0.45f;    // seconds per passenger per door
 
+// ---- dispatcher controls + score (shared game score, see game.h) ----------------
+constexpr float HOLD_STEP      = 10.0f;    // HOLD adds this many seconds to the stop
+constexpr float DRAG_SPEED     = 1.4f;     // u/s: fastest you can pull a train along the track
+constexpr int SCORE_DEPART_OK    = +3;     // left on time with everyone on board
+constexpr int SCORE_DEPART_LATE  = +1;     // everyone on board, but late
+constexpr int SCORE_LEFT_BEHIND  = -1;     // per passenger left on the platform (max 4)
+constexpr int SCORE_STUCK_ABOARD = -1;     // per passenger who could not get off (max 3)
+constexpr int SCORE_HELP_BOARD   = +2;     // you put a passenger on the right train
+constexpr int SCORE_WRONG_TRAIN  = -2;     // ... on the wrong train
+constexpr int SCORE_LATE_ARRIVAL = -1;     // a train arrived more than 10 s late
+constexpr int SCORE_EARLY_ARRIVAL = +1;    // you brought a train in early
+
 }   // namespace stationcfg
 
 #endif

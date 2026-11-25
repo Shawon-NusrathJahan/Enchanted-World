@@ -1,4 +1,6 @@
 #include "hospitalsim.h"
+#include "game.h"
+#include "cgmath.h"
 
 #include <algorithm>
 #include <cmath>
@@ -272,6 +274,26 @@ void createPatient(float symptom, bool amb, float x, float y, View announce)
     push(l);
 }
 
+// an injured child from the playground (arrives by ambulance)
+void createKidPatient(const game::Injury& inj)
+{
+    Patient p;
+    p.id = nextId++;
+    p.kind = Kind::Emergency;
+    p.cond = (Cond)std::max(0, std::min((int)Cond::Surgery, inj.cond));
+    p.severity = std::max(1, std::min(5, inj.severity));
+    p.treatTotal = p.treatLeft = treatTimeOf(p.cond) * 0.8f;
+    p.skin = inj.kidId % 4; p.hair = (inj.kidId * 3) % 4; p.shirt = inj.kidId % 6;
+    p.fromAmbulance = true; p.kidId = inj.kidId;
+    p.x = ENTRY_X; p.y = ENTRY_Y; p.tx = DESK_X; p.ty = DESK_Y;
+    p.st = PState::CheckIn; p.zone = Zone::Reception;
+    pts.push_back(p);
+    st.admitted++; st.admittedEmergency++; st.kidsAdmitted++;
+    LogLine l; std::snprintf(l.text, sizeof(l.text), "PLAYGROUND CHILD #%d ARRIVED - %s", inj.kidId, condName(p.cond)); l.color = 1;
+    push(l);
+    popup(View::Inside, ENTRY_X + 0.3f, ENTRY_Y + 0.4f, 1, "INJURED CHILD ARRIVED");
+}
+
 // ---------------------------------------------------------------------------
 // Pedestrians and ambulances (outside)
 // ---------------------------------------------------------------------------
@@ -457,6 +479,7 @@ void updatePatients(float dt)
                 if (p.worsenT > WORSEN_AFTER)
                 {
                     p.worsenT = 0; p.severity++; p.flash = 1.0f;
+                    game::addAt(game::Where::Hospital, SCORE_WORSENED, p.x, p.y + 0.3f, "Patient #%d got worse while waiting", p.id);
                     LogLine l;
                     std::snprintf(l.text, sizeof(l.text), "#%d CONDITION WORSENING (SEVERITY %d)", p.id, p.severity);
                     l.color = 1;
@@ -481,6 +504,15 @@ void updatePatients(float dt)
             p.id = -p.id;
             st.released++;
             const int idv = p.id;
+            if (p.kidId > 0)
+            {
+                st.kidsHealed++;
+                game::kidHealed(p.kidId);
+                game::addAt(game::Where::Hospital, SCORE_KID_HEALED, ENTRY_X + 0.25f, ENTRY_Y + 0.3f, "Child #%d healed - back to the playground!", p.kidId);
+                p.id = 0;
+                continue;
+            }
+            game::addAt(game::Where::Hospital, SCORE_RELEASED, ENTRY_X + 0.25f, ENTRY_Y + 0.3f, "Patient #%d went home healthy", idv);
             popup(View::Inside, ENTRY_X + 0.25f, ENTRY_Y + 0.35f, 0, "+1 RELEASED");
             sayD("#%d RELEASED - GOING HOME", 0, idv);
             spawnPed(DOOR_X, 0.0f, rng.next() < 0.5f ? 1.0f : -1.0f, false);       // leaves the building as a healthy pedestrian
@@ -580,11 +612,13 @@ void dropPatient(Patient& p, Zone z)
     {
         st.correct++;
         sayS("CORRECT: %s", 0, why);
+        if (!fromEr) game::addAt(game::Where::Hospital, SCORE_CORRECT_ROOM, p.x, p.y + 0.3f, "Right room: %s -> %s", condName(p.cond), zoneName(z));
         popup(View::Inside, p.x, p.y + 0.35f, 0, p.kind == Kind::Emergency ? "ASSIGNED TO EMERGENCY" : "ASSIGNED TO CONSULT");
         if (z == Zone::Emergency && fromEr == false) { /* fresh assignment */ }
         return;
     }
-    if (v == Verdict::WrongArea) { st.wrong++; sayS("WRONG: %s", 1, why); popup(View::Inside, p.x, p.y + 0.35f, 1, "WRONG AREA - BACK TO SEAT"); }
+    if (v == Verdict::WrongArea) { st.wrong++; sayS("WRONG: %s", 1, why);
+                                   game::addAt(game::Where::Hospital, SCORE_WRONG_ROOM, p.x, p.y + 0.3f, "Wrong room: %s belongs in %s", condName(p.cond), zoneName(rightZone(p))); popup(View::Inside, p.x, p.y + 0.35f, 1, "WRONG AREA - BACK TO SEAT"); }
     else                         { st.rejected++; sayS("REJECTED: %s", 2, why); popup(View::Inside, p.x, p.y + 0.35f, 2, v == Verdict::Cooldown ? "ER LOCKED - WAIT" : "NO SPACE"); }
     if (fromEr) p.cooldown = std::max(p.cooldown, ER_COOLDOWN);                 // it already left the ER
     backToSeat(p);
@@ -660,6 +694,7 @@ Action handleInput(View view, const Input& in)
                     std::snprintf(buf, sizeof(buf), "PERSON NEEDS CARE - ADMITTING");
                     sayS("%s", 0, buf);
                     popup(View::Outside, d->x, d->y + 0.40f, 0, "NEEDS CARE - ADMITTED");
+                    game::addAt(game::Where::Hospital, SCORE_ADMIT_SICK, d->x, d->y + 0.3f, "Good eye! That person needed care");
                 }
                 else if (d->symptom >= ADMIT_THRESHOLD)
                 {
@@ -672,6 +707,7 @@ Action handleInput(View view, const Input& in)
                 {
                     st.turnedAway++;
                     sayD("CHECKED: NO MEDICAL NEED - NOT ADMITTED", 1);
+                    game::addAt(game::Where::Hospital, SCORE_ADMIT_HEALTHY, d->x, d->y + 0.3f, "That person was healthy");
                     popup(View::Outside, d->x, d->y + 0.40f, 1, "HEALTHY - NOT ADMITTED");
                     d->st = Pedestrian::Walk; d->flash = 1.0f;
                     d->dir = d->x < 0 ? -1.0f : 1.0f;
@@ -713,7 +749,16 @@ const char* condName(Cond c)
 }
 const char* kindName(Kind k) { return k == Kind::Emergency ? "EMERGENCY" : "GENERAL"; }
 
-bool overHospital(float x, float y) { return x >= HOSP_X0 && x <= HOSP_X1 && y >= HOSP_Y0 && y <= HOSP_Y1; }
+// "dropped on the hospital": ray-casting point-in-polygon against the building's real
+// stepped silhouette (two low wings + the tall centre block with the red-cross sign)
+bool overHospital(float x, float y)
+{
+    static const std::vector<cg::V2> outline = {
+        cg::V2(HOSP_X0, HOSP_Y0), cg::V2(HOSP_X1, HOSP_Y0), cg::V2(HOSP_X1, 0.33f), cg::V2(0.54f, 0.33f),
+        cg::V2(0.54f, 0.63f), cg::V2(0.12f, 0.63f), cg::V2(0.12f, HOSP_Y1), cg::V2(-0.12f, HOSP_Y1),
+        cg::V2(-0.12f, 0.63f), cg::V2(-0.54f, 0.63f), cg::V2(-0.54f, 0.33f), cg::V2(HOSP_X0, 0.33f)};
+    return cg::pointInPolygon(cg::V2(x, y), outline);
+}
 
 Zone zoneAt(float x, float y)
 {
@@ -725,6 +770,20 @@ Zone zoneAt(float x, float y)
 }
 
 void init(unsigned seed) { seed0 = seed; reset(); }
+
+const char* zoneName(Zone z)
+{
+    switch (z)
+    {
+    case Zone::Reception: return "Reception";
+    case Zone::Waiting:   return "Waiting room";
+    case Zone::Emergency: return "Emergency";
+    case Zone::Consult:   return "Consultation";
+    default:              return "-";
+    }
+}
+
+Zone rightZone(const Patient& p) { return p.kind == Kind::Emergency ? Zone::Emergency : Zone::Consult; }
 
 void reset()
 {
@@ -753,6 +812,9 @@ Action update(double dtIn, View view, const Input& in)
     simTime += dt;
 
     Action act = handleInput(view, in);
+
+    game::Injury inj;                                   // injured playground children arrive here
+    while (insideCount() < MAX_INSIDE && game::takeInjured(inj)) createKidPatient(inj);
 
     updatePatients(dt);
     promoteErQueue();

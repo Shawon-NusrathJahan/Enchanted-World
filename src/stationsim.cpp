@@ -1,6 +1,7 @@
 // stationsim.cpp - rules of the train station (see stationsim.h for the algorithm list)
 
 #include "stationsim.h"
+#include "game.h"
 
 #include <algorithm>
 #include <cmath>
@@ -50,6 +51,18 @@ float                   pendX = 0, pendY = 0;
 float                   dragDX = 0, dragDY = 0;
 Input                   lastIn;
 float                   lastBoard[2][DOORS];
+int                     selSvc = -1, dragTrainSvc = -1, pendTrainSvc = -1;
+float                   pendTX = 0, trainDragOff = 0;
+char                    bannerText[96] = "";
+float                   bannerAge = 99.0f;
+
+void setBanner(const char* fmt, ...)
+{
+    va_list ap; va_start(ap, fmt);
+    std::vsnprintf(bannerText, sizeof(bannerText), fmt, ap);
+    va_end(ap);
+    bannerAge = 0.0f;
+}
 
 float rnd() { return std::uniform_real_distribution<float>(0.0f, 1.0f)(rng); }
 float rnd(float a, float b) { return a + (b - a) * rnd(); }
@@ -418,7 +431,7 @@ void addService()
     std::snprintf(s.name, sizeof(s.name), "%s %d", PREFIX[s.dest], 100 + s.id);
     lastPlan = (svcV.empty() ? simT + 3.0f : lastPlan + HEADWAY + rnd(-HEADWAY_JITTER, HEADWAY_JITTER));
     s.planArr = s.estArr = lastPlan;
-    s.dwell = DWELL + rnd(-DWELL_JITTER, DWELL_JITTER);
+    s.dwell = s.planDwell = DWELL + rnd(-DWELL_JITTER, DWELL_JITTER);
     s.load = (int)rnd(18.0f, 48.0f);
     s.alight = (int)rnd(2.0f, 6.0f);
     s.platform = s.id % 2;
@@ -445,7 +458,7 @@ void replan()
     for (Service* s : todo)
     {
         float tmin = s->planArr;
-        if (const Train* t = trainOfSvc(s->id)) tmin = std::max(tmin, simT + (STOP_X - t->x) / V_MAX + 1.0f);
+        if (const Train* t = trainOfSvc(s->id)) tmin = std::max(tmin, simT + (STOP_X - t->x) / V_MAX + 1.0f + (t->userHold || t->manual ? 6.0f : 0.0f));
         else tmin = std::max(tmin, simT + approachTime());
         if (homeHold) tmin = std::max(tmin, simT + approachTime() + 2.0f);
         int p = s->platform;
@@ -465,6 +478,7 @@ void replan()
         {
             s->platform = p; s->flash = 3.0f; st.platformChanges++;
             say(2, "PLANNER: %s TO %s MOVED TO PLATFORM %d", s->name, DEST[s->dest], p + 1);
+            setBanner("PLATFORM CHANGE: %s TO %s NOW USES PLATFORM %d", s->name, DEST[s->dest], p + 1);
             rerouteAll(true, s->id);
         }
     }
@@ -505,9 +519,8 @@ bool readyToLeave(const Train& t)
 {
     const Service* s = svcById(t.svc);
     if (!s || t.st != Train::Dwell) return false;
-    if (t.closing) return true;
+    if (t.closing || t.departNow) return true;      // DEPART NOW: any time, even mid-boarding
     if (t.toAlight > 0 || t.doors < 0.95f) return false;
-    if (t.departNow) return true;
     if (t.t < s->dwell) return false;
     if (t.t >= s->dwell + MAX_EXTRA_DWELL || s->load >= CAPACITY) return true;
     for (const Passenger& p : paxV)                       // keep the doors open while people are boarding
@@ -522,7 +535,7 @@ bool exitClear(const Train& t)
     return true;
 }
 
-void drive(Train& t, float target, float dt)          // kinematics with exact stopping (v^2 = 2 a d)
+void drive(Train& t, float target, float dt, float vmax = V_MAX)   // kinematics with exact stopping (v^2 = 2 a d)
 {
     t.target = target;
     const float d = target - t.x;
@@ -530,10 +543,10 @@ void drive(Train& t, float target, float dt)          // kinematics with exact s
     float a;
     const float brakeDist = t.v * t.v / (2.0f * BRAKE);
     if (d <= brakeDist + t.v * dt) a = -(t.v * t.v) / (2.0f * std::max(d, 1e-3f));   // a = v^2 / 2d
-    else a = t.v < V_MAX ? ACCEL : 0.0f;
+    else a = t.v < vmax ? ACCEL * (vmax > V_MAX ? 2.0f : 1.0f) : 0.0f;
     a = std::max(a, -4.0f * BRAKE);                                    // emergency brake limit
     const float before = t.x;
-    t.v = std::max(0.0f, std::min(V_MAX, t.v + a * dt));
+    t.v = std::max(0.0f, std::min(vmax, t.v + a * dt));
     t.x += t.v * dt;
     if (before <= target && t.x > target) { t.x = target; t.v = 0.0f; }
 }
@@ -577,9 +590,37 @@ void updateTrains(float dt)
                 }
                 else target = HOME_X - 0.03f;                                    // home signal at danger
             }
+            if (!t.routed && t.userHold) target = std::min(target, HOME_X - 0.03f);   // you hold it outside
+            const float sigTarget = target;
             for (const Train& o : trainsV)                                        // never run into the train ahead
                 if (&o != &t && o.x > t.x && (!o.routed || o.track == t.track || !t.routed)) target = std::min(target, rearOf(o) - 0.12f);
-            drive(t, target, dt);
+            if (t.manual)
+            {
+                // you pull the train along the rail: the interlocking still limits it
+                // (collision gap to the train ahead, red home signal, the platform end)
+                t.blockedT = std::max(0.0f, t.blockedT - dt);
+                if (t.wantX < t.x - 0.002f)                                       // backwards: slow shunting move
+                {
+                    float back = SPAWN_X + 0.05f;
+                    for (const Train& o : trainsV) if (&o != &t && o.x < t.x && (o.track == t.track || !o.routed || !t.routed)) back = std::max(back, o.x + 0.12f + TRAIN_L * 0.0f);
+                    if (t.routed) back = std::max(back, HOME_X);
+                    t.v = 0.0f;
+                    t.x = std::max(std::max(back, t.wantX), t.x - 0.5f * DRAG_SPEED * dt);
+                }
+                else
+                {
+                    const float want = std::min(target, t.wantX);
+                    if (t.wantX > target + 0.08f && t.blockedT <= 0.0f)
+                    {
+                        t.blockedT = 1.5f; st.dragBlocked++;
+                        const float y = trackY(t.track, t.x) + CAR_H + 0.10f;
+                        if (target < sigTarget - 0.01f) popup(t.x, y, 1, "STOP! TRAIN AHEAD");
+                        else if (!t.routed)             popup(t.x, y, 1, "RED SIGNAL - ROUTE NOT CLEAR");
+                    }
+                    drive(t, want, dt, DRAG_SPEED);
+                }
+            }
+            else drive(t, target, dt);
             if (t.routed && t.x >= STOP_X - 0.001f && t.v == 0.0f)
             {
                 t.st = Train::Dwell; t.t = 0; t.toAlight = std::min(s->alight, s->load);
@@ -587,6 +628,17 @@ void updateTrains(float dt)
                 st.arrived++;
                 const float late = simT - s->planArr;
                 if (late > 3.0f) { st.delayed++; st.totalDelay += late; } else st.onTime++;
+                const float ay = trackY(t.track, t.x) + CAR_H + 0.12f;
+                if (late > 10.0f)
+                {
+                    game::addAt(game::Where::Station, SCORE_LATE_ARRIVAL, t.x - TRAIN_L / 2, ay, "%s arrived %.0f s late", s->name, late);
+                    setBanner("%s TO %s ARRIVED %.0f S LATE - PLATFORM %d", s->name, DEST[s->dest], late, t.track + 1);
+                }
+                else if (late < -3.0f)
+                {
+                    game::addAt(game::Where::Station, SCORE_EARLY_ARRIVAL, t.x - TRAIN_L / 2, ay, "%s arrived %.0f s early", s->name, -late);
+                    setBanner("%s TO %s ARRIVED %.0f S EARLY - PLATFORM %d", s->name, DEST[s->dest], -late, t.track + 1);
+                }
                 say(late > 3.0f ? 2 : 0, "%s TO %s ARRIVED AT PLATFORM %d%s", s->name, DEST[s->dest], t.track + 1, late > 3.0f ? " (LATE)" : "");
                 for (float& b : lastBoard[t.track]) b = -10.0f;
             }
@@ -620,6 +672,26 @@ void updateTrains(float dt)
                 s->st = SvcState::Departed; s->depTime = simT;
                 st.departed++;
                 say(3, "%s DEPARTED FROM PLATFORM %d WITH %d ON BOARD", s->name, t.track + 1, s->load);
+                int left = 0;
+                for (const Passenger& p : paxV)
+                    if (p.ticket == t.svc && p.st != Passenger::Board && p.st != Passenger::Dragged) left++;
+                const int stuck = t.toAlight;
+                const float dx = t.x - TRAIN_L / 2, dy = trackY(t.track, t.x) + CAR_H + 0.12f;
+                const float lateDep = simT - plannedDeparture(*s);
+                if (left > 0 || stuck > 0)
+                {
+                    st.leftBehind += left;
+                    const int d = SCORE_LEFT_BEHIND * std::min(left, 4) + SCORE_STUCK_ABOARD * std::min(stuck, 3);
+                    if (left > 0 && stuck > 0) game::addAt(game::Where::Station, d, dx, dy, "%s left %d behind, %d could not get off", s->name, left, stuck);
+                    else if (left > 0)         game::addAt(game::Where::Station, d, dx, dy, "%s left %d passenger%s behind!", s->name, left, left == 1 ? "" : "s");
+                    else                       game::addAt(game::Where::Station, d, dx, dy, "%d passenger%s could not get off %s", stuck, stuck == 1 ? "" : "s", s->name);
+                    t.toAlight = 0;
+                }
+                else if (lateDep <= 4.0f) game::addAt(game::Where::Station, SCORE_DEPART_OK, dx, dy, "%s left %s with everyone aboard", s->name, lateDep < -3.0f ? "early" : "on time");
+                else                      game::addAt(game::Where::Station, SCORE_DEPART_LATE, dx, dy, "%s left %.0f s late, everyone aboard", s->name, lateDep);
+                if (lateDep < -3.0f) { s->early = true; setBanner("%s TO %s DEPARTED %.0f S EARLY", s->name, DEST[s->dest], -lateDep); }
+                else if (lateDep > 6.0f) setBanner("%s TO %s DEPARTED %.0f S LATE", s->name, DEST[s->dest], lateDep);
+                if (selSvc == t.svc) selSvc = -1;
             }
             break;
         }
@@ -675,13 +747,54 @@ bool swapPoints()
     st.platformChanges++;
     popup(PTS_X0 + 0.2f, TRACK_Y[1] + 0.05f, 2, "POINTS: %s -> PLATFORM %d", target->name, target->platform + 1);
     say(2, "YOU SWITCHED THE POINTS: %s WILL USE PLATFORM %d", target->name, target->platform + 1);
+    setBanner("PLATFORM CHANGE: %s TO %s NOW USES PLATFORM %d", target->name, DEST[target->dest], target->platform + 1);
     rerouteAll(true, target->id);
     replan();
     return true;
 }
 
+// dropped on a standing train: right ticket -> boards at once, wrong ticket -> gets off again
+Train* trainAt(float x, float y)
+{
+    for (Train& t : trainsV)
+    {
+        if (x < rearOf(t) - 0.02f || x > t.x + 0.02f) continue;
+        const float y0 = trackY(t.track, x);
+        if (y >= y0 - 0.06f && y <= y0 + CAR_H + 0.04f) return &t;
+    }
+    return nullptr;
+}
+
 void dropPax(Passenger& p, float x, float y)
 {
+    if (Train* t = trainAt(x, y + 0.08f))
+    {
+        Service* s = svcById(t->svc);
+        st.drags++;
+        if (s && t->st == Train::Dwell && !t->closing)
+        {
+            if (p.ticket == t->svc && s->load < CAPACITY)
+            {
+                p.st = Passenger::Board; p.door = 0; p.x = x; p.y = y; p.alpha = 0.9f;
+                s->load++; st.boarded++; st.helped++;
+                game::addAt(game::Where::Station, SCORE_HELP_BOARD, x, y + 0.2f, "Helped a passenger onto %s", s->name);
+                popup(x, y + 0.26f, 0, "RIGHT TRAIN!");
+                return;
+            }
+            st.wrongTrain++;
+            const Service* mine = p.ticket >= 0 ? svcById(p.ticket) : nullptr;
+            if (mine) game::addAt(game::Where::Station, SCORE_WRONG_TRAIN, x, y + 0.2f, "Wrong train! Ticket is for %s to %s", mine->name, DEST[mine->dest]);
+            else      game::addAt(game::Where::Station, SCORE_WRONG_TRAIN, x, y + 0.2f, "That passenger was going home!");
+            popup(x, y + 0.26f, 1, mine ? "WRONG TRAIN - TICKET FOR %s" : "WRONG TRAIN - GOING HOME", mine ? mine->name : "");
+            x = std::max(P1_X0 + 0.1f, std::min(P1_X1, x));
+            y = t->track == 0 ? P1_Y : P2_Y;                // gets off onto that platform
+        }
+        else
+        {
+            popup(x, y + 0.26f, 1, t->st == Train::Dwell ? "DOORS CLOSING!" : "THE TRAIN IS MOVING!");
+            x = p.fromX; y = p.fromY;
+        }
+    }
     int plat = -1;
     if (std::fabs(y - P1_Y) < 0.13f && x > P1_X0 + 0.05f && x < P1_X1 + 0.25f) plat = 0;
     else if (std::fabs(y - P2_Y) < 0.10f && x > P2_X0 && x < P2_X1 + 0.25f) plat = 1;
@@ -703,8 +816,38 @@ void dropPax(Passenger& p, float x, float y)
     }
 }
 
+bool inRect(const Input& in, float x0, float y0, float x1, float y1) { return in.x >= x0 && in.x <= x1 && in.y >= y0 && in.y <= y1; }
+
 void handleInput(const Input& in)
 {
+    if (selSvc >= 0 && !trainOfSvc(selSvc)) selSvc = -1;
+    // ---- pulling a train along its track ----
+    if (dragTrainSvc >= 0)
+    {
+        Train* t = trainOfSvc(dragTrainSvc);
+        if (!t || t->st == Train::Depart) { dragTrainSvc = -1; return; }
+        if (in.valid) t->wantX = in.x + trainDragOff;
+        if (t->st == Train::Dwell && t->wantX > t->x + 0.15f)          // pulled forward out of the platform
+        {
+            t->manual = false; dragTrainSvc = -1;
+            departNow(t->svc);
+            return;
+        }
+        if (in.released || !in.down) { t->manual = false; dragTrainSvc = -1; }
+        return;
+    }
+    if (pendTrainSvc >= 0)
+    {
+        Train* t = trainOfSvc(pendTrainSvc);
+        if (!t || !in.down || in.released) { pendTrainSvc = -1; return; }
+        if (std::fabs(in.x - pendTX) < 0.03f) return;
+        pendTrainSvc = -1;
+        if (t->st == Train::Depart) return;
+        dragTrainSvc = t->svc; trainDragOff = t->x - pendTX; st.trainDrags++;
+        if (t->st == Train::Approach) { t->manual = true; t->wantX = t->x; t->userHold = false; }
+        else t->wantX = t->x;
+        return;
+    }
     if (dragId >= 0)
     {
         Passenger* p = paxById(dragId);
@@ -725,6 +868,13 @@ void handleInput(const Input& in)
         return;
     }
     if (!in.valid || !in.pressed) return;
+    // dispatcher panel buttons of the selected train
+    if (selSvc >= 0 && inRect(in, PANEL_X0, PANEL_Y0, PANEL_X1, PANEL_Y1))
+    {
+        if (inRect(in, BTN_X0, BTN_DEP_Y0, BTN_X1, BTN_DEP_Y1)) departNow(selSvc);
+        else if (inRect(in, BTN_X0, BTN_HOLD_Y0, BTN_X1, BTN_HOLD_Y1)) holdTrain(selSvc);
+        return;
+    }
     if (Passenger* p = pickPax(in.x, in.y)) { pendId = p->id; pendX = in.x; pendY = in.y; return; }
     switch (hoverThing())
     {
@@ -743,15 +893,13 @@ void handleInput(const Input& in)
     default: break;
     }
     const int sv = hoverTrainSvc();
-    if (sv >= 0)
+    if (sv >= 0)                                    // click selects (panel), drag pulls it along the rail
     {
-        Train* t = trainOfSvc(sv);
-        if (t && t->st == Train::Dwell)
-        {
-            t->departNow = true;
-            popup(t->x - TRAIN_L / 2, trackY(t->track, t->x) + CAR_H + 0.06f, 2, starterHold[t->track] ? "DISPATCH: STARTER HELD!" : "DISPATCH NOW");
-        }
+        selSvc = sv;
+        pendTrainSvc = sv; pendTX = in.x;
+        return;
     }
+    selSvc = -1;                                    // click on empty space: deselect
 }
 
 void initialScene()
@@ -792,6 +940,7 @@ void reset()
     nextSvc = 1; nextPax = 1; lastPlan = 0; replanT = 0;
     arrivalsOn = true; homeHold = false; starterHold[0] = starterHold[1] = false; bridgeClosed = false; lastCrossingOpen = true;
     dragId = -1; pendId = -1;
+    selSvc = dragTrainSvc = pendTrainSvc = -1; bannerText[0] = 0; bannerAge = 99.0f;
     for (auto& row : lastBoard) for (float& b : row) b = -10.0f;
     for (int i = 0; i < 6; i++) addService();
     nextArrival = 1.0f;
@@ -828,6 +977,7 @@ void update(double dtIn, const Input& in)
     updatePassengers(dt);
     for (Popup& p : pops) p.age += dt;
     pops.erase(std::remove_if(pops.begin(), pops.end(), [](const Popup& p) { return p.age > 2.6f; }), pops.end());
+    bannerAge += dt;
 }
 
 float now() { return simT; }
@@ -951,6 +1101,76 @@ int hoverThing()
     if (std::fabs(x - ENTRY_X) < 0.08f && y > P1_Y && y < P1_Y + 0.26f) return 6;
     if (close(XING_X, TRACK_Y[0] + 0.03f, 0.08f)) return 7;
     return 0;
+}
+
+int  selectedTrain() { return selSvc; }
+int  draggedTrain()  { return dragTrainSvc; }
+const char* banner(float& age) { age = bannerAge; return bannerText; }
+float plannedDeparture(const Service& s) { return s.planArr + s.planDwell; }
+float expectedDeparture(const Service& s)
+{
+    if (s.st == SvcState::Departed) return s.depTime;
+    const float arr = s.actualArr >= 0.0f ? s.actualArr : std::max(s.estArr, simT);
+    return std::max(arr + s.dwell, simT);
+}
+
+bool departNow(int svc)
+{
+    Train* t = trainOfSvc(svc);
+    Service* s = svcById(svc);
+    if (!t || !s) return false;
+    const float px = t->x - TRAIN_L / 2, py = trackY(t->track, t->x) + CAR_H + 0.10f;
+    if (t->st != Train::Dwell)
+    {
+        if (t->st == Train::Approach && t->userHold) { t->userHold = false; popup(px, py, 0, "%s RELEASED", s->name); setBanner("%s TO %s RELEASED - RUNNING IN", s->name, DEST[s->dest]); return true; }
+        popup(px, py, 2, t->st == Train::Depart ? "ALREADY LEAVING" : "NOT AT THE PLATFORM YET");
+        return false;
+    }
+    if (t->departNow) return true;
+    t->departNow = true; s->rushed = true; st.departNow++;
+    starterHold[t->track] = false;                       // you give the right of way
+    int waiting = 0;
+    for (const Passenger& p : paxV) if (p.ticket == svc && p.st != Passenger::Board) waiting++;
+    if (!exitClear(*t)) popup(px, py, 2, "DEPART: WAITING FOR THE LINE AHEAD");
+    else if (waiting > 0 || t->toAlight > 0) popup(px, py, 1, "DEPART NOW - %d STILL ON THE PLATFORM!", waiting);
+    else popup(px, py, 0, "DEPART NOW");
+    say(2, "%s DISPATCHED BY YOU", s->name);
+    return true;
+}
+
+bool holdTrain(int svc)
+{
+    Train* t = trainOfSvc(svc);
+    Service* s = svcById(svc);
+    if (!t || !s) return false;
+    const float px = t->x - TRAIN_L / 2, py = trackY(t->track, t->x) + CAR_H + 0.10f;
+    if (t->st == Train::Approach)
+    {
+        if (t->routed) { popup(px, py, 2, "TOO LATE - ROUTE IS SET"); return false; }
+        t->userHold = !t->userHold;
+        popup(px, py, t->userHold ? 2 : 0, t->userHold ? "%s HELD AT THE SIGNAL" : "%s RELEASED", s->name);
+        setBanner(t->userHold ? "%s TO %s HELD OUTSIDE THE STATION - DELAYED" : "%s TO %s RELEASED - RUNNING IN", s->name, DEST[s->dest]);
+        st.holds += t->userHold ? 1 : 0;
+        replan();
+        return true;
+    }
+    if (t->st != Train::Dwell) { popup(px, py, 2, "ALREADY LEAVING"); return false; }
+    s->dwell = std::max(s->dwell, t->t) + HOLD_STEP;     // extends the stop from now
+    s->held += HOLD_STEP; st.holds++;
+    t->departNow = false; t->closing = false;            // doors open again
+    popup(px, py, 2, "%s HELD +%.0f S", s->name, HOLD_STEP);
+    setBanner("%s TO %s HELD - NOW DEPARTS IN %.0f S", s->name, DEST[s->dest], s->dwell - t->t);
+    replan();
+    return true;
+}
+
+void testDragTrain(int svc, float toX, float seconds)
+{
+    Train* t = trainOfSvc(svc);
+    if (!t) return;
+    t->manual = true; t->wantX = toX; t->userHold = false;
+    for (float k = 0; k < seconds; k += 1.0f / 60.0f) update(1.0 / 60.0, Input());
+    if ((t = trainOfSvc(svc))) t->manual = false;
 }
 
 void testSetArrivals(bool on) { arrivalsOn = on; }

@@ -4,8 +4,8 @@
 // Mouse:  top-left arrow = restart the whole film      top-right map = go to a location
 //         Playground: click swings / see-saw / ball, drag children onto rides
 //         Station:    click signals / points / footbridge / entrance / a train, drag passengers
-// Keys:   SPACE  pause / resume          R        restart
-//         1..5   jump to a stage         <- / ->  skip -2 s / +2 s
+// Keys:   SPACE  pause / resume          R        restart (back to the title screen, score is kept)
+//         0..5   jump to a stage (0 = title)        <- / ->  skip -2 s / +2 s
 //         O      view culling on / off   T        TEST: cycle day/afternoon/evening/night
 //         ESC    close map / quit
 //
@@ -18,6 +18,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -33,6 +34,8 @@
 #include "scenes.h"
 #include "theme.h"
 #include "ui.h"
+#include "font.h"
+#include "game.h"
 
 using namespace std;
 
@@ -212,6 +215,7 @@ static void keyCallback(GLFWwindow* window, int key, int, int action, int)
         break;
     case GLFW_KEY_SPACE:  toggleAnimation(); break;
     case GLFW_KEY_R:      scenes::restartFromBeginning(now); break;
+    case GLFW_KEY_0:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_TITLE, now); break;
     case GLFW_KEY_1:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_OPENING, now); break;
     case GLFW_KEY_2:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_REVEAL, now); break;
     case GLFW_KEY_3:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_JOURNEY, now); break;
@@ -235,6 +239,7 @@ int main(int argc, char** argv)
     float       testHour = -1.0f, clickX = 0.0f, clickY = 0.0f;
     const char* testScene = nullptr;
     double      simSeconds = 0.0, afterSeconds = 0.0;
+    int         repeat = 1;
     bool        haveCursor = false;
     float       curX = 0.0f, curY = 0.0f;
     for (int i = 1; i < argc; i++)
@@ -245,6 +250,7 @@ int main(int argc, char** argv)
         else if (a == "--scene" && i + 1 < argc) { testScene = argv[++i]; }
         else if (a == "--simulate" && i + 1 < argc) { simSeconds = atof(argv[++i]); }
         else if (a == "--after" && i + 1 < argc)    { afterSeconds = atof(argv[++i]); }
+        else if (a == "--repeat" && i + 1 < argc)   { repeat = atoi(argv[++i]); }
         else if (a == "--cursor" && i + 2 < argc) { haveCursor = true; curX = (float)atof(argv[i + 1]); curY = (float)atof(argv[i + 2]); i += 2; }
         else if (a == "--map")                   { openMap = true; }
         else if (a == "--click" && i + 2 < argc) { doClick = true; clickX = (float)atof(argv[i + 1]); clickY = (float)atof(argv[i + 2]); i += 2; }
@@ -259,6 +265,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_SAMPLES, 4);                            // smooth edges (MSAA)
+    glfwWindowHint(GLFW_STENCIL_BITS, 8);                       // stencil masks (pond reflections)
 
     GLFWwindow* window = glfwCreateWindow(START_W, START_H, "Enchanted Garden", NULL, NULL);
     if (window == NULL)
@@ -285,6 +292,8 @@ int main(int argc, char** argv)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_MULTISAMPLE);
 
+    font::init();
+    game::init();
     theme::init();
     hospital::init();
     playground::init();
@@ -297,7 +306,8 @@ int main(int argc, char** argv)
 
     if (shotMode)
     {
-        seekAnimation(shotTime, glfwGetTime());
+        if (shotTime >= 0.0) seekAnimation(shotTime, glfwGetTime());   // --shot -1 = title screen (logo fully shown)
+        else { for (int i = 0; i < 300; i++) updateAnimation(glfwGetTime() + i * 0.02); }
         theme::snap();
         if (testScene)
         {
@@ -317,15 +327,25 @@ int main(int argc, char** argv)
             {
                 gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f);
                 scenes::updateLocation(1.0 / 60.0);
+                game::update(1.0 / 60.0);
             }
         }
         if (doClick)                                            // simulate one left click at world position X,Y
         {
-            ui::mouse.valid = true; ui::mouse.x = clickX; ui::mouse.y = clickY; ui::mouse.pressed = true;
+            for (int r = 0; r < repeat; r++)                    // --repeat N: N clicks, 0.5 s apart
             {
+                ui::mouse.valid = true; ui::mouse.x = clickX; ui::mouse.y = clickY; ui::mouse.pressed = true;
                 const AnimState& as = getAnimState();
                 gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen);
                 scenes::updateLocation(1.0 / 60.0);
+                game::update(1.0 / 60.0);
+                ui::mouse.pressed = false;
+                if (r + 1 < repeat)
+                    for (double t = 0.0; t < 0.5; t += 1.0 / 60.0)
+                    {
+                        scenes::updateLocation(1.0 / 60.0);
+                        game::update(1.0 / 60.0);
+                    }
             }
             renderFrame(window, shotTime);
             ui::endFrame();
@@ -334,6 +354,7 @@ int main(int argc, char** argv)
             {
                 gardensim::update(1.0 / 60.0, as2, ui::mouse, scenes::isIntroOrGarden() && as2.gardenBlend >= 1.0f);
                 scenes::updateLocation(1.0 / 60.0);
+                game::update(1.0 / 60.0);
             }
         }
         renderFrame(window, shotTime);
@@ -350,12 +371,23 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(window))
     {
         const double now = glfwGetTime();
-        const double dt  = now - prev;
+        // frame-time smoothing: clamp spikes (window drag, alt-tab) and low-pass filter the
+        // step with an exponential moving average, so simulations move evenly (no stutter)
+        static double dtSmooth = 1.0 / 60.0;
+        const double raw = std::min(0.1, std::max(0.0, now - prev));
+        dtSmooth += (raw - dtSmooth) * 0.2;
+        const double dt = dtSmooth;
         prev = now;
 
         theme::update(dt);                                      // follows the device clock
         updateAnimation(now);
         updateMouse(window);
+        game::update(dt);
+        if (getAnimState().waiting && ui::mouse.pressed && ui::mouse.valid)   // title screen: the first click starts the film
+        {
+            startFilm(now);
+            ui::mouse.pressed = false;                          // this click does nothing else
+        }
         {
             const AnimState& as = getAnimState();
             const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen;
