@@ -118,6 +118,18 @@ void continueFilm()
     recompute();
 }
 
+void goToVillageFilm(double currentTime)
+{
+    waiting  = false;
+    titleClk = timeline::LOGO_IN;
+    elapsed  = timeline::JOURNEY_START;     // mountains fully parted, village in view
+    holding  = true;
+    released = false;
+    holdClk  = 0.0;
+    lastTime = currentTime;
+    recompute();
+}
+
 void toggleAnimation() { playing = !playing; recompute(); }
 
 void resetAnimation(double currentTime) { initializeAnimation(currentTime); }

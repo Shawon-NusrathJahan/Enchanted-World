@@ -47,6 +47,8 @@ float                 ballPX = 0, ballPY = 0;
 struct Sample { float x, y, t; };
 std::deque<Sample>    ballTrail;               // recent cursor samples while holding the ball
 float                 simT = 0;
+int                   ssPend = -1;             // pressed on a see-saw child: swipe UP = fling, plain click = push
+float                 ssPX = 0, ssPY = 0;
 int                   funRides = 0, funPushes = 0;
 float                 funT = 0;
 
@@ -665,10 +667,10 @@ void updateKid(Kid& k, float dt, int playIndex)
         if (k.vy < 0.0f && k.y <= k.landY)
         {
             k.y = k.landY; k.spin = 0;
+            const bool slide = std::strcmp(k.why, "flew off the slide") == 0;   // the waxed-slide launch
             if (matCovers(k.x, k.y))
             {
                 st.saves++;
-                const bool slide = std::strncmp(k.why, "flew off the slide", 6) == 0;
                 if (slide) { st.superSlides++; game::addAt(game::Where::Playground, SCORE_SUPER, k.x, k.y + 0.3f, "SUPER SLIDE! Landed safely on the mat"); }
                 else game::addAt(game::Where::Playground, SCORE_SAVED, k.x, k.y + 0.3f, "Phew! The safety mat caught kid #%d", k.id);
                 popup(k.x, k.y + 0.34f, 0, slide ? "SUPER SLIDE!" : "SAFE LANDING!");
@@ -678,9 +680,9 @@ void updateKid(Kid& k, float dt, int playIndex)
             }
             else
             {
-                const bool slide = std::strncmp(k.why, "flew off the slide", 6) == 0;
-                injure(k, true, slide ? SCORE_CRASH : SCORE_FALL,
-                       slide ? "A child flew off the waxed slide - injured!" : "A child fell off the swing - injured!");
+                char msg[80];
+                std::snprintf(msg, sizeof(msg), "Kid #%d %s - injured!", k.id, k.why);
+                injure(k, true, slide ? SCORE_CRASH : SCORE_FALL, msg);
             }
         }
         break;
@@ -747,7 +749,12 @@ void handleInput(const Input& in)
             dragId = -1;
             const Ride r = rideZoneAt(in.x, in.y);
             st.drags++;
-            if (r == Ride::None)
+            if (r == Ride::None && k->y > DROP_FALL_Y)          // let go high in the air: the child drops
+            {
+                startFall(*k, k->x, k->y, 0.0f, 0.0f, -0.40f, "was dropped from high up");
+                popup(k->x, k->y + 0.30f, 1, "WHOOPS!");
+            }
+            else if (r == Ride::None)
             {
                 k->y = std::max(LANE_Y0, std::min(LANE_Y1, k->y));
                 becomeFree(*k, Ride::None);
@@ -773,6 +780,33 @@ void handleInput(const Input& in)
         releaseReservation(*k);
         k->st = KState::Dragged; k->ride = Ride::None; k->seat = -1;
         dragId = k->id; dragDX = k->x - pendX; dragDY = k->y - pendY;
+        return;
+    }
+    // ---- see-saw child pressed: swipe UP flings the child off, a plain click pushes that end down ----
+    if (ssPend >= 0)
+    {
+        const int side = ssPend;
+        Kid* k = ss.seat[side] >= 0 && ss.mounted[side] ? byId(ss.seat[side]) : nullptr;
+        if (!k) { ssPend = -1; return; }
+        const float dy = in.y - ssPY, dx = in.x - ssPX;
+        if (in.valid && in.down && dy > SEESAW_FLING_DY && dy > std::fabs(dx))
+        {
+            float x, y; seesawSeatPos(side, x, y);
+            const float out = side == 0 ? -1.0f : 1.0f;               // flung outward, past the end of the beam
+            startFall(*k, x, y + 0.02f, out * 0.55f, 1.25f, GROUND_Y - 0.06f, "was flung off the see-saw");
+            ss.omega += (side == 0 ? -1.0f : 1.0f) * 0.8f;             // that end jumps up
+            popup(x, y + 0.34f, 1, "WHOA! FLUNG OFF!");
+            say(1, "YOU FLUNG KID #%d OFF THE SEE-SAW", k->id);
+            ssPend = -1;
+            return;
+        }
+        if (in.released || !in.down)                                   // no swipe: the old push
+        {
+            ss.omega += (side == 0 ? 1.0f : -1.0f) * SEESAW_USER_PUSH;
+            st.seesawPushes++;
+            popup(SEESAW_X + (side == 0 ? -0.3f : 0.3f), SEESAW_Y + 0.22f, 3, "PUSH %s DOWN", side == 0 ? "LEFT" : "RIGHT");
+            ssPend = -1;
+        }
         return;
     }
     // ---- the safety mat follows the cursor while dragged ----
@@ -818,6 +852,26 @@ void handleInput(const Input& in)
 
     if (hoverBall()) { ballPend = 1; ballPX = in.x; ballPY = in.y; ballTrail.clear(); ballTrail.push_back(Sample{in.x, in.y, simT}); return; }
     if (hoverMat() && !pickKid(in.x, in.y)) { matDrag = 1; matDX = mat_.x - in.x; matDY = mat_.y - in.y; return; }
+    // a child at the top of the slide (or high on the ladder): one click and they slip off
+    for (Kid& k : kidsV)
+    {
+        if (k.st != KState::Riding || k.ride != Ride::Slide || k.slideStage > 1) continue;
+        if (k.slideStage == 0 && k.y < GROUND_Y + 0.20f) continue;   // still low on the ladder: safe
+        if (std::fabs(in.x - k.x) < 0.07f && in.y > k.y - 0.03f && in.y < k.y + 0.30f)
+        {
+            startFall(k, k.x, k.y + 0.02f, 0.30f, 0.55f, GROUND_Y - 0.06f, "slipped off the top of the slide");
+            popup(k.x, k.y + 0.34f, 1, "SLIPPED!");
+            say(1, "KID #%d SLIPPED OFF THE TOP OF THE SLIDE", k.id);
+            return;
+        }
+    }
+    // a child sitting on the see-saw: wait to see if the mouse swipes up (fling) or not (push)
+    for (int side = 0; side < 2; side++)
+    {
+        if (ss.seat[side] < 0 || !ss.mounted[side]) continue;
+        float x, y; seesawSeatPos(side, x, y);
+        if (std::fabs(in.x - x) < 0.07f && in.y > y - 0.04f && in.y < y + 0.30f) { ssPend = side; ssPX = in.x; ssPY = in.y; return; }
+    }
     if (Kid* k = pickKid(in.x, in.y)) { pendId = k->id; pendX = in.x; pendY = in.y; return; }
     const int s = hoverSwing();
     if (s >= 0) { testPushSwing(s); return; }
@@ -838,6 +892,7 @@ void handleInput(const Input& in)
             popup(SEESAW_X, SEESAW_Y + 0.25f, 2, "LEVER BALANCE %s", ss.balance ? "ON" : "OFF");
             say(2, "SEE-SAW LEVER BALANCE %s (HEAVIER CHILD %s)", ss.balance ? "ON" : "OFF", ss.balance ? "SITS CLOSER" : "SITS AT THE END");
         }
+        else if (ss.seat[side] >= 0 && ss.mounted[side]) { ssPend = side; ssPX = in.x; ssPY = in.y; }   // swipe up from the beam end too
         else
         {
             ss.omega += (side == 0 ? 1.0f : -1.0f) * SEESAW_USER_PUSH;
@@ -870,7 +925,7 @@ void reset()
     for (auto& q : qs) q.clear();
     for (Swing& s : sw) s = Swing();
     ss = Seesaw(); bl = Ball(); st = Stats();
-    dragId = -1; pendId = -1; frozen = false; seesawRest = 0; seesawWait = 0;
+    dragId = -1; pendId = -1; ssPend = -1; frozen = false; seesawRest = 0; seesawWait = 0;
     mat_ = Mat(); waxT = 0; matDrag = 0; ballPend = 0; ballTrail.clear(); simT = 0; funRides = funPushes = 0; funT = 0;
 
     for (int i = 0; i < KIDS; i++)
@@ -893,7 +948,7 @@ void reset()
     placeOnRideNow(kidsV[4], Ride::Slide);
     placeOnRideNow(kidsV[5], Ride::Ball);
     kidsV[5].x = bl.x - 0.3f; kidsV[5].y = BALL_Y + 0.025f;
-    say(3, "%s IS OPEN - CLICK SWINGS, SEE-SAW OR BALL, DRAG CHILDREN", NAME);
+    say(3, "%s IS OPEN - CLICK SWINGS, SEE-SAW OR BALL, DRAG CHILDREN, PLACE THE MAT", NAME);
 }
 
 void update(double dtIn, const Input& in)

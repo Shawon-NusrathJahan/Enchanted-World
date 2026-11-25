@@ -30,9 +30,9 @@ constexpr float SWING_LENGTH  = 0.52f;
 constexpr float SWING_DAMPING = 0.10f;    // c (1/s)
 constexpr float SWING_PUMP    = 0.90f;    // rider's leg pumping (rad/s^2), only below PUMP_LIMIT
 constexpr float SWING_PUMP_LIMIT = 0.70f; // rad: a child pumps up to ~40 degrees
-constexpr float SWING_PUSH    = 1.10f;    // angular-velocity impulse of one user push (rad/s)
-constexpr float SWING_DANGER_AMP = 1.05f; // rad (60 deg): the child gets scared (red warning)
-constexpr float SWING_FALL_AMP   = 1.31f; // rad (75 deg): the child loses grip at the top and FALLS
+constexpr float SWING_PUSH    = 1.00f;    // angular-velocity impulse of one user push (rad/s): ~3 pushes reach a fall
+constexpr float SWING_DANGER_AMP = 1.00f; // rad (57 deg): the child gets scared (red warning)
+constexpr float SWING_FALL_AMP   = 1.13f; // rad (65 deg): the child loses grip at the top and FALLS
 
 // ---- see-saw: rigid beam, torque balance  I*phi'' = G cos(phi) (mL dL - mR dR) ----
 constexpr float SEESAW_HALF        = 0.36f;
@@ -55,6 +55,8 @@ constexpr float WAX_FRICTION     = 0.03f;  // mu of a waxed slide
 constexpr float SLIDE_SAFE_SPEED = 1.45f;  // faster than this at the bottom -> the child flies off the end
 constexpr float BALL_BONK_SPEED  = 1.5f;   // a ball faster than this makes a child cry ...
 constexpr float BALL_HURT_SPEED  = 2.3f;   // ... and faster than this injures them
+constexpr float SEESAW_FLING_DY  = 0.07f;  // swipe the cursor UP this far on a see-saw child: they are flung off
+constexpr float DROP_FALL_Y      = -0.10f; // a carried child let go above this height (not on a ride) falls
 constexpr float HOSPITAL_DELAY   = 3.0f;   // seconds an injured child cries before being taken away
 
 // score (session score, see game.h)

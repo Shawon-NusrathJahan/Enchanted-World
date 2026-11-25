@@ -1125,9 +1125,13 @@ void drawVillageLive(double time, bool still, float mx, float my)
                 setColor(rgb(1.0f, 0.95f, 0.6f, 0.30f)); ellipse(sp.x, sp.y, sp.w * 0.55f * kk, 0.03f * kk, 30);
                 const float sx = toScreenX(sp.x), sy = toScreenY(ly);
                 glPushMatrix(); glLoadIdentity();
-                const float w = ui::textWidth(nm, 0.0060f) * 0.5f + 0.04f;
-                setColor(rgb(0.08f, 0.10f, 0.20f, 0.80f)); rect(sx - w, sy - 0.02f, sx + w, sy + 0.06f);
+                bool open = false;                              // can this place be visited yet?
+                for (const world::Place& p : world::PLACES) if (p.name == nm) open = p.visitable;
+                const char* sub = open ? "click to visit" : "under construction";
+                const float w = std::max(ui::textWidth(nm, 0.0060f), ui::textWidth(sub, 0.0042f)) * 0.5f + 0.04f;
+                setColor(rgb(0.08f, 0.10f, 0.20f, 0.80f)); rect(sx - w, sy - 0.055f, sx + w, sy + 0.06f);
                 ui::drawText(sx, sy + 0.002f, 0.0060f, rgb(1.0f, 0.95f, 0.75f), nm, true);
+                ui::drawText(sx, sy - 0.042f, 0.0042f, open ? rgb(0.55f, 0.95f, 0.60f) : rgb(1.0f, 0.70f, 0.40f), sub, true);
                 glPopMatrix();
                 gfx::useTint = old;
             }

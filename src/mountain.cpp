@@ -713,6 +713,8 @@ void drawRiver(float t, bool still)
     }
 }
 
+const char* hubHover_ = nullptr;                // place under the mouse in the village (picking)
+
 void drawPlateau(float t, bool still)
 {
     pushLayer(PLATEAU_F);
@@ -742,6 +744,7 @@ void drawPlateau(float t, bool still)
     glow(upperFall.p3.x, upperFall.p3.y + 0.02f, 0.06f, rgb(1, 1, 1, 0.35f), 24);
 
     // the village (buildings, people, train) - sorted far -> near
+    hubHover_ = villageHover(mx, my);           // the village is the navigation hub: remember what is under the mouse
     drawVillageLive(still ? 0.0 : (double)t, still, mx, my);
     popCamera();
 }
@@ -766,6 +769,8 @@ void drawFlock(float t)
 // ----------------------------------------------------------------------------
 // public
 // ----------------------------------------------------------------------------
+const char* villageHubHover() { return hubHover_; }
+
 void initMountain()
 {
     initVillage();
@@ -825,6 +830,7 @@ void initMountain()
 
 void drawMountainScene(const AnimState& s)
 {
+    hubHover_ = nullptr;
     const float t = (float)s.time;                      // film clock: drives the camera
     const float at = (float)s.ambient;                  // always running: water, people, clouds
     const bool still = s.waiting;                       // title screen: nothing moves
@@ -904,7 +910,7 @@ void drawMountainScene(const AnimState& s)
         {
             const bool old = gfx::useTint;
             gfx::useTint = false;
-            font::draw(0.0f, -0.965f, 0.026f, rgb(1.0f, 1.0f, 1.0f, 0.85f * a), "Click anywhere to continue", 1, true);
+            font::draw(0.0f, -0.965f, 0.026f, rgb(1.0f, 1.0f, 1.0f, 0.85f * a), "Click a place in the village to visit it", 1, true);
             gfx::useTint = old;
         }
     }

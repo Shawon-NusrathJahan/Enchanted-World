@@ -43,7 +43,7 @@ struct AnimState
     float  gardenBlend;   // 0 = village only .. 1 = garden only
     double gardenTime;    // seconds since the garden started animating
     bool   paused;
-    bool   villageWait;   // the village is revealed and the film waits for a click
+    bool   villageWait;   // the village hub: revealed, the film waits while you pick a place
     float  holdT;         // seconds spent waiting at the village (for the small hint)
     double ambient;       // always-running seconds (water, people, smoke keep moving while waiting)
 };
@@ -51,7 +51,8 @@ struct AnimState
 void initializeAnimation(double currentTime);
 void updateAnimation(double currentTime);
 void startFilm(double currentTime);                             // the first click on the title screen
-void continueFilm();                                            // click while waiting at the village
+void continueFilm();                                            // village hub: the Garden was clicked (zoom into it)
+void goToVillageFilm(double currentTime);                           // MAP button: back to the village hub (film waits there)
 void toggleAnimation();
 void resetAnimation(double currentTime);                        // back to the title screen
 void jumpToPhase(Phase phase, double currentTime);

@@ -1,17 +1,18 @@
 // Enchanted Garden - cinematic mountain -> village -> garden animation
 // C++17, OpenGL 2.1 (immediate mode), GLFW + GLEW
 //
-// Mouse:  top-left arrow = restart the whole film      top-right map = go to a location
-//         Playground: click swings / see-saw / ball, drag children onto rides
+// Mouse:  top-left arrow = restart the whole film      top-right map = back to the village hub
+//         Village hub: click a place to visit it (unfinished places show "under construction")
+//         Playground: click swings / see-saw / ball, drag children onto rides, swipe up on see-saw kids
 //         Station:    click signals / points / footbridge / entrance / a train, drag passengers
 // Keys:   SPACE  pause / resume          R        restart (back to the title screen, score is kept)
 //         0..5   jump to a stage (0 = title)        <- / ->  skip -2 s / +2 s
 //         O      view culling on / off   T        TEST: cycle day/afternoon/evening/night
-//         ESC    close map / quit
+//         ESC    quit
 //
 // Test options (single frame, then exit):
 //   EnchantedGarden --shot <seconds> <file.ppm> [--hour H] [--scene garden|playground|station|hospital|inside]
-//                   [--map] [--click X Y]
+//                   [--hub] [--click X Y]
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -210,17 +211,16 @@ static void keyCallback(GLFWwindow* window, int key, int, int action, int)
     switch (key)
     {
     case GLFW_KEY_ESCAPE:
-        if (scenes::mapOpen) scenes::mapOpen = false;
-        else glfwSetWindowShouldClose(window, GLFW_TRUE);
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
     case GLFW_KEY_SPACE:  toggleAnimation(); break;
     case GLFW_KEY_R:      scenes::restartFromBeginning(now); break;
-    case GLFW_KEY_0:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_TITLE, now); break;
-    case GLFW_KEY_1:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_OPENING, now); break;
-    case GLFW_KEY_2:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_REVEAL, now); break;
-    case GLFW_KEY_3:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_JOURNEY, now); break;
-    case GLFW_KEY_4:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_GARDEN_REVEAL, now); break;
-    case GLFW_KEY_5:      scenes::current = SceneId::Intro; scenes::mapOpen = false; jumpToPhase(PHASE_LIVING_GARDEN, now); break;
+    case GLFW_KEY_0:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_TITLE, now); break;
+    case GLFW_KEY_1:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_OPENING, now); break;
+    case GLFW_KEY_2:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_REVEAL, now); break;
+    case GLFW_KEY_3:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_JOURNEY, now); break;
+    case GLFW_KEY_4:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_GARDEN_REVEAL, now); break;
+    case GLFW_KEY_5:      scenes::current = SceneId::Intro; jumpToPhase(PHASE_LIVING_GARDEN, now); break;
     case GLFW_KEY_LEFT:   seekAnimation(-2.0, now); break;
     case GLFW_KEY_RIGHT:  seekAnimation(2.0, now); break;
     case GLFW_KEY_O:      gfx::cullingEnabled = !gfx::cullingEnabled; break;
@@ -233,7 +233,7 @@ static void keyCallback(GLFWwindow* window, int key, int, int action, int)
 int main(int argc, char** argv)
 {
     // optional test options (see top of file)
-    bool        shotMode = false, openMap = false, doClick = false;
+    bool        shotMode = false, openHub = false, doClick = false;
     double      shotTime = 0.0;
     const char* shotFile = "shot.ppm";
     float       testHour = -1.0f, clickX = 0.0f, clickY = 0.0f;
@@ -252,7 +252,7 @@ int main(int argc, char** argv)
         else if (a == "--after" && i + 1 < argc)    { afterSeconds = atof(argv[++i]); }
         else if (a == "--repeat" && i + 1 < argc)   { repeat = atoi(argv[++i]); }
         else if (a == "--cursor" && i + 2 < argc) { haveCursor = true; curX = (float)atof(argv[i + 1]); curY = (float)atof(argv[i + 2]); i += 2; }
-        else if (a == "--map")                   { openMap = true; }
+        else if (a == "--hub")                   { openHub = true; }
         else if (a == "--click" && i + 2 < argc) { doClick = true; clickX = (float)atof(argv[i + 1]); clickY = (float)atof(argv[i + 2]); i += 2; }
     }
 
@@ -318,7 +318,7 @@ int main(int argc, char** argv)
             else if (sc == "hospital")   scenes::current = SceneId::HospitalOutside;
             else if (sc == "inside")     scenes::current = SceneId::HospitalInside;
         }
-        scenes::mapOpen = openMap;
+        if (openHub) scenes::goToVillage(glfwGetTime());
         if (simSeconds > 0.0)                                   // run the garden simulation forward (for tests)
         {
             ui::mouse.valid = haveCursor; ui::mouse.x = curX; ui::mouse.y = curY;
@@ -335,8 +335,13 @@ int main(int argc, char** argv)
             for (int r = 0; r < repeat; r++)                    // --repeat N: N clicks, 0.5 s apart
             {
                 ui::mouse.valid = true; ui::mouse.x = clickX; ui::mouse.y = clickY; ui::mouse.pressed = true;
+                if (scenes::atVillageHub(getAnimState()))       // village hub: draw once so the hovered place is known
+                {
+                    renderFrame(window, shotTime);
+                    scenes::hubClick(villageHubHover(), shotTime - 0.5);   // pop-up 0.5 s old in the picture
+                }
                 const AnimState& as = getAnimState();
-                gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen);
+                gardensim::update(1.0 / 60.0, as, ui::mouse, scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f);
                 scenes::updateLocation(1.0 / 60.0);
                 game::update(1.0 / 60.0);
                 ui::mouse.pressed = false;
@@ -388,15 +393,15 @@ int main(int argc, char** argv)
             startFilm(now);
             ui::mouse.pressed = false;                          // this click does nothing else
         }
-        if (getAnimState().villageWait && ui::mouse.pressed && ui::mouse.valid && scenes::isIntroOrGarden() &&
+        if (scenes::atVillageHub(getAnimState()) && ui::mouse.pressed && ui::mouse.valid &&
             std::hypot(ui::mouse.x - (-gfx::WORLD_W + 0.095f), ui::mouse.y - 0.895f) > 0.07f)   // not the restart button
         {
-            continueFilm();                                     // village view: the next click continues the journey
-            ui::mouse.pressed = false;
+            // village hub: the place under the mouse (picked through the inverse layer transform)
+            if (scenes::hubClick(villageHubHover(), now)) ui::mouse.pressed = false;
         }
         {
             const AnimState& as = getAnimState();
-            const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f && !scenes::mapOpen;
+            const bool interactive = scenes::isIntroOrGarden() && as.gardenBlend >= 1.0f;
             gardensim::update(dt, as, ui::mouse, interactive);
             scenes::updateLocation(dt);
         }

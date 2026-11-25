@@ -495,8 +495,12 @@ void drawGate()
     const float x = GATE_X - 0.02f, y = GATE_Y;
     setColor(rgb(0.55f, 0.36f, 0.20f)); rect(x - 0.01f, y, x + 0.01f, y + 0.30f); rect(x + 0.12f, y, x + 0.14f, y + 0.30f);
     setColor(rgb(0.70f, 0.48f, 0.26f)); rect(x - 0.01f, y + 0.27f, x + 0.14f, y + 0.30f);
+    // sign board on top of the gate (kept fully inside the screen)
+    const float cx = x + 0.065f, hw = ui::textWidth("TO HOSPITAL", 0.0030f) * 0.5f + 0.018f;   // board fits the text
+    setColor(rgb(0.45f, 0.28f, 0.15f)); rect(cx - hw - 0.007f, y + 0.305f, cx + hw + 0.007f, y + 0.365f);
+    setColor(rgb(0.80f, 0.20f, 0.20f)); rect(cx - hw, y + 0.311f, cx + hw, y + 0.359f);
     const bool o = gfx::useTint; gfx::useTint = false;
-    ui::drawText(x + 0.065f, y + 0.315f, 0.0030f, rgb(1, 1, 1, 0.85f), "TO HOSPITAL", true);
+    ui::drawText(cx, y + 0.326f, 0.0030f, rgb(1, 1, 1), "TO HOSPITAL", true);
     gfx::useTint = o;
 }
 
@@ -664,13 +668,13 @@ void drawOverlay()
             const int i = hoverSwing();
             const float deg = swingAmplitude(i) * 57.2958f;
             std::snprintf(t1, sizeof(t1), "Swing %d  -  %.0f degrees%s", i + 1, deg, swing(i).rider >= 0 ? "" : "  (empty)");
-            std::snprintf(t2, sizeof(t2), "Click to push. Children love 25-60 degrees");
+            std::snprintf(t2, sizeof(t2), "Click to push. Over 57 degrees is scary, 65 = they fall!");
             std::snprintf(t3, sizeof(t3), "Above 75 degrees they let go and FALL!");
         }
         else if (hoverSlide())
         {
             std::snprintf(t1, sizeof(t1), "The slide%s", slideWax() > 0.0f ? "  -  WAXED" : "");
-            std::snprintf(t2, sizeof(t2), "Click to wax it: children slide much faster");
+            std::snprintf(t2, sizeof(t2), "Click to wax it. Click a child at the top: they slip off!");
             std::snprintf(t3, sizeof(t3), "Too fast and they fly off the end - put the mat there!");
         }
         else if (hoverSeesaw(side))
@@ -685,7 +689,7 @@ void drawOverlay()
             else
             {
                 std::snprintf(t1, sizeof(t1), "See-saw");
-                std::snprintf(t2, sizeof(t2), "Click a side to push it down");
+                std::snprintf(t2, sizeof(t2), "Click a side to push it. Swipe UP on a child: flung off!");
                 std::snprintf(t3, sizeof(t3), "Push too hard and it slams: BUMP!");
             }
         }

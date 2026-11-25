@@ -60,7 +60,7 @@ constexpr float SLIDE_TOP_X = 0.40f, SLIDE_TOP_Y = 0.14f;
 constexpr float SLIDE_BOT_X = 0.90f, SLIDE_BOT_Y = -0.24f;
 constexpr float SLIDE_LIP_X = 1.00f;
 
-constexpr float GATE_X = 1.74f, GATE_Y = -0.46f;     // children leave for / return from the hospital here
+constexpr float GATE_X = 1.58f, GATE_Y = -0.46f;     // children leave for / return from the hospital here
 constexpr float MAT_HW = 0.15f, MAT_HH = 0.03f;      // safety mat half size
 
 struct Kid
