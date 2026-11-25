@@ -19,7 +19,7 @@ extern bool    mapOpen;
 
 bool        isIntroOrGarden();                         // drawn by the original mountain/garden pipeline
 void        restartFromBeginning(double now);          // back button: whole film from t = 0
-void        updateLocation(double dt);                 // advances the active location's simulation (hospital)
+void        updateLocation(double dt);                 // advances the active location's simulation (playground, station, hospital)
 void        drawLocation(const AnimState& s);          // every scene except Intro / Garden
 void        drawUI(const AnimState& s, double now);    // buttons, map, clock label (also handles clicks)
 const char* name(SceneId id);

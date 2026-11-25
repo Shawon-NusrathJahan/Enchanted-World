@@ -3,6 +3,8 @@
 #include "gfx.h"
 #include "gardensim.h"
 #include "hospital.h"
+#include "playground.h"
+#include "station.h"
 #include "theme.h"
 #include "ui.h"
 
@@ -196,28 +198,6 @@ bool drawMapNodes(float t, SceneId& picked)
     return clicked;
 }
 
-// ---------------------------------------------------------------------------
-// Placeholder locations (replaced by the real scenes in the next phases)
-// ---------------------------------------------------------------------------
-void drawBackdrop(float t, const Color& groundTop, const Color& groundBottom)
-{
-    Stop stops[] = {{-0.2f, rgb(0.84f, 0.93f, 0.99f)}, {0.5f, rgb(0.62f, 0.82f, 0.98f)}, {1.3f, rgb(0.28f, 0.55f, 0.90f)}};
-    for (Stop& st : stops) st.c = theme::skyColor(st.c, st.y);
-    const bool old = gfx::useTint;
-    gfx::useTint = false;
-    vGradient(-WORLD_W - 0.1f, WORLD_W + 0.1f, stops, 3);
-    const float sunA = theme::cur().sunAlpha;
-    glow(0.9f, 0.7f, 0.6f, theme::sun(rgb(1.0f, 0.97f, 0.80f, 0.7f)), 40);
-    setColor(theme::sun(rgb(1.0f, 0.97f, 0.78f, 1.0f)));
-    if (sunA > 0.01f) circle(0.9f, 0.7f, 0.09f, 32);
-    theme::drawStarsAndMoon(0.9f, 0.7f, 0.09f, fract(t / 60.0f));
-    gfx::useTint = old;
-
-    static const Ridge hills = makeRolling(-2.2f, 2.2f, 0.04f, -0.05f, 0.18f, 1.7f, 2.3f);
-    drawRidge(hills, -0.6f, rgb(0.52f, 0.76f, 0.54f), rgb(0.62f, 0.82f, 0.58f));
-    rectV(-WORLD_W - 0.1f, -1.0f, WORLD_W + 0.1f, -0.15f, groundBottom, groundTop);
-}
-
 }   // namespace
 
 bool isIntroOrGarden() { return current == SceneId::Intro || current == SceneId::Garden; }
@@ -241,10 +221,31 @@ void restartFromBeginning(double now)
     current = SceneId::Intro;
     mapOpen = false;
     hospital::reset();
+    playground::reset();
+    station::reset();
 }
 
 void updateLocation(double dt)
 {
+    const bool  blocked = mapOpen;
+    const float mx = ui::mouse.x, my = ui::mouse.y;
+    const bool  valid = ui::mouse.valid && !blocked, down = ui::mouse.down && !blocked;
+    const bool  pressed = ui::mouse.pressed && !blocked, released = ui::mouse.released && !blocked;
+
+    if (current == SceneId::Playground)            // each location only runs while it is on screen
+    {
+        playground::Input in;
+        in.x = mx; in.y = my; in.valid = valid; in.down = down; in.pressed = pressed; in.released = released;
+        playground::update(dt, in);
+        return;
+    }
+    if (current == SceneId::Station)
+    {
+        station::Input in;
+        in.x = mx; in.y = my; in.valid = valid; in.down = down; in.pressed = pressed; in.released = released;
+        station::update(dt, in);
+        return;
+    }
     if (current != SceneId::HospitalOutside && current != SceneId::HospitalInside) return;
     hospital::Input in;
     in.x = ui::mouse.x; in.y = ui::mouse.y; in.valid = ui::mouse.valid && !mapOpen;
@@ -258,24 +259,14 @@ void updateLocation(double dt)
 void drawLocation(const AnimState& s)
 {
     const float t = (float)s.time;
-    if (current == SceneId::HospitalOutside || current == SceneId::HospitalInside)
-    {
-        hospital::draw(current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside, t);
-        return;
-    }
-    const char* title = name(current);
     switch (current)
     {
-    case SceneId::Playground:      drawBackdrop(t, rgb(0.55f, 0.80f, 0.45f), rgb(0.40f, 0.68f, 0.36f)); break;
-    case SceneId::Station:         drawBackdrop(t, rgb(0.62f, 0.60f, 0.56f), rgb(0.48f, 0.46f, 0.44f)); break;
-    case SceneId::HospitalOutside: drawBackdrop(t, rgb(0.70f, 0.74f, 0.78f), rgb(0.56f, 0.60f, 0.66f)); break;
-    default:                       drawBackdrop(t, rgb(0.94f, 0.94f, 0.96f), rgb(0.80f, 0.84f, 0.90f)); break;
+    case SceneId::Playground:      playground::draw(t); break;
+    case SceneId::Station:         station::draw(t);    break;
+    case SceneId::HospitalOutside: hospital::draw(hospital::View::Outside, t); break;
+    case SceneId::HospitalInside:  hospital::draw(hospital::View::Inside, t);  break;
+    default: break;                                    // Intro / Garden are drawn by main.cpp
     }
-    const bool old = gfx::useTint;
-    gfx::useTint = false;
-    ui::drawText(0.0f, 0.15f, 0.026f, rgb(1, 1, 1), title, true);
-    ui::drawText(0.0f, 0.02f, 0.012f, rgb(1, 1, 0.85f), "SCENE UNDER CONSTRUCTION", true);
-    gfx::useTint = old;
 }
 
 void drawUI(const AnimState& s, double now)
@@ -307,6 +298,8 @@ void drawUI(const AnimState& s, double now)
 
     if (!mapOpen && (current == SceneId::HospitalOutside || current == SceneId::HospitalInside))
         hospital::drawOverlay(current == SceneId::HospitalInside ? hospital::View::Inside : hospital::View::Outside);
+    if (!mapOpen && current == SceneId::Playground) playground::drawOverlay();
+    if (!mapOpen && current == SceneId::Station)    station::drawOverlay();
 
     if (ui::backButton()) restartFromBeginning(now);
     if (!mapOpen && mapAllowed && ui::mapButton()) mapOpen = true;

@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\msys64\ucrt64\bin\cmake.exe --regenerate-during-build -SC:\Users\DELL\Downloads\Enchanted-Garden-phase3 -BC:\Users\DELL\Downloads\Enchanted-Garden-phase3\build
+  command = C:\msys64\ucrt64\bin\cmake.exe --regenerate-during-build -S"E:\CG - EG\Enchanted-Garden" -B"E:\CG - EG\Enchanted-Garden\build"
   description = Re-running CMake...
   generator = 1
 
