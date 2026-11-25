@@ -22,6 +22,11 @@ add_executable(EnchantedGarden
     src/gardensim.cpp
     src/hospitalsim.cpp
     src/hospital.cpp
+    src/playgroundsim.cpp
+    src/playground.cpp
+    src/stationsim.cpp
+    src/station.cpp
+
 )
 
 target_include_directories(EnchantedGarden PRIVATE
@@ -44,4 +49,12 @@ if(BUILD_TESTS)
 
     add_executable(hospital_sim_test tests/hospital_sim_test.cpp src/hospitalsim.cpp)
     target_include_directories(hospital_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+
+    add_executable(playground_sim_test tests/playground_sim_test.cpp src/playgroundsim.cpp)
+    target_include_directories(playground_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+    add_executable(station_sim_test tests/station_sim_test.cpp src/stationsim.cpp)
+    target_include_directories(station_sim_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
 endif()

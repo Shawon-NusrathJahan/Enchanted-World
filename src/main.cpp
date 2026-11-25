@@ -2,6 +2,8 @@
 // C++17, OpenGL 2.1 (immediate mode), GLFW + GLEW
 //
 // Mouse:  top-left arrow = restart the whole film      top-right map = go to a location
+//         Playground: click swings / see-saw / ball, drag children onto rides
+//         Station:    click signals / points / footbridge / entrance / a train, drag passengers
 // Keys:   SPACE  pause / resume          R        restart
 //         1..5   jump to a stage         <- / ->  skip -2 s / +2 s
 //         O      view culling on / off   T        TEST: cycle day/afternoon/evening/night
@@ -26,6 +28,8 @@
 #include "mountain.h"
 #include "gardensim.h"
 #include "hospital.h"
+#include "playground.h"
+#include "station.h"
 #include "scenes.h"
 #include "theme.h"
 #include "ui.h"
@@ -283,6 +287,9 @@ int main(int argc, char** argv)
 
     theme::init();
     hospital::init();
+    playground::init();
+    station::init();
+
     if (testHour >= 0.0f) theme::setOverrideHour(testHour);
     initMountain();
     initGarden();
